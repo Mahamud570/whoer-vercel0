@@ -658,6 +658,33 @@ app.post('/api/telegram-webhook', async (req, res) => {
         return;
     }
 
+    // /ban [ip]
+    if (text.startsWith('/ban ')) {
+        const ip = text.split(' ')[1];
+        if (ip) {
+            bannedIPs.add(ip);
+            await sendMsg(`🔨 *BANNED:*\n\`${ip}\``);
+        }
+        return;
+    }
+
+    // /unban [ip]
+    if (text.startsWith('/unban ')) {
+        const ip = text.split(' ')[1];
+        if (ip) {
+            bannedIPs.delete(ip);
+            await sendMsg(`🔓 *UNBANNED:*\n\`${ip}\``);
+        }
+        return;
+    }
+
+    // /clearban
+    if (text === '/clearban') {
+        bannedIPs.clear();
+        await sendMsg(`🧹 *Banlist Cleared!*`);
+        return;
+    }
+
     // /stats
     if (text.startsWith('/stats')) {
         try {
