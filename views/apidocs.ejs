@@ -86,19 +86,20 @@
 <div class="api-wrap">
 
     <div class="api-hero">
-        <div class="free-badge">⚡ FREE — NO API KEY REQUIRED</div>
-        <h1>Whoer Live — Free IP API</h1>
-        <p>Use our IP geolocation and privacy detection API in your own apps and scripts. No key, no signup, no cost. Just make an HTTP request and get JSON back.</p>
+        <div class="free-badge" style="color:var(--blue); background:var(--blue-dim); border-color:rgba(77,159,255,0.3);">⚡ V2 PAID API — KEY REQUIRED</div>
+        <h1>Whoer Live — Unlimited Data API</h1>
+        <p>Incorporate our advanced IP geolocation, blacklist tracking, and privacy detection into your own apps. Subscribing gives you an <code>x-api-key</code> to bypass all limits.</p>
+        <a href="https://t.me/mahamud570" target="_blank" class="btn btn-primary" style="margin-top:20px;display:inline-block;border-radius:20px;">🛒 Buy API Key via Telegram</a>
     </div>
 
-    <!-- Rate limits -->
+    <!-- Pricing & Limits -->
     <div class="api-section">
-        <h2>🚦 Rate Limits</h2>
+        <h2>🚦 Unlimited V2 Access</h2>
         <div class="rate-grid">
             <div class="rate-card">
                 <div class="rate-label">Per Minute</div>
-                <div class="rate-amount">60</div>
-                <div class="rate-unit">requests / minute</div>
+                <div class="rate-amount">∞</div>
+                <div class="rate-unit">no rate limits</div>
             </div>
             <div class="rate-card">
                 <div class="rate-label">Bulk Check</div>
@@ -107,30 +108,31 @@
             </div>
             <div class="rate-card">
                 <div class="rate-label">Cost</div>
-                <div class="rate-amount">$0</div>
-                <div class="rate-unit">completely free</div>
+                <div class="rate-amount">$15</div>
+                <div class="rate-unit">per month (crypto accepted)</div>
             </div>
         </div>
     </div>
 
     <!-- Endpoints -->
     <div class="api-section">
-        <h2>📡 Endpoints</h2>
+        <h2>📡 V2 Endpoints</h2>
+        <p style="font-size:13px;color:var(--muted);margin-bottom:16px;">All V2 endpoints require the <code>x-api-key: your-purchased-key</code> header to be sent with every request.</p>
 
         <div class="endpoint-line">
-            <span class="method m-get">GET</span>
-            <span class="endpoint-url">https://whoer.live/api/dns-probe/:token</span>
-            <span class="endpoint-desc">DNS probe test</span>
-        </div>
-        <div class="endpoint-line">
             <span class="method m-post">POST</span>
-            <span class="endpoint-url">https://whoer.live/api/bulk-scan</span>
+            <span class="endpoint-url">https://whoer.live/api/v2/bulk-scan</span>
             <span class="endpoint-desc">Bulk IP lookup (up to 100 IPs)</span>
         </div>
         <div class="endpoint-line">
             <span class="method m-post">POST</span>
-            <span class="endpoint-url">https://whoer.live/api/process-scan</span>
-            <span class="endpoint-desc">Full privacy scan (requires browser fingerprint data)</span>
+            <span class="endpoint-url">https://whoer.live/api/v2/blacklist-check</span>
+            <span class="endpoint-desc">Spam DNSBL IP checker</span>
+        </div>
+        <div class="endpoint-line">
+            <span class="method m-post">POST</span>
+            <span class="endpoint-url">https://whoer.live/api/v2/port-scan</span>
+            <span class="endpoint-desc">TCP Port Scanner</span>
         </div>
     </div>
 
@@ -147,15 +149,19 @@
         </div>
         <div id="curl-bulk" class="tab-content active copy-code">
             <button class="copy-btn-code" onclick="copyCode(this)">copy</button>
-<pre>curl -X POST https://whoer.live/api/bulk-scan \
+<pre>curl -X POST https://whoer.live/api/v2/bulk-scan \
   -H "Content-Type: application/json" \
+  -H "x-api-key: whr_your_30_day_key" \
   -d '{"ips":["8.8.8.8","1.1.1.1","104.21.0.1"]}'</pre>
         </div>
         <div id="js-bulk" class="tab-content copy-code">
             <button class="copy-btn-code" onclick="copyCode(this)">copy</button>
-<pre>const res = await fetch('https://whoer.live/api/bulk-scan', {
+<pre>const res = await fetch('https://whoer.live/api/v2/bulk-scan', {
   method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
+  headers: { 
+    'Content-Type': 'application/json',
+    'x-api-key': 'whr_your_30_day_key'
+  },
   body: JSON.stringify({ ips: ['8.8.8.8', '1.1.1.1'] }),
 });
 const { results } = await res.json();
@@ -165,8 +171,11 @@ console.log(results);</pre>
             <button class="copy-btn-code" onclick="copyCode(this)">copy</button>
 <pre>import requests
 
-r = requests.post('https://whoer.live/api/bulk-scan',
+headers = {'x-api-key': 'whr_your_30_day_key'}
+r = requests.post('https://whoer.live/api/v2/bulk-scan',
+    headers=headers,
     json={'ips': ['8.8.8.8', '1.1.1.1']})
+    
 for item in r.json()['results']:
     print(item['ip'], item['country'], item['isp'], item['is_vpn'])</pre>
         </div>
