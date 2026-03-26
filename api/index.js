@@ -115,7 +115,7 @@ app.get('/api/ping-check', (req, res) => {
 // ─── SEO: ROBOTS & SITEMAP (must be before express.static) ─────────────────
 app.get('/robots.txt', (req, res) => {
     res.type('text/plain');
-    res.send('User-agent: *\nAllow: /\nSitemap: https://whoer.live/sitemap.xml');
+    res.send('User-agent: *\nAllow: /\nSitemap: https://www.whoer.live/sitemap.xml');
 });
 
 app.get('/sitemap.xml', (req, res) => {
@@ -127,7 +127,7 @@ app.get('/sitemap.xml', (req, res) => {
                        'argentina','south-africa','vietnam','thailand','egypt','pakistan'];
     const doorwayUrls = countries.map(c => `
     <url>
-        <loc>https://whoer.live/proxy/${c}</loc>
+        <loc>https://www.whoer.live/proxy/${c}</loc>
         <lastmod>${today}</lastmod>
         <changefreq>hourly</changefreq>
         <priority>0.9</priority>
@@ -135,13 +135,13 @@ app.get('/sitemap.xml', (req, res) => {
 
     res.send(`<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-    <url><loc>https://whoer.live/</loc><lastmod>${today}</lastmod><changefreq>hourly</changefreq><priority>1.0</priority></url>
-    <url><loc>https://whoer.live/bulk</loc><lastmod>${today}</lastmod><changefreq>daily</changefreq><priority>0.8</priority></url>
-    <url><loc>https://whoer.live/api-docs</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
-    <url><loc>https://whoer.live/blacklist</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
-    <url><loc>https://whoer.live/port-scanner</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
-    <url><loc>https://whoer.live/ping</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
-    <url><loc>https://whoer.live/guides</loc><lastmod>${today}</lastmod><changefreq>daily</changefreq><priority>0.9</priority></url>${doorwayUrls}
+    <url><loc>https://www.whoer.live/</loc><lastmod>${today}</lastmod><changefreq>hourly</changefreq><priority>1.0</priority></url>
+    <url><loc>https://www.whoer.live/bulk</loc><lastmod>${today}</lastmod><changefreq>daily</changefreq><priority>0.8</priority></url>
+    <url><loc>https://www.whoer.live/api-docs</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+    <url><loc>https://www.whoer.live/blacklist</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+    <url><loc>https://www.whoer.live/port-scanner</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+    <url><loc>https://www.whoer.live/ping</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+    <url><loc>https://www.whoer.live/guides</loc><lastmod>${today}</lastmod><changefreq>daily</changefreq><priority>0.9</priority></url>${doorwayUrls}
 </urlset>`);
 });
 
@@ -226,7 +226,7 @@ function cleanIp(raw) {
 // ─── SEO ROUTES ──────────────────────────────────────────────────────────────
 app.get('/robots.txt', (req, res) => {
     res.type('text/plain');
-    res.send('User-agent: *\nAllow: /\nSitemap: https://whoer.live/sitemap.xml');
+    res.send('User-agent: *\nAllow: /\nSitemap: https://www.whoer.live/sitemap.xml');
 });
 
 app.get('/sitemap.xml', (req, res) => {
@@ -235,7 +235,7 @@ app.get('/sitemap.xml', (req, res) => {
     res.send(`<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://whoer.live/</loc>
+    <loc>https://www.whoer.live/</loc>
     <lastmod>${date}</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>

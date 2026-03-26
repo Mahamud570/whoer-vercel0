@@ -6,7 +6,7 @@
     <title>Free IP Lookup API — Whoer Live Developer Docs</title>
     <meta name="description" content="Free IP geolocation and privacy detection API. No key needed. Check IP country, ISP, VPN status, and more via simple HTTP requests.">
     <meta name="robots" content="index, follow">
-    <link rel="canonical" href="https://whoer.live/api-docs">
+    <link rel="canonical" href="https://www.whoer.live/api-docs">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🛡️</text></svg>">
     <link rel="stylesheet" href="/css/style.css">
     <style>
@@ -121,17 +121,17 @@
 
         <div class="endpoint-line">
             <span class="method m-post">POST</span>
-            <span class="endpoint-url">https://whoer.live/api/v2/bulk-scan</span>
+            <span class="endpoint-url">https://www.whoer.live/api/v2/bulk-scan</span>
             <span class="endpoint-desc">Bulk IP lookup (up to 100 IPs)</span>
         </div>
         <div class="endpoint-line">
             <span class="method m-post">POST</span>
-            <span class="endpoint-url">https://whoer.live/api/v2/blacklist-check</span>
+            <span class="endpoint-url">https://www.whoer.live/api/v2/blacklist-check</span>
             <span class="endpoint-desc">Spam DNSBL IP checker</span>
         </div>
         <div class="endpoint-line">
             <span class="method m-post">POST</span>
-            <span class="endpoint-url">https://whoer.live/api/v2/port-scan</span>
+            <span class="endpoint-url">https://www.whoer.live/api/v2/port-scan</span>
             <span class="endpoint-desc">TCP Port Scanner</span>
         </div>
     </div>
@@ -149,14 +149,14 @@
         </div>
         <div id="curl-bulk" class="tab-content active copy-code">
             <button class="copy-btn-code" onclick="copyCode(this)">copy</button>
-<pre>curl -X POST https://whoer.live/api/v2/bulk-scan \
+<pre>curl -X POST https://www.whoer.live/api/v2/bulk-scan \
   -H "Content-Type: application/json" \
   -H "x-api-key: whr_your_30_day_key" \
   -d '{"ips":["8.8.8.8","1.1.1.1","104.21.0.1"]}'</pre>
         </div>
         <div id="js-bulk" class="tab-content copy-code">
             <button class="copy-btn-code" onclick="copyCode(this)">copy</button>
-<pre>const res = await fetch('https://whoer.live/api/v2/bulk-scan', {
+<pre>const res = await fetch('https://www.whoer.live/api/v2/bulk-scan', {
   method: 'POST',
   headers: { 
     'Content-Type': 'application/json',
@@ -172,7 +172,7 @@ console.log(results);</pre>
 <pre>import requests
 
 headers = {'x-api-key': 'whr_your_30_day_key'}
-r = requests.post('https://whoer.live/api/v2/bulk-scan',
+r = requests.post('https://www.whoer.live/api/v2/bulk-scan',
     headers=headers,
     json={'ips': ['8.8.8.8', '1.1.1.1']})
     
