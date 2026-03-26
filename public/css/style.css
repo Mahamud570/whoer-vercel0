@@ -618,3 +618,66 @@ footer a:hover { color: var(--text); }
     color: var(--muted);
     line-height: 1.75;
 }
+
+/* ─── MOBILE RESPONSIVENESS ─────────────────────────────────────────────────── */
+@media (max-width: 640px) {
+    /* Header: stack logo + shrink buttons */
+    .header-inner {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+    .header-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        width: 100%;
+    }
+    .btn {
+        padding: 5px 11px;
+        font-size: 11px;
+        gap: 4px;
+    }
+    /* Hide the emoji icons on very small screens to save space */
+    .btn svg { display: none; }
+
+    /* Hero */
+    .hero { padding: 28px 0 20px; }
+    .ip-display { font-size: 28px; }
+
+    /* Main scan grid becomes single column */
+    .checks-grid {
+        grid-template-columns: 1fr !important;
+    }
+    .info-grid {
+        grid-template-columns: 1fr !important;
+    }
+
+    /* Score ring smaller */
+    .score-outer { width: 110px; height: 110px; }
+    .score-inner { width: 82px; height: 82px; }
+    .score-num   { font-size: 30px; }
+
+    /* Floating score bar tighter */
+    .score-capsule { padding: 10px 14px; gap: 10px; }
+    .sc-pct { font-size: 20px; }
+
+    /* Tables horizontal scroll on mobile */
+    .ip-table-wrap, .proxy-table-wrap { overflow-x: auto; }
+
+    /* Container padding */
+    .container { padding: 0 12px; }
+
+    /* DNS leak grid full width */
+    .leak-grid { grid-template-columns: 1fr !important; }
+
+    /* Doorway loader smaller */
+    .loader-box { padding: 24px 16px; }
+}
+
+@media (max-width: 380px) {
+    .logo { font-size: 16px; }
+    .btn { padding: 5px 8px; font-size: 10px; }
+    .ip-display { font-size: 22px; }
+}
+
