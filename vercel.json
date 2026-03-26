@@ -1,7 +1,10 @@
 {
   "version": 2,
   "rewrites": [
-    { "source": "/(.*)", "destination": "/api/index" }
+    { "source": "/css/(.*)",  "destination": "/css/$1" },
+    { "source": "/js/(.*)",   "destination": "/js/$1" },
+    { "source": "/img/(.*)",  "destination": "/img/$1" },
+    { "source": "/(.*)",      "destination": "/api/index" }
   ],
   "headers": [
     {
@@ -11,6 +14,10 @@
     {
       "source": "/js/(.*)",
       "headers": [{ "key": "Cache-Control", "value": "public, max-age=86400" }]
+    },
+    {
+      "source": "/img/(.*)",
+      "headers": [{ "key": "Cache-Control", "value": "public, max-age=604800" }]
     }
   ]
 }

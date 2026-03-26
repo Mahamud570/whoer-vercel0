@@ -8,6 +8,8 @@ const axios = require('axios');
 const UAParser = require('ua-parser-js');
 const rateLimit = require('express-rate-limit');
 const compression = require('compression');
+const dns = require('dns').promises;
+const net = require('net');
 
 const app = express();
 
@@ -16,7 +18,7 @@ app.set('trust proxy', 1); // Required for Vercel/Cloudflare real IPs
 
 app.use(compression());
 app.disable('x-powered-by');
-app.use(helmet({ contentSecurityPolicy: false }));
+app.use(helmet({ contentSecurityPolicy: false, crossOriginEmbedderPolicy: false }));
 app.use(cors());
 
 // Rate limiting — best-effort on Vercel serverless (no shared state)
@@ -31,6 +33,39 @@ app.use('/api/', limiter);
 
 app.use(bodyParser.json({ limit: '500kb' }));
 app.use(bodyParser.urlencoded({ extended: true }));
+
+// ─── SEO: ROBOTS & SITEMAP (must be before express.static) ─────────────────
+app.get('/robots.txt', (req, res) => {
+    res.type('text/plain');
+    res.send('User-agent: *\nAllow: /\nSitemap: https://whoer.live/sitemap.xml');
+});
+
+app.get('/sitemap.xml', (req, res) => {
+    res.type('application/xml');
+    const today = new Date().toISOString().split('T')[0];
+    const countries = ['usa','uk','canada','germany','france','brazil','india','australia',
+                       'japan','russia','china','spain','italy','mexico','netherlands',
+                       'indonesia','south-korea','turkey','sweden','switzerland','poland',
+                       'argentina','south-africa','vietnam','thailand','egypt','pakistan'];
+    const doorwayUrls = countries.map(c => `
+    <url>
+        <loc>https://whoer.live/proxy/${c}</loc>
+        <lastmod>${today}</lastmod>
+        <changefreq>hourly</changefreq>
+        <priority>0.9</priority>
+    </url>`).join('');
+
+    res.send(`<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <url><loc>https://whoer.live/</loc><lastmod>${today}</lastmod><changefreq>hourly</changefreq><priority>1.0</priority></url>
+    <url><loc>https://whoer.live/bulk</loc><lastmod>${today}</lastmod><changefreq>daily</changefreq><priority>0.8</priority></url>
+    <url><loc>https://whoer.live/api-docs</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+    <url><loc>https://whoer.live/blacklist</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+    <url><loc>https://whoer.live/port-scanner</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+    <url><loc>https://whoer.live/ping</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+    <url><loc>https://whoer.live/guides</loc><lastmod>${today}</lastmod><changefreq>daily</changefreq><priority>0.9</priority></url>${doorwayUrls}
+</urlset>`);
+});
 
 // Static files — Vercel serves /public automatically but Express handles dev
 app.use(express.static(path.join(__dirname, '..', 'public'), { maxAge: '1d' }));
@@ -121,18 +156,201 @@ app.get('/sitemap.xml', (req, res) => {
     const date = new Date().toISOString().split('T')[0];
     res.send(`<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://whoer.live/</loc><lastmod>${date}</lastmod><priority>1.0</priority></url>
+  <url>
+    <loc>https://whoer.live/</loc>
+    <lastmod>${date}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
 </urlset>`);
 });
 
 // ─── MAIN ROUTES ─────────────────────────────────────────────────────────────
-app.get('/', (req, res) => res.render('scan'));
+app.get('/',            (req, res) => res.render('scan'));
+app.get('/bulk',        (req, res) => res.render('bulk'));
+app.get('/api-docs',    (req, res) => res.render('apidocs'));
+app.get('/blacklist',   (req, res) => res.render('blacklist'));
+app.get('/port-scanner',(req, res) => res.render('port_scanner'));
+app.get('/ping',        (req, res) => res.render('ping_test'));
+app.get('/guides',      (req, res) => res.render('guides'));
+
+
+// ─── PROGRAMMATIC SEO DOORWAY PAGES ──────────────────────────────────────────
+// e.g. /proxy/brazil, /proxy/usa, /proxy/germany
+app.get('/proxy/:country', (req, res) => {
+    // Format "united-states" -> "United States"
+    let country = req.params.country || 'Unknown';
+    country = country.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+    
+    // We pass year and country to the EJS template to ensure title tags are perfectly optimized
+    res.render('doorway', { 
+        country, 
+        year: new Date().getFullYear() 
+    });
+});
+
+// ─── BULK IP SCAN ─────────────────────────────────────────────────────────────
+// Free, no key required. Max 100 IPs. Batched to avoid rate limits.
+app.post('/api/bulk-scan', async (req, res) => {
+    try {
+        const { ips = [] } = req.body;
+        const cleaned = [...new Set(
+            ips.map(ip => (ip || '').trim()).filter(ip => ip && /^[\d.:a-fA-F]+$/.test(ip))
+        )].slice(0, 100);
+
+        if (!cleaned.length) return res.json({ results: [] });
+
+        // Helper: look up a single IP with fallback
+        async function lookupIP(ip) {
+            // Primary: ipapi.co
+            try {
+                const r = await axios.get(`https://ipapi.co/${ip}/json/`, {
+                    timeout: 5000, headers: { 'User-Agent': 'whoer.live/4.0' },
+                });
+                const d = r.data;
+                if (d && d.ip && !d.error) {
+                    return {
+                        ip, country: d.country_name || '—', countryCode: d.country_code || '',
+                        city: d.city || '—', region: d.region || '—',
+                        isp: d.org || '—', timezone: d.timezone || '—',
+                        is_vpn: isHosting(d.org || ''), error: false,
+                    };
+                }
+            } catch (_) {}
+
+            // Fallback: ip-api.com (free, no key)
+            try {
+                const r2 = await axios.get(
+                    `http://ip-api.com/json/${ip}?fields=status,country,countryCode,regionName,city,isp,org,timezone`,
+                    { timeout: 5000 }
+                );
+                const d = r2.data;
+                if (d && d.status === 'success') {
+                    return {
+                        ip, country: d.country || '—', countryCode: d.countryCode || '',
+                        city: d.city || '—', region: d.regionName || '—',
+                        isp: d.org || d.isp || '—', timezone: d.timezone || '—',
+                        is_vpn: isHosting(d.org || d.isp || ''), error: false,
+                    };
+                }
+            } catch (_) {}
+
+            return { ip, error: true };
+        }
+
+        // Process in batches of 5 with 200ms pause → avoids rate limits
+        const BATCH = 5, DELAY = 200;
+        const results = [];
+        for (let i = 0; i < cleaned.length; i += BATCH) {
+            const batch = cleaned.slice(i, i + BATCH);
+            const batchResults = await Promise.all(batch.map(lookupIP));
+            results.push(...batchResults);
+            if (i + BATCH < cleaned.length) {
+                await new Promise(r => setTimeout(r, DELAY));
+            }
+        }
+
+        res.json({ results });
+    } catch (err) {
+        console.error('bulk-scan error:', err);
+        res.status(500).json({ error: 'server_error' });
+    }
+});
+
+// ─── DNS PROBE ────────────────────────────────────────────────────────────────
+// Frontend makes multiple requests with a session token.
+// We record which IPs hit us — if they differ, that hints at split-routing.
+const dnsProbes = new Map(); // token → [{ip, ts}]
+
+app.get('/api/dns-probe/:token', (req, res) => {
+    const token = (req.params.token || '').slice(0, 64);
+    const ip = cleanIp(req.headers['x-forwarded-for'] || req.socket.remoteAddress || '');
+    if (!token || !ip) return res.json({ ok: false });
+    const list = dnsProbes.get(token) || [];
+    list.push({ ip, ts: Date.now() });
+    dnsProbes.set(token, list);
+    setTimeout(() => dnsProbes.delete(token), 30000); // cleanup after 30s
+    res.json({ ok: true });
+});
+
+app.get('/api/dns-results/:token', (req, res) => {
+    const token = (req.params.token || '').slice(0, 64);
+    const list = dnsProbes.get(token) || [];
+    const ips  = [...new Set(list.map(e => e.ip))];
+    res.json({ ips, count: list.length });
+});
+
+// ─── BLACKLIST CHECKER ───────────────────────────────────────────────────────
+// Given an IP, reverses it and checks against common DNSBLs
+app.post('/api/blacklist-check', async (req, res) => {
+    const { ip } = req.body;
+    if (!ip || !/^(\d{1,3}\.){3}\d{1,3}$/.test(ip)) {
+        return res.status(400).json({ error: 'invalid_ipv4' });
+    }
+    
+    const reversed = ip.split('.').reverse().join('.');
+    const lists = [
+        { host: 'zen.spamhaus.org', name: 'Spamhaus ZEN' },
+        { host: 'b.barracudacentral.org', name: 'Barracuda' },
+        { host: 'bl.spamcop.net', name: 'SpamCop' },
+        { host: 'dnsbl.sorbs.net', name: 'SORBS' },
+        { host: 'cbl.abuseat.org', name: 'CBL' }
+    ];
+
+    const results = await Promise.all(lists.map(async (list) => {
+        try {
+            const addrs = await dns.resolve4(`${reversed}.${list.host}`);
+            return { list: list.name, listed: true, details: addrs[0] };
+        } catch (e) {
+            return { list: list.name, listed: false };
+        }
+    }));
+
+    res.json({ ip, results });
+});
+
+// ─── PORT SCANNER ────────────────────────────────────────────────────────────
+// Attempts to open a TCP socket to a given IP and port, returns open/closed
+app.post('/api/port-scan', async (req, res) => {
+    const { ip, ports } = req.body;
+    if (!ip || !Array.isArray(ports)) return res.status(400).json({ error: 'invalid_request' });
+
+    const results = await Promise.all(ports.slice(0, 20).map(port => {
+        return new Promise((resolve) => {
+            const socket = new net.Socket();
+            socket.setTimeout(2000); // 2 second timeout
+            
+            socket.on('connect', () => {
+                socket.destroy();
+                resolve({ port, status: 'open' });
+            });
+            socket.on('timeout', () => {
+                socket.destroy();
+                resolve({ port, status: 'filtered' }); // dropped/timeout
+            });
+            socket.on('error', () => {
+                resolve({ port, status: 'closed' }); // actively rejected
+            });
+            socket.connect(Number(port), ip);
+        });
+    }));
+
+    res.json({ ip, results });
+});
 
 // WebRTC leak test — client posts discovered IPs
 app.post('/api/webrtc-check', async (req, res) => {
     const { ips = [] } = req.body;
     const userIp = cleanIp(req.headers['x-forwarded-for'] || req.socket.remoteAddress || '');
-    const leaked = ips.filter(ip => ip && ip !== userIp && !ip.startsWith('192.168') && !ip.startsWith('10.') && !ip.startsWith('172.'));
+    const leaked = ips.filter(ip =>
+        ip &&
+        ip !== userIp &&
+        !ip.startsWith('192.168') &&
+        !ip.startsWith('10.')     &&
+        !ip.startsWith('172.')    &&
+        !ip.startsWith('169.254') &&
+        ip !== '0.0.0.0'
+    );
     res.json({ leaked, count: leaked.length });
 });
 

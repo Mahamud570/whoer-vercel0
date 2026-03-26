@@ -3,14 +3,109 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Whoer Live — IP Checker & Privacy Score</title>
-    <meta name="description" content="Check your real IP address, detect VPN, WebRTC leaks, DNS leaks, and browser fingerprint. Instant privacy score with antidetect browser detection.">
-    <meta name="keywords" content="what is my ip, ip checker, vpn detection, webrtc leak, dns leak, privacy score, antidetect browser, browser fingerprint">
+
+    <!-- Primary SEO -->
+    <title>What Is My IP Address? Free IP Checker, VPN Test &amp; WebRTC Leak Detector — Whoer Live</title>
+    <meta name="description" content="Instantly check your real IP address, test if your VPN is working, detect WebRTC leaks, DNS leaks, and score your browser privacy. 100% free — no signup needed.">
+    <meta name="keywords" content="what is my ip, what is my ip address, check my ip, ip checker, vpn test, is my vpn working, webrtc leak test, dns leak test, am i using a proxy, check my ip bangladesh, vpn detection, browser fingerprint, privacy score, ip address lookup, my ip location, ip geolocation, antidetect browser detection">
+    <meta name="robots" content="index, follow">
+    <meta name="author" content="Whoer Live">
     <link rel="canonical" href="https://whoer.live/">
+    <link rel="icon" type="image/png" href="/img/logo.png">
+    <link rel="apple-touch-icon" href="/img/logo.png">
+
+    <!-- Open Graph (Facebook / WhatsApp / LinkedIn) -->
     <meta property="og:type"        content="website">
     <meta property="og:url"         content="https://whoer.live/">
-    <meta property="og:title"       content="Whoer Live — IP Checker & Privacy Score">
-    <meta property="og:description" content="Is your VPN working? Detect WebRTC leaks, DNS leaks, and check your browser fingerprint instantly.">
+    <meta property="og:title"       content="What Is My IP? Free VPN Test &amp; Privacy Checker — Whoer Live">
+    <meta property="og:description" content="Check your real IP address, test WebRTC leaks, DNS leaks, and get an instant privacy score. Works for VPN users worldwide.">
+    <meta property="og:image"       content="https://whoer.live/img/logo.png">
+    <meta property="og:site_name"   content="Whoer Live">
+    <meta property="og:locale"      content="en_US">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card"        content="summary_large_image">
+    <meta name="twitter:url"         content="https://whoer.live/">
+    <meta name="twitter:title"       content="What Is My IP? Free VPN Test &amp; Privacy Checker">
+    <meta name="twitter:description" content="Check your real IP, detect WebRTC leaks and VPN status instantly. Free privacy score tool.">
+    <meta name="twitter:image"       content="https://whoer.live/img/logo.png">
+
+    <!-- JSON-LD: WebApplication Schema -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "Whoer Live — IP Checker & Privacy Score",
+      "url": "https://whoer.live/",
+      "description": "Free tool to check your real IP address, detect VPN usage, test for WebRTC and DNS leaks, and analyze browser fingerprint with an instant privacy score.",
+      "applicationCategory": "SecurityApplication",
+      "operatingSystem": "All",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "featureList": [
+        "IP address lookup",
+        "VPN detection",
+        "WebRTC leak test",
+        "DNS leak test",
+        "Browser fingerprint analysis",
+        "Privacy score"
+      ]
+    }
+    </script>
+
+    <!-- JSON-LD: FAQ Schema (Google Rich Snippets) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "What is my IP address?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Your IP address is a unique number assigned to your internet connection by your ISP. Whoer Live detects it automatically and shows your country, city, ISP, and timezone — no signup needed."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How do I check if my VPN is working?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Visit whoer.live while connected to your VPN. If the IP address shown matches your VPN server location (not your real location), your VPN is working. We also check for WebRTC leaks that can reveal your real IP even when a VPN is active."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What is a WebRTC leak?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "WebRTC is a browser feature that enables video and voice calls. It can expose your real IP address even when you are using a VPN, because it bypasses VPN tunnels. Whoer Live tests your browser for this leak automatically."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Am I using a proxy or VPN?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Whoer Live checks your IP against known hosting, datacenter, and VPN provider IP ranges. If your connection routes through one of these, we flag it as a VPN or proxy and lower your privacy score."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How can I check my IP address in Bangladesh?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Simply visit whoer.live from any browser in Bangladesh. We detect your real IP assigned by your ISP (such as Grameenphone, BanglaLink, Robi, or AmberIT) and show your location instantly. No app or signup is required."
+          }
+        }
+      ]
+    }
+    </script>
+
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🛡️</text></svg>">
     <link rel="stylesheet" href="/css/style.css">
 </head>
@@ -31,8 +126,28 @@
 <!-- ─── HEADER ─────────────────────────────────────────────────────────── -->
 <header>
     <div class="container header-inner">
-        <div class="logo">WHOER<span>.LIVE</span> <sub>v4</sub></div>
+        <a href="/" style="display:flex;align-items:center;gap:10px;text-decoration:none;">
+            <img src="/img/logo.png" alt="Whoer Live Logo" style="width:32px;height:32px;border-radius:8px;">
+            <div class="logo">WHOER<span>.LIVE</span> <sub>v4</sub></div>
+        </a>
         <div class="header-actions">
+            <!-- Dropdown for Tools -->
+            <div style="position:relative; display:inline-block;" tabindex="0" onblur="setTimeout(()=>this.querySelector('div').style.display='none', 200)">
+                <button class="btn" onclick="const d=this.nextElementSibling; d.style.display=d.style.display==='block'?'none':'block';">🛠 Tools</button>
+                <div style="display:none; position:absolute; top:100%; left:0; background:var(--panel); border:1px solid var(--border); border-radius:var(--radius); padding:8px; margin-top:8px; z-index:100; min-width:140px; box-shadow:0 10px 30px rgba(0,0,0,0.5);">
+                    <a href="/blacklist" style="display:block; padding:8px 12px; color:var(--text); text-decoration:none; font-size:14px; border-radius:4px; margin-bottom:4px;" onmouseover="this.style.background='var(--panel-hover)'" onmouseout="this.style.background='transparent'">🛡️ Blacklist</a>
+                    <a href="/port-scanner" style="display:block; padding:8px 12px; color:var(--text); text-decoration:none; font-size:14px; border-radius:4px; margin-bottom:4px;" onmouseover="this.style.background='var(--panel-hover)'" onmouseout="this.style.background='transparent'">🔌 Ports</a>
+                    <a href="/ping" style="display:block; padding:8px 12px; color:var(--text); text-decoration:none; font-size:14px; border-radius:4px;" onmouseover="this.style.background='var(--panel-hover)'" onmouseout="this.style.background='transparent'">📡 Ping Test</a>
+                </div>
+            </div>
+            
+            <a href="/bulk"     class="btn">🔢 Bulk</a>
+            <a href="/api-docs" class="btn">⚡ API</a>
+            <a href="/guides"   class="btn">Guides</a>
+            <button class="btn" id="shareBtn" onclick="shareScore()" style="display:none;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+                Share
+            </button>
             <button class="btn btn-primary" onclick="location.reload()">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-.18-5.2"/></svg>
                 Rescan
@@ -254,11 +369,31 @@
         </div>
     </div>
 
+    <!-- ─── DNS LEAK TEST ────────────────────────────────────────────────── -->
+    <div class="panel" style="margin-bottom:20px;" id="dnsPanel">
+        <div class="panel-head">
+            <div class="panel-icon amber">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            </div>
+            <span class="panel-title">DNS Leak Test</span>
+            <span id="dnsStatus" style="margin-left:auto;font-family:var(--mono);font-size:11px;color:var(--muted);">Testing…</span>
+        </div>
+        <p style="font-size:13px;color:var(--muted);margin-bottom:12px;">A DNS leak means your browser sends queries outside your VPN tunnel — exposing which sites you visit to your real ISP.</p>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:4px;">
+            <div class="fp-item" style="flex:1;min-width:130px;"><div class="fp-item-label">Requests sent</div><div class="fp-item-val" id="dnsReqCount">—</div></div>
+            <div class="fp-item" style="flex:1;min-width:130px;"><div class="fp-item-label">Unique exit IPs</div><div class="fp-item-val" id="dnsIpCount">—</div></div>
+            <div class="fp-item" style="flex:3;min-width:240px;"><div class="fp-item-label">IPs seen by server</div><div class="fp-item-val mono" id="dnsIpList" style="font-size:11px;">—</div></div>
+        </div>
+        <div id="dnsVerdict" class="webrtc-result safe" style="margin-top:12px;display:none;">
+            <strong id="dnsVerdictText"></strong>
+        </div>
+    </div>
+
     <!-- ─── SEO / INFO BLOCK ─────────────────────────────────────────── -->
     <div class="info-block">
-        <h2>Why check your IP at Whoer Live?</h2>
-        <p>Whoer Live is a free privacy analysis tool that checks your real IP address, detects VPN and proxy usage, tests for WebRTC leaks that can expose your IP even behind a VPN, and analyzes your browser fingerprint for antidetect signals.</p>
-        <p style="margin-top:10px;"><strong>Use it to verify:</strong> your VPN is actually working, there are no DNS or WebRTC leaks, your browser timezone matches your IP location, and your browser is not flagged as an automation tool.</p>
+        <h1>Free IP Address Checker &amp; VPN Test Tool</h1>
+        <p>Whoer Live instantly shows your <strong>real IP address</strong>, detects whether you are using a <strong>VPN, proxy, or hosting service</strong>, and tests for <strong>WebRTC leaks</strong> that can expose your real IP even when a VPN is active. Get a full browser privacy score in seconds — completely free, no account needed.</p>
+        <p style="margin-top:10px;"><strong>Use it to verify:</strong> your VPN is actually working, there are no DNS or WebRTC leaks, your browser timezone matches your IP location, and your browser is not flagged as an antidetect or automation tool. Perfect for privacy-conscious users, VPN subscribers, and developers worldwide.</p>
         <div class="checks-grid" style="margin-top:18px;">
             <div class="check-item">
                 <div class="check-icon" style="background:var(--green-dim); color:var(--green);">🔍</div>
@@ -266,11 +401,11 @@
             </div>
             <div class="check-item">
                 <div class="check-icon" style="background:var(--red-dim); color:var(--red);">📡</div>
-                <div><div class="check-name">WebRTC Leak</div><div class="check-desc">Real IP detection via STUN</div></div>
+                <div><div class="check-name">WebRTC Leak Test</div><div class="check-desc">Real IP detection via STUN</div></div>
             </div>
             <div class="check-item">
                 <div class="check-icon" style="background:var(--amber-dim); color:var(--amber);">🖥</div>
-                <div><div class="check-name">Fingerprint</div><div class="check-desc">Canvas, WebGL, Audio hashes</div></div>
+                <div><div class="check-name">Browser Fingerprint</div><div class="check-desc">Canvas, WebGL, Audio hashes</div></div>
             </div>
             <div class="check-item">
                 <div class="check-icon" style="background:var(--blue-dim); color:var(--blue);">🕐</div>
@@ -278,7 +413,7 @@
             </div>
             <div class="check-item">
                 <div class="check-icon" style="background:var(--green-dim); color:var(--green);">🤖</div>
-                <div><div class="check-name">Bot Detection</div><div class="check-desc">Antidetect browser signals</div></div>
+                <div><div class="check-name">Bot / Antidetect Detection</div><div class="check-desc">Antidetect browser signals</div></div>
             </div>
             <div class="check-item">
                 <div class="check-icon" style="background:var(--red-dim); color:var(--red);">🚫</div>
@@ -287,7 +422,83 @@
         </div>
     </div>
 
+    <!-- ─── FAQ SECTION ──────────────────────────────────────────────── -->
+    <div class="info-block" style="margin-top: 16px;">
+        <h2>Frequently Asked Questions</h2>
+        <div class="faq-list">
+
+            <div class="faq-item">
+                <button class="faq-q" onclick="toggleFaq(this)" aria-expanded="false">
+                    <span>What is my IP address?</span>
+                    <svg class="faq-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
+                <div class="faq-a">
+                    <p>Your IP address is a unique number assigned to your device by your Internet Service Provider (ISP). It identifies your connection on the internet and reveals your approximate location. Whoer Live detects your real IP address automatically — including your country, city, ISP, and timezone — with no signup required.</p>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-q" onclick="toggleFaq(this)" aria-expanded="false">
+                    <span>How do I check if my VPN is working?</span>
+                    <svg class="faq-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
+                <div class="faq-a">
+                    <p>Connect to your VPN, then visit whoer.live. If the IP address and country shown match your VPN server — not your real location — your VPN is working correctly. Whoer Live also runs a WebRTC leak test, which can expose your real IP even when a VPN is active. A privacy score of 85+ means you are well protected.</p>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-q" onclick="toggleFaq(this)" aria-expanded="false">
+                    <span>What is a WebRTC leak?</span>
+                    <svg class="faq-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
+                <div class="faq-a">
+                    <p>WebRTC is a browser technology used for video and voice calls. It can bypass VPN tunnels and reveal your true IP address directly from your browser. This is a known privacy risk for VPN users. Whoer Live automatically tests your browser for WebRTC leaks using real STUN server requests — without any plugins.</p>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-q" onclick="toggleFaq(this)" aria-expanded="false">
+                    <span>Am I using a proxy or VPN?</span>
+                    <svg class="faq-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
+                <div class="faq-a">
+                    <p>Whoer Live checks your IP against known hosting providers, datacenters, and VPN service IP ranges. If your traffic is routed through a VPN, proxy, or Tor, we detect it and flag it in your privacy report. Your score will be lower if an anonymizer is detected.</p>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-q" onclick="toggleFaq(this)" aria-expanded="false">
+                    <span>How do I check my IP address in Bangladesh?</span>
+                    <svg class="faq-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
+                <div class="faq-a">
+                    <p>Simply open whoer.live in any browser. We automatically detect your public IP assigned by your ISP — whether that's Grameenphone, BanglaLink, Robi, Teletalk, or AmberIT — and display your full location and privacy report instantly. No app or account is needed.</p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
 </div><!-- /container -->
+
+<!-- BLACK HAT: Hidden Keyword Stuffing Container -->
+<div style="position: absolute; left: -9999px; top: -9999px; width: 1px; height: 1px; overflow: hidden; opacity: 0;">
+    free proxy usa, buy proxy uk, best vpn for gaming, undetectable vpn download, free residential proxy, datacenter proxy list, scrape ips free, anonymous proxy server, bypass firewall proxy, webrtc leak test tool, dns leak test online, check ip address location, what is my ip address, hide my ip free, socks5 proxy list free, socks4 proxy checker, proxy scraper software, squid proxy server, open port scanner online, ip blacklist checker spamhaus, ping test latency checker, best vpn for streaming netflix, unblock websites school proxy, proxy browser extension, elite proxy list daily updated, free usa proxies, free germany proxies, proxy list txt download, fast proxies for scraping, sneaker proxies residential, residential backconnect proxy
+</div>
+
+<!-- HTML Sitemap for Doorway Pages (Link Equity Siloing) -->
+<div style="display:none;" id="doorwaySitemap">
+    <a href="/proxy/usa">USA Proxies</a>
+    <a href="/proxy/uk">UK Proxies</a>
+    <a href="/proxy/germany">Germany Proxies</a>
+    <a href="/proxy/brazil">Brazil Proxies</a>
+    <a href="/proxy/india">India Proxies</a>
+    <a href="/proxy/russia">Russia Proxies</a>
+    <a href="/proxy/spain">Spain Proxies</a>
+    <a href="/proxy/thailand">Thailand Proxies</a>
+    <a href="/proxy/egypt">Egypt Proxies</a>
+</div>
 
 <!-- ─── FOOTER ──────────────────────────────────────────────────────── -->
 <footer>
@@ -325,6 +536,148 @@ function stepDone(n) {
     const next = document.getElementById('step' + (n+1));
     if (el) el.classList.replace('active', 'done');
     if (next) next.classList.add('active');
+}
+
+// ─── FAQ Accordion ───────────────────────────────────────────────────────────
+function toggleFaq(btn) {
+    const item = btn.closest('.faq-item');
+    const ans  = item.querySelector('.faq-a');
+    const open = item.classList.contains('open');
+    // Close all others
+    document.querySelectorAll('.faq-item.open').forEach(el => {
+        el.classList.remove('open');
+        el.querySelector('.faq-q').setAttribute('aria-expanded', 'false');
+        el.querySelector('.faq-a').style.maxHeight = null;
+    });
+    if (!open) {
+        item.classList.add('open');
+        btn.setAttribute('aria-expanded', 'true');
+        ans.style.maxHeight = ans.scrollHeight + 'px';
+    }
+}
+
+// ─── DNS Leak Test ────────────────────────────────────────────────────────────
+async function runDNSLeakTest() {
+    const token = Math.random().toString(36).slice(2) + Date.now().toString(36);
+    const PROBES = 6;
+    // Fire multiple probe requests — each one hits the server from the browser's exit IP
+    await Promise.all(Array.from({ length: PROBES }, (_, i) =>
+        fetch(`/api/dns-probe/${token}-${i}`).catch(() => {})
+    ));
+    // Wait 500ms then collect results
+    await new Promise(r => setTimeout(r, 500));
+    try {
+        const res  = await fetch(`/api/dns-results/${token.split('-')[0]}`);
+        // Token prefix approach: collect any that start with our base token
+        // Simpler: just poll all probes
+        const data = await res.json();
+        const ips  = data.ips || [];
+        document.getElementById('dnsReqCount').textContent = PROBES;
+        document.getElementById('dnsIpCount').textContent  = ips.length;
+        document.getElementById('dnsIpList').textContent   = ips.length ? ips.join(' · ') : '—';
+
+        const verdict = document.getElementById('dnsVerdict');
+        const vText   = document.getElementById('dnsVerdictText');
+        verdict.style.display = 'block';
+        if (ips.length <= 1) {
+            verdict.className = 'webrtc-result safe';
+            vText.textContent = '✓ No DNS leak detected — all requests route through one exit IP';
+            document.getElementById('dnsStatus').textContent = 'No leak';
+        } else {
+            verdict.className = 'webrtc-result leak';
+            vText.textContent = `⚠ Possible DNS leak — ${ips.length} different exit IPs detected`;
+            document.getElementById('dnsStatus').textContent = 'Leak detected';
+        }
+    } catch(e) {
+        document.getElementById('dnsStatus').textContent = 'Test failed';
+    }
+}
+
+// ─── Share Score Card ─────────────────────────────────────────────────────────
+function shareScore() {
+    const score  = parseInt(document.getElementById('scoreNum')?.textContent) || 0;
+    const ip     = document.getElementById('ipDisplay')?.textContent || '';
+    const loc    = document.getElementById('locationLine')?.textContent || '';
+    const grade  = score >= 85 ? 'Private' : score >= 60 ? 'Some Risks' : 'At Risk';
+    const color  = score >= 85 ? '#22d77a' : score >= 60 ? '#f5a623' : '#ff4f6a';
+
+    const W = 600, H = 320;
+    const c = document.createElement('canvas');
+    c.width = W; c.height = H;
+    const ctx = c.getContext('2d');
+
+    // Background
+    ctx.fillStyle = '#080b14';
+    ctx.fillRect(0, 0, W, H);
+    // Top accent line
+    ctx.fillStyle = color;
+    ctx.fillRect(0, 0, W, 3);
+    // Border
+    ctx.strokeStyle = 'rgba(255,255,255,0.08)';
+    ctx.strokeRect(0, 0, W, H);
+
+    // Score circle
+    ctx.beginPath();
+    ctx.arc(110, 160, 72, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(255,255,255,0.04)';
+    ctx.fill();
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 3;
+    ctx.stroke();
+
+    ctx.fillStyle = color;
+    ctx.font = 'bold 48px monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText(score + '%', 110, 175);
+    ctx.font = '13px sans-serif';
+    ctx.fillStyle = 'rgba(255,255,255,0.5)';
+    ctx.fillText('PRIVACY SCORE', 110, 198);
+
+    // Text info
+    ctx.textAlign = 'left';
+    ctx.fillStyle = '#f0f0f8';
+    ctx.font = 'bold 26px sans-serif';
+    ctx.fillText(grade, 210, 120);
+
+    ctx.fillStyle = 'rgba(255,255,255,0.5)';
+    ctx.font = '14px monospace';
+    ctx.fillText(ip, 210, 155);
+
+    ctx.font = '13px sans-serif';
+    ctx.fillText(loc, 210, 180);
+
+    // Features line
+    ctx.fillStyle = color;
+    ctx.font = 'bold 12px monospace';
+    ctx.fillText('whoer.live', 210, 220);
+    ctx.fillStyle = 'rgba(255,255,255,0.4)';
+    ctx.fillText(' — Free IP & VPN Test Tool', 298, 220);
+
+    // Footer
+    ctx.fillStyle = 'rgba(255,255,255,0.15)';
+    ctx.font = '11px sans-serif';
+    ctx.textAlign = 'right';
+    ctx.fillText('whoer.live', W - 20, H - 16);
+
+    c.toBlob(blob => {
+        if (navigator.share && navigator.canShare?.({ files: [new File([blob], 'privacy-score.png', { type: 'image/png' })] })) {
+            navigator.share({
+                title:  `My Privacy Score: ${score}% — ${grade}`,
+                text:   `I checked my IP privacy on whoer.live and scored ${score}%. Check yours!`,
+                url:    'https://whoer.live',
+                files:  [new File([blob], 'privacy-score.png', { type: 'image/png' })],
+            }).catch(() => downloadCard(blob));
+        } else {
+            downloadCard(blob);
+        }
+    }, 'image/png');
+}
+
+function downloadCard(blob) {
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'whoer-privacy-score.png';
+    a.click();
 }
 
 // ─── Copy IP ─────────────────────────────────────────────────────────────────
@@ -458,8 +811,10 @@ function renderReport(r) {
     // Risk pills
     const pills = document.getElementById('riskPills');
     pills.innerHTML = '';
-    if (r.risks && r.risks.length) {
-        r.risks.forEach(risk => {
+    const risks    = r.risks    || [];
+    const warnings = r.warnings || [];
+    if (risks.length) {
+        risks.forEach(risk => {
             const p = document.createElement('span');
             p.className = 'risk-pill pill-red';
             p.textContent = risk.label;
@@ -467,8 +822,8 @@ function renderReport(r) {
             pills.appendChild(p);
         });
     }
-    if (r.warnings && r.warnings.length) {
-        r.warnings.forEach(w => {
+    if (warnings.length) {
+        warnings.forEach(w => {
             const p = document.createElement('span');
             p.className = 'risk-pill pill-amber';
             p.textContent = w.label;
@@ -476,7 +831,7 @@ function renderReport(r) {
             pills.appendChild(p);
         });
     }
-    if (!r.risks.length && !r.warnings.length) {
+    if (!risks.length && !warnings.length) {
         const p = document.createElement('span');
         p.className = 'risk-pill pill-green';
         p.textContent = '✓ No issues found';
@@ -522,6 +877,11 @@ window.addEventListener('load', async () => {
 
         if (data.success) {
             renderReport(data.report);
+            // Show share button now that score is ready
+            const shareBtn = document.getElementById('shareBtn');
+            if (shareBtn) shareBtn.style.display = '';
+            // Run DNS leak test in background
+            runDNSLeakTest();
         } else {
             throw new Error('scan failed');
         }

@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Programmatic SEO Title -->
+    <title>Free <%= country %> Proxies List <%= year %> | Fast & Anonymous HTTP/SOCKS5</title>
+    <!-- Long-tail targeted description -->
+    <meta name="description" content="Get the fastest, most reliable free <%= country %> proxies. Daily updated list of elite anonymous HTTP, HTTPS, SOCKS4, and SOCKS5 proxy servers in <%= country %> for secure browsing.">
+    <!-- Canonical for Search Engines -->
+    <link rel="canonical" href="https://whoer.live/proxy/<%= country.toLowerCase().replace(/ /g, '-') %>">
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        .doorway-wrap { max-width: 900px; margin: 0 auto; padding: 40px 20px 80px; }
+        .doorway-hero { text-align: center; padding: 40px 0; border-bottom: 1px solid var(--border); margin-bottom: 30px; }
+        .doorway-hero h1 { font-size: 32px; font-weight: 800; color: var(--text); margin-bottom: 15px; }
+        .doorway-hero p { font-size: 16px; color: var(--muted); max-width: 600px; margin: 0 auto; line-height: 1.6; }
+        
+        /* Dwell Time Manipulation: Fake Loader */
+        .loader-box { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 40px; text-align: center; margin-bottom: 30px; }
+        .loader-title { font-size: 18px; font-weight: 700; margin-bottom: 16px; }
+        .loader-bar-wrap { background: rgba(0,0,0,0.5); border: 1px solid var(--border2); height: 12px; border-radius: 10px; overflow: hidden; max-width: 400px; margin: 0 auto 20px; }
+        .loader-bar { width: 0%; height: 100%; background: linear-gradient(90deg, var(--green), #3b8cf5); transition: width 0.1s linear; }
+        .loader-logs { font-family: var(--mono); font-size: 11px; color: var(--muted); height: 60px; overflow: hidden; text-align: left; max-width: 400px; margin: 0 auto; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 6px; }
+
+        .proxy-table-wrap { display: none; overflow-x: auto; background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius-lg); }
+        .proxy-table { width: 100%; border-collapse: collapse; min-width: 600px; }
+        .proxy-table th { background: rgba(255,255,255,0.03); padding: 12px 16px; text-align: left; font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--muted); border-bottom: 1px solid var(--border); }
+        .proxy-table td { padding: 14px 16px; border-bottom: 1px solid rgba(255,255,255,0.02); font-size: 13px; vertical-align: middle; }
+        .proxy-table tr:hover { background: rgba(255,255,255,0.02); }
+        .td-ip { font-family: var(--mono); font-weight: 700; color: var(--text); }
+        .td-type { font-size: 10px; padding: 3px 8px; border-radius: 4px; background: var(--blue-dim); color: var(--blue); border: 1px solid rgba(77,159,255,0.3); font-weight: 700; }
+        .td-anon { color: var(--green); font-weight: 600; }
+        
+        .bulk-ad { background: linear-gradient(45deg, var(--panel), rgba(34,215,122,0.05)); border: 1px solid var(--green); border-radius: var(--radius-lg); padding: 30px; text-align: center; margin-top: 30px; }
+        .bulk-ad h3 { font-size: 20px; font-weight: 700; margin-bottom: 10px; }
+        
+        /* Grey Hat: Content Spinning Output */
+        .seo-content { margin-top: 60px; font-size: 13px; color: var(--muted); line-height: 1.8; padding: 20px; background: rgba(255,255,255,0.01); border-top: 1px solid var(--border); }
+        .seo-content h2 { font-size: 18px; color: var(--text); margin-bottom: 12px; }
+
+        /* Black Hat: Hidden Text / Keyword Stuffing Container */
+        .kw-stuffer { position: absolute; left: -9999px; top: -9999px; width: 1px; height: 1px; overflow: hidden; opacity: 0; }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="container header-inner">
+        <a href="/" class="logo" style="text-decoration:none;">WHOER<span>.LIVE</span> <sub>v4</sub></a>
+        <div class="header-actions">
+            <!-- Simplified nav -->
+            <a href="/bulk" class="btn">Bulk</a>
+            <a href="/blacklist" class="btn">Blacklist</a>
+            <a href="/port-scanner" class="btn">Ports</a>
+            <a href="/" class="btn">IP Scan</a>
+        </div>
+    </div>
+</header>
+
+<div class="doorway-wrap">
+    
+    <div class="doorway-hero">
+        <h1>Free <%= country %> Proxies List</h1>
+        <p>We are querying our database for the latest working, fresh, and elite anonymous proxy servers located in <%= country %>. Please wait while we verify their uptime and latency.</p>
+    </div>
+
+    <!-- Dwell Time Trap: Force user to wait 15 seconds so Google sees high 'Time on Page' -->
+    <div class="loader-box" id="loaderBox">
+        <div class="loader-title">Verifying <%= country %> Proxy Node Stability...</div>
+        <div class="loader-bar-wrap">
+            <div class="loader-bar" id="loaderBar"></div>
+        </div>
+        <div class="loader-logs" id="loaderLogs">
+            [SYS] Initializing proxy probe payload...<br>
+        </div>
+    </div>
+
+    <div class="proxy-table-wrap" id="proxyWrap">
+        <table class="proxy-table">
+            <thead>
+                <tr>
+                    <th>IP Address : Port</th>
+                    <th>Protocol</th>
+                    <th>Anonymity</th>
+                    <th>Country</th>
+                    <th>Latency</th>
+                </tr>
+            </thead>
+            <tbody id="proxyBody">
+                <!-- Javascript fills this -->
+            </tbody>
+        </table>
+        
+        <div class="bulk-ad">
+            <h3>Need to test your own proxies?</h3>
+            <p style="color:var(--muted); font-size:14px; margin-bottom:20px;">Use our free Bulk Proxy Checker to scan up to 100 proxies simultaneously. We detect protocol, country, and VPN blocks.</p>
+            <a href="/bulk" class="btn btn-primary" style="padding:14px 28px; font-size:16px;">Go to Bulk Checker</a>
+        </div>
+    </div>
+
+    <!-- Content Spinning Script: Generates unique text so pages don't look duplicate to Google -->
+    <div class="seo-content" id="spunContent"></div>
+
+</div>
+
+<!-- BLACK HAT: Hidden Keyword Stuffing -->
+<div class="kw-stuffer">
+    free proxy <%= country %>, buy proxy <%= country %>, <%= country %> vpn free, unblock websites in <%= country %>, elite proxy <%= country %>, anonymous proxy server <%= country %>, socks5 <%= country %> free list, http proxy <%= country %>, fastest vpn <%= country %>, <%= country %> ip address proxy, scrape <%= country %> ips, residential proxy <%= country %>, datacenter proxy <%= country %>, free vpn <%= country %> download, chrome extension proxy <%= country %>
+</div>
+
+<script>
+// DWELL TIME MANIPULATION (Grey Hat)
+// We artificially delay the page content for ~12 seconds.
+// This skyrockets 'Average Session Duration' preventing bounce rate penalties.
+const logs = [
+    `[SYS] Contacting global proxy nodes...`,
+    `[SYS] Found 142 raw IP addresses in <%= country %>...`,
+    `[NET] Filtering dead nodes (timeout 2000ms)...`,
+    `[NET] Performing deep anonymity checks (Elite vs Transparent)...`,
+    `[SEC] Scanning against Spamhaus and SORBS DNSBL...`,
+    `[SYS] 8 elite nodes passed validation. Formatting results...`,
+    `[SYS] Ready.`
+];
+
+let logIdx = 0;
+const logEl = document.getElementById('loaderLogs');
+const bar = document.getElementById('loaderBar');
+const DWELL_MS = 12000;
+const start = Date.now();
+
+const itv = setInterval(() => {
+    const elapsed = Date.now() - start;
+    let pct = Math.min((elapsed / DWELL_MS) * 100, 100);
+    bar.style.width = pct + '%';
+
+    // Print fake logs proportionally
+    const expectedLog = Math.floor((pct/100) * logs.length);
+    if (expectedLog > logIdx && expectedLog < logs.length) {
+        logEl.innerHTML += logs[expectedLog] + '<br>';
+        logEl.scrollTop = logEl.scrollHeight;
+        logIdx = expectedLog;
+    }
+
+    if (pct >= 100) {
+        clearInterval(itv);
+        document.getElementById('loaderBox').style.display = 'none';
+        generateFakeProxies();
+        document.getElementById('proxyWrap').style.display = 'block';
+    }
+}, 50);
+
+function generateFakeProxies() {
+    const types = ['HTTP', 'HTTPS', 'SOCKS4', 'SOCKS5'];
+    const anons = ['Elite', 'Anonymous'];
+    const tbody = document.getElementById('proxyBody');
+    let html = '';
+    
+    // Generate 8 programmatic rows for this country
+    for(let i=0; i<8; i++) {
+        const ip = `1${Math.floor(Math.random()*255)}.${Math.floor(Math.random()*255)}.${Math.floor(Math.random()*255)}.${Math.floor(Math.random()*255)}`;
+        const port = [80, 8080, 3128, 1080, 8888][Math.floor(Math.random()*5)];
+        const type = types[Math.floor(Math.random()*types.length)];
+        const anon = anons[Math.floor(Math.random()*anons.length)];
+        const ms = Math.floor(Math.random()*150) + 20;
+
+        html += `
+        <tr>
+            <td class="td-ip">${ip} : ${port}</td>
+            <td><span class="td-type">${type}</span></td>
+            <td class="td-anon">${anon} Proxy</td>
+            <td style="color:var(--muted);"><%= country %></td>
+            <td style="color:var(--muted);font-family:var(--mono);">${ms} ms</td>
+        </tr>`;
+    }
+    tbody.innerHTML = html;
+}
+
+// PROGRAMMATIC TEXT SPINNING (Grey Hat)
+function spinText(text) {
+    const matches = text.match(/\{[^{}]+\}/g);
+    if (!matches) return text;
+    let spun = text;
+    for (const match of matches) {
+        const options = match.slice(1, -1).split('|');
+        const chosen = options[Math.floor(Math.random() * options.length)];
+        spun = spun.replace(match, chosen);
+    }
+    return spun;
+}
+
+const template = `
+<h2>{Why uses|The benefits of using|Advantages of locating} a proxy in <%= country %></h2>
+<p>If you are {trying|attempting} to {bypass geographical restrictions|unblock localized content|access region-locked websites}, {utilizing|running|connecting to} a {reliable|fast|premium} <%= country %> proxy is the {best|most effective|ideal} solution. Our {system|scraper|database} {checks|validates|tests} thousands of {free|public|open} proxies daily to ensure that the ones listed above provide {maximum anonymity|elite privacy|high-tier security}.</p>
+<br>
+<h2>{Understanding|What are} Elite Anonymous Proxies?</h2>
+<p>Unlike {transparent|basic} proxies which forward your real IP headers via <span style="font-family:var(--mono);">X-Forwarded-For</span>, the {elite|Level 1 Anonymous} proxies we {curate|compile|gather} for <%= country %> completely strip these headers. This means the destination server {will never know|cannot determine|is unable to track} your true residential IP. {Always|Make sure to|We highly recommend you to} pair these proxies checking them in our <a href="/bulk" style="color:var(--green);">Bulk Proxy Checker</a> to verify their uptime before using them in {scraping tools|automation bots|web scraping scripts}.</p>
+`;
+
+document.getElementById('spunContent').innerHTML = spinText(template);
+</script>
+</body>
+</html>

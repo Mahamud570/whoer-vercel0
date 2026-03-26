@@ -71,20 +71,27 @@ async function collectFingerprint() {
     try {
         const AudioCtx = window.AudioContext || window.webkitAudioContext;
         if (AudioCtx) {
-            const ctx  = new AudioCtx();
-            const osc  = ctx.createOscillator();
-            const anal = ctx.createAnalyser();
-            const gain = ctx.createGain();
-            gain.gain.value = 0;
-            osc.connect(anal);
-            anal.connect(gain);
-            gain.connect(ctx.destination);
-            osc.start(0);
-            const buf = new Float32Array(anal.frequencyBinCount);
-            anal.getFloatFrequencyData(buf);
-            osc.stop();
-            ctx.close();
-            data.audioHash = hashCode(buf.slice(0, 20).join(','));
+            data.audioHash = await new Promise((res) => {
+                try {
+                    const ctx  = new AudioCtx();
+                    const osc  = ctx.createOscillator();
+                    const anal = ctx.createAnalyser();
+                    const gain = ctx.createGain();
+                    gain.gain.value = 0;
+                    osc.connect(anal);
+                    anal.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.start(0);
+                    // Give the oscillator a tick to actually produce data
+                    setTimeout(() => {
+                        const buf = new Float32Array(anal.frequencyBinCount);
+                        anal.getFloatFrequencyData(buf);
+                        osc.stop();
+                        ctx.close();
+                        res(hashCode(buf.slice(0, 20).join(',')));
+                    }, 50);
+                } catch (e) { res(null); }
+            });
         }
     } catch (e) {
         data.audioHash = null;
@@ -142,6 +149,14 @@ function getWebRTCIPs() {
         if (!RTCPeerConnection) return resolve([]);
 
         let pc;
+        let resolved = false;
+        function done() {
+            if (resolved) return;
+            resolved = true;
+            try { pc.close(); } catch(e) {}
+            resolve([...ips]);
+        }
+
         try {
             pc = new RTCPeerConnection({ iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] });
         } catch (e) { return resolve([]); }
@@ -149,21 +164,22 @@ function getWebRTCIPs() {
         pc.createDataChannel('');
 
         pc.onicecandidate = (e) => {
-            if (!e.candidate) {
-                pc.close();
-                return resolve([...ips]);
-            }
+            if (!e.candidate) return done();
             const line = e.candidate.candidate;
-            const match = line.match(/([0-9]{1,3}(\.[0-9]{1,3}){3}|[a-f0-9]{1,4}(:[a-f0-9]{1,4}){7})/);
-            if (match) ips.add(match[1]);
+            // Match IPv4 addresses
+            const v4 = line.match(/\b(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\b/);
+            if (v4) ips.add(v4[1]);
+            // Match IPv6 addresses (including link-local fe80::)
+            const v6 = line.match(/\b([0-9a-f]{0,4}(?::[0-9a-f]{0,4}){2,7})\b/i);
+            if (v6 && v6[1].includes(':')) ips.add(v6[1]);
         };
 
         pc.createOffer()
           .then(o => pc.setLocalDescription(o))
-          .catch(() => resolve([]));
+          .catch(() => done());
 
         // Timeout after 3s
-        setTimeout(() => { try { pc.close(); } catch(e){} resolve([...ips]); }, 3000);
+        setTimeout(done, 3000);
     });
 }
 

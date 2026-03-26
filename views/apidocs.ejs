@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Free IP Lookup API — Whoer Live Developer Docs</title>
+    <meta name="description" content="Free IP geolocation and privacy detection API. No key needed. Check IP country, ISP, VPN status, and more via simple HTTP requests.">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://whoer.live/api-docs">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🛡️</text></svg>">
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        .api-wrap { max-width: 860px; margin: 0 auto; padding: 40px 20px 120px; }
+        .api-hero { text-align: center; padding: 48px 0 40px; }
+        .api-hero h1 { font-size: 32px; font-weight: 700; margin-bottom: 10px; }
+        .api-hero p { font-size: 15px; color: var(--muted); max-width: 520px; margin: 0 auto; line-height: 1.65; }
+        .free-badge { display: inline-flex; align-items: center; gap: 6px; background: var(--green-dim); border: 1px solid rgba(34,215,122,0.3); color: var(--green); border-radius: 20px; padding: 4px 14px; font-size: 11px; font-weight: 700; margin-bottom: 18px; }
+
+        .api-section { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 28px; margin-bottom: 20px; }
+        .api-section h2 { font-size: 16px; font-weight: 700; margin-bottom: 16px; display: flex; align-items: center; gap: 10px; }
+        .api-section h3 { font-size: 13px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; margin-top: 20px; }
+        .api-section h3:first-of-type { margin-top: 0; }
+
+        .endpoint-line { display: flex; align-items: center; gap: 10px; background: rgba(255,255,255,0.03); border: 1px solid var(--border2); border-radius: var(--radius); padding: 12px 16px; margin-bottom: 10px; flex-wrap: wrap; gap: 8px; }
+        .method { font-family: var(--mono); font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 4px; }
+        .m-get  { background: var(--green-dim); color: var(--green); border: 1px solid rgba(34,215,122,0.3); }
+        .m-post { background: var(--blue-dim);  color: var(--blue);  border: 1px solid rgba(77,159,255,0.3); }
+        .endpoint-url { font-family: var(--mono); font-size: 13px; color: var(--text); }
+        .endpoint-desc{ font-size: 12px; color: var(--muted); margin-left: auto; }
+
+        pre {
+            background: rgba(0,0,0,0.35); border: 1px solid var(--border);
+            border-radius: var(--radius); padding: 16px;
+            font-family: var(--mono); font-size: 12px;
+            color: var(--text); overflow-x: auto;
+            line-height: 1.7; margin-top: 8px;
+        }
+        .copy-code { position: relative; }
+        .copy-btn-code { position: absolute; top: 10px; right: 10px; padding: 4px 10px; background: var(--panel); border: 1px solid var(--border2); border-radius: 6px; color: var(--muted); font-size: 11px; cursor: pointer; font-family: var(--mono); transition: all 0.2s; }
+        .copy-btn-code:hover { color: var(--text); background: var(--panel-hover); }
+
+        .field-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 8px; }
+        .field-table th { text-align: left; font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); padding: 8px 10px; border-bottom: 1px solid var(--border); }
+        .field-table td { padding: 9px 10px; border-bottom: 1px solid rgba(255,255,255,0.04); vertical-align: top; }
+        .field-table td:first-child { font-family: var(--mono); color: var(--green); font-size: 12px; white-space: nowrap; }
+        .field-table td:nth-child(2) { color: var(--muted); font-size: 12px; }
+        .field-table tr:last-child td { border-bottom: none; }
+
+        .tab-bar { display: flex; gap: 6px; margin-bottom: 10px; }
+        .tab { padding: 6px 14px; border-radius: 6px; background: var(--panel); border: 1px solid var(--border); font-size: 12px; font-weight: 600; cursor: pointer; color: var(--muted); transition: all 0.2s; }
+        .tab.active { background: var(--blue-dim); border-color: rgba(77,159,255,0.3); color: var(--blue); }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        .rate-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+        @media(max-width:580px){ .rate-grid { grid-template-columns: 1fr; } }
+        .rate-card { background: rgba(255,255,255,0.02); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px; text-align: center; }
+        .rate-amount { font-size: 28px; font-weight: 700; color: var(--green); font-family: var(--mono); }
+        .rate-unit   { font-size: 12px; color: var(--muted); margin-top: 4px; }
+        .rate-label  { font-size: 13px; font-weight: 600; margin-bottom: 8px; }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="container header-inner">
+        <a href="/" class="logo" style="text-decoration:none;">WHOER<span>.LIVE</span> <sub>v4</sub></a>
+        <div class="header-actions">
+            <!-- Dropdown for Tools -->
+            <div style="position:relative; display:inline-block;" tabindex="0" onblur="setTimeout(()=>this.querySelector('div').style.display='none', 200)">
+                <button class="btn" onclick="const d=this.nextElementSibling; d.style.display=d.style.display==='block'?'none':'block';">🛠 Tools</button>
+                <div style="display:none; position:absolute; top:100%; left:0; background:var(--panel); border:1px solid var(--border); border-radius:var(--radius); padding:8px; margin-top:8px; z-index:100; min-width:140px; box-shadow:0 10px 30px rgba(0,0,0,0.5);">
+                    <a href="/blacklist" style="display:block; padding:8px 12px; color:var(--text); text-decoration:none; font-size:14px; border-radius:4px; margin-bottom:4px;" onmouseover="this.style.background='var(--panel-hover)'" onmouseout="this.style.background='transparent'">🛡️ Blacklist</a>
+                    <a href="/port-scanner" style="display:block; padding:8px 12px; color:var(--text); text-decoration:none; font-size:14px; border-radius:4px; margin-bottom:4px;" onmouseover="this.style.background='var(--panel-hover)'" onmouseout="this.style.background='transparent'">🔌 Ports</a>
+                    <a href="/ping" style="display:block; padding:8px 12px; color:var(--text); text-decoration:none; font-size:14px; border-radius:4px;" onmouseover="this.style.background='var(--panel-hover)'" onmouseout="this.style.background='transparent'">📡 Ping Test</a>
+                </div>
+            </div>
+            
+            <a href="/bulk"     class="btn">🔢 Bulk</a>
+            <a href="/api-docs" class="btn btn-primary">⚡ API</a>
+            <a href="/guides"   class="btn">Guides</a>
+        </div>
+    </div>
+</header>
+
+<div class="api-wrap">
+
+    <div class="api-hero">
+        <div class="free-badge">⚡ FREE — NO API KEY REQUIRED</div>
+        <h1>Whoer Live — Free IP API</h1>
+        <p>Use our IP geolocation and privacy detection API in your own apps and scripts. No key, no signup, no cost. Just make an HTTP request and get JSON back.</p>
+    </div>
+
+    <!-- Rate limits -->
+    <div class="api-section">
+        <h2>🚦 Rate Limits</h2>
+        <div class="rate-grid">
+            <div class="rate-card">
+                <div class="rate-label">Per Minute</div>
+                <div class="rate-amount">60</div>
+                <div class="rate-unit">requests / minute</div>
+            </div>
+            <div class="rate-card">
+                <div class="rate-label">Bulk Check</div>
+                <div class="rate-amount">100</div>
+                <div class="rate-unit">IPs per request</div>
+            </div>
+            <div class="rate-card">
+                <div class="rate-label">Cost</div>
+                <div class="rate-amount">$0</div>
+                <div class="rate-unit">completely free</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Endpoints -->
+    <div class="api-section">
+        <h2>📡 Endpoints</h2>
+
+        <div class="endpoint-line">
+            <span class="method m-get">GET</span>
+            <span class="endpoint-url">https://whoer.live/api/dns-probe/:token</span>
+            <span class="endpoint-desc">DNS probe test</span>
+        </div>
+        <div class="endpoint-line">
+            <span class="method m-post">POST</span>
+            <span class="endpoint-url">https://whoer.live/api/bulk-scan</span>
+            <span class="endpoint-desc">Bulk IP lookup (up to 100 IPs)</span>
+        </div>
+        <div class="endpoint-line">
+            <span class="method m-post">POST</span>
+            <span class="endpoint-url">https://whoer.live/api/process-scan</span>
+            <span class="endpoint-desc">Full privacy scan (requires browser fingerprint data)</span>
+        </div>
+    </div>
+
+    <!-- Bulk Scan -->
+    <div class="api-section">
+        <h2>🔢 Bulk IP Lookup</h2>
+        <p style="font-size:13px;color:var(--muted);margin-bottom:16px;">Submit up to 100 IP addresses and get geolocation + VPN status for each. Free, no key needed.</p>
+
+        <h3>Request</h3>
+        <div class="tab-bar">
+            <button class="tab active" onclick="switchTab(this,'curl-bulk')">cURL</button>
+            <button class="tab" onclick="switchTab(this,'js-bulk')">JavaScript</button>
+            <button class="tab" onclick="switchTab(this,'python-bulk')">Python</button>
+        </div>
+        <div id="curl-bulk" class="tab-content active copy-code">
+            <button class="copy-btn-code" onclick="copyCode(this)">copy</button>
+<pre>curl -X POST https://whoer.live/api/bulk-scan \
+  -H "Content-Type: application/json" \
+  -d '{"ips":["8.8.8.8","1.1.1.1","104.21.0.1"]}'</pre>
+        </div>
+        <div id="js-bulk" class="tab-content copy-code">
+            <button class="copy-btn-code" onclick="copyCode(this)">copy</button>
+<pre>const res = await fetch('https://whoer.live/api/bulk-scan', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ ips: ['8.8.8.8', '1.1.1.1'] }),
+});
+const { results } = await res.json();
+console.log(results);</pre>
+        </div>
+        <div id="python-bulk" class="tab-content copy-code">
+            <button class="copy-btn-code" onclick="copyCode(this)">copy</button>
+<pre>import requests
+
+r = requests.post('https://whoer.live/api/bulk-scan',
+    json={'ips': ['8.8.8.8', '1.1.1.1']})
+for item in r.json()['results']:
+    print(item['ip'], item['country'], item['isp'], item['is_vpn'])</pre>
+        </div>
+
+        <h3>Response</h3>
+<pre>{
+  "results": [
+    {
+      "ip":          "8.8.8.8",
+      "country":     "United States",
+      "countryCode": "US",
+      "city":        "Mountain View",
+      "region":      "California",
+      "isp":         "AS15169 Google LLC",
+      "timezone":    "America/Los_Angeles",
+      "is_vpn":      true,
+      "error":       false
+    }
+  ]
+}</pre>
+
+        <h3>Response Fields</h3>
+        <table class="field-table">
+            <tr><th>Field</th><th>Type</th><th>Description</th></tr>
+            <tr><td>ip</td><td>string</td><td>The IP address looked up</td></tr>
+            <tr><td>country</td><td>string</td><td>Full country name</td></tr>
+            <tr><td>countryCode</td><td>string</td><td>ISO 3166-1 alpha-2 code (e.g. "US")</td></tr>
+            <tr><td>city</td><td>string</td><td>City name</td></tr>
+            <tr><td>region</td><td>string</td><td>Region / State name</td></tr>
+            <tr><td>isp</td><td>string</td><td>ISP or organisation name with ASN</td></tr>
+            <tr><td>timezone</td><td>string</td><td>IANA timezone (e.g. "Asia/Dhaka")</td></tr>
+            <tr><td>is_vpn</td><td>boolean</td><td>true if IP is from a hosting/VPN/datacenter provider</td></tr>
+            <tr><td>error</td><td>boolean</td><td>true if the IP could not be resolved</td></tr>
+        </table>
+    </div>
+
+    <!-- Tools links -->
+    <div class="api-section">
+        <h2>🛠 Related Tools</h2>
+        <div class="checks-grid">
+            <a href="/" class="check-item" style="text-decoration:none;color:inherit;">
+                <div class="check-icon" style="background:var(--green-dim);color:var(--green);">🛡️</div>
+                <div><div class="check-name">IP Privacy Scanner</div><div class="check-desc">Full scan with WebRTC, fingerprint, score</div></div>
+            </a>
+            <a href="/bulk" class="check-item" style="text-decoration:none;color:inherit;">
+                <div class="check-icon" style="background:var(--blue-dim);color:var(--blue);">🔢</div>
+                <div><div class="check-name">Bulk IP Checker</div><div class="check-desc">Check up to 100 proxies or IPs at once</div></div>
+            </a>
+        </div>
+    </div>
+
+</div>
+
+<footer>
+    <div class="container">
+        <div class="footer-links">
+            <a href="/">Home</a>
+            <a href="/bulk">Bulk Check</a>
+            <a href="/api-docs">API Docs</a>
+            <a href="/sitemap.xml">Sitemap</a>
+        </div>
+        <div>Whoer Live &copy; <span id="yr"></span> — Free IP &amp; Privacy API</div>
+        <div style="margin-top:6px;font-size:12px;">No data sold. No ads. No tracking.</div>
+    </div>
+</footer>
+
+<script>
+document.getElementById('yr').textContent = new Date().getFullYear();
+
+function switchTab(btn, id) {
+    const section = btn.closest('.api-section');
+    section.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    section.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById(id).classList.add('active');
+}
+
+function copyCode(btn) {
+    const pre = btn.nextElementSibling;
+    navigator.clipboard.writeText(pre.textContent.trim()).then(() => {
+        btn.textContent = 'copied!';
+        setTimeout(() => { btn.textContent = 'copy'; }, 2000);
+    });
+}
+</script>
+</body>
+</html>
