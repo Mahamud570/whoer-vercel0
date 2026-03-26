@@ -26,12 +26,30 @@ app.use(cors());
 app.use(bodyParser.json({ limit: '500kb' }));
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// ─── LAYER 7 DDoS PROTECTION ──────────────────────────────────────────────────
+// ─── LAYER 7 DDoS PROTECTION & API LOCKDOWN ──────────────────────────────────
 
 // 1. In-memory IP blacklist (resets on deploy — use KV for persistence)
 const bannedIPs = new Set();
 
-// 2. Per-endpoint strict rate limiters
+// 2. Middlewares: Origin Protector (V1) & API Key Validator (V2)
+const originProtector = (req, res, next) => {
+    const origin = req.headers.origin || req.headers.referer || req.headers.host || '';
+    if (!origin.includes('whoer.live') && !origin.includes('localhost') && !origin.includes('vercel.app')) {
+        return res.status(403).json({ error: 'Direct API access forbidden. Subscribe for a V2 API Key.' });
+    }
+    next();
+};
+
+const apiKeyValidator = async (req, res, next) => {
+    const key = req.headers['x-api-key'];
+    if (!key) return res.status(401).json({ error: 'Missing x-api-key header. Get one via Telegram Admin.' });
+    const kv = await getKV();
+    const isValid = await kv.get(`apikey:${key}`);
+    if (!isValid) return res.status(403).json({ error: 'Invalid or expired API Key' });
+    next();
+};
+
+// 3. Per-endpoint strict rate limiters
 const limiter = rateLimit({
     windowMs: 1 * 60 * 1000,
     limit: 60,
@@ -51,12 +69,16 @@ const heavyLimiter = rateLimit({
     message: { error: 'Too many requests on this endpoint.' },
     standardHeaders: true, legacyHeaders: false,
 });
-app.use('/api/', limiter);
-app.use('/api/bulk-scan',       bulkLimiter);
-app.use('/api/blacklist-check', heavyLimiter);
-app.use('/api/port-scan',       heavyLimiter);
 
-// 3. Global middleware: block banned IPs + headless bot UAs
+// Protect V1 API routes, allow unlimited access for V2 and webhook
+app.use(/^\/api\/(?!v2|telegram-webhook).*/, limiter);
+
+app.use('/api/bulk-scan',       originProtector, bulkLimiter);
+app.use('/api/blacklist-check', originProtector, heavyLimiter);
+app.use('/api/port-scan',       originProtector, heavyLimiter);
+app.use('/api/process-scan',    originProtector);
+
+// 4. Global middleware: block banned IPs + headless bot UAs
 app.use((req, res, next) => {
     const ip = req.headers['cf-connecting-ip'] || req.ip || '';
     if (bannedIPs.has(ip)) {
@@ -239,7 +261,7 @@ app.get('/proxy/:country', (req, res) => {
 
 // ─── BULK IP SCAN ─────────────────────────────────────────────────────────────
 // Free, no key required. Max 100 IPs. Batched to avoid rate limits.
-app.post('/api/bulk-scan', async (req, res) => {
+const handleBulkScan = async (req, res) => {
     try {
         const { ips = [] } = req.body;
         const cleaned = [...new Set(
@@ -303,7 +325,9 @@ app.post('/api/bulk-scan', async (req, res) => {
         console.error('bulk-scan error:', err);
         res.status(500).json({ error: 'server_error' });
     }
-});
+};
+app.post('/api/bulk-scan', handleBulkScan);
+app.post('/api/v2/bulk-scan', apiKeyValidator, handleBulkScan);
 
 // ─── DNS PROBE ────────────────────────────────────────────────────────────────
 // Frontend makes multiple requests with a session token.
@@ -330,7 +354,7 @@ app.get('/api/dns-results/:token', (req, res) => {
 
 // ─── BLACKLIST CHECKER ───────────────────────────────────────────────────────
 // Given an IP, reverses it and checks against common DNSBLs
-app.post('/api/blacklist-check', async (req, res) => {
+const handleBlacklistCheck = async (req, res) => {
     const { ip } = req.body;
     if (!ip || !/^(\d{1,3}\.){3}\d{1,3}$/.test(ip)) {
         return res.status(400).json({ error: 'invalid_ipv4' });
@@ -355,11 +379,13 @@ app.post('/api/blacklist-check', async (req, res) => {
     }));
 
     res.json({ ip, results });
-});
+};
+app.post('/api/blacklist-check', handleBlacklistCheck);
+app.post('/api/v2/blacklist-check', apiKeyValidator, handleBlacklistCheck);
 
 // ─── PORT SCANNER ────────────────────────────────────────────────────────────
 // Attempts to open a TCP socket to a given IP and port, returns open/closed
-app.post('/api/port-scan', async (req, res) => {
+const handlePortScan = async (req, res) => {
     const { ip, ports } = req.body;
     if (!ip || !Array.isArray(ports)) return res.status(400).json({ error: 'invalid_request' });
 
@@ -384,7 +410,9 @@ app.post('/api/port-scan', async (req, res) => {
     }));
 
     res.json({ ip, results });
-});
+};
+app.post('/api/port-scan', handlePortScan);
+app.post('/api/v2/port-scan', apiKeyValidator, handlePortScan);
 
 // WebRTC leak test — client posts discovered IPs
 app.post('/api/webrtc-check', async (req, res) => {
@@ -571,6 +599,75 @@ app.post('/api/process-scan', async (req, res) => {
     } catch (error) {
         console.error('process-scan error:', error);
         res.status(500).json({ error: 'server_error' });
+    }
+});
+
+// ─── TELEGRAM ADMIN WEBHOOK ──────────────────────────────────────────────────
+app.post('/api/telegram-webhook', async (req, res) => {
+    res.send('ok'); // Always ack quickly to Telegram
+    
+    const message = req.body?.message;
+    if (!message || !message.text) return;
+    
+    const chatId = message.chat.id.toString();
+    const text = message.text.trim();
+    const TELEGRAM_TOKEN = process.env.TELEGRAM_BOT_TOKEN || '8699755123:AAFLqOjndyc29DJMIu0Bf_NijsxGXp75h34';
+    const ADMIN_ID = process.env.ADMIN_CHAT_ID;
+    
+    const sendMsg = async (msg) => {
+        try {
+            await axios.post(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`, {
+                chat_id: chatId, text: msg, parse_mode: 'Markdown'
+            });
+        } catch (e) {
+            console.error('Telegram reply error:', e.message);
+        }
+    };
+
+    // Global /start (open to anyone so user can find their ID)
+    if (text.startsWith('/start')) {
+        await sendMsg(`👋 *Whoer.live Admin Bot*\n\nYour Telegram User ID is: \`${chatId}\`\n\nIf you are the admin, put this ID in Vercel as \`ADMIN_CHAT_ID\`.`);
+        return;
+    }
+
+    // AUTHENTICATION BARRIER — Block unauthorized users
+    if (ADMIN_ID && chatId !== ADMIN_ID) {
+        await sendMsg('⛔ Unauthorized. You are not the admin.');
+        return;
+    }
+
+    // If ADMIN_ID is not set yet, warn them
+    if (!ADMIN_ID) {
+        await sendMsg(`⚠️ WARNING: \`ADMIN_CHAT_ID\` is not set in Vercel environment variables. Anyone can use these commands right now. Your ID is \`${chatId}\`. Put it in Vercel to lock this bot down.`);
+    }
+
+    // /genkey [days]
+    if (text.startsWith('/genkey')) {
+        const parts = text.split(' ');
+        const days = parseInt(parts[1]) || 30;
+        const key = 'whr_' + uuidv4().replace(/-/g, '');
+        
+        try {
+            const kv = await getKV();
+            // Store key with TTL in seconds
+            await kv.set(`apikey:${key}`, { created: Date.now(), days }, { ex: days * 24 * 60 * 60 });
+            await sendMsg(`✅ *API Key Generated*\n\n\`${key}\`\n\nExpires in: ${days} days.\nSend this to your customer. They must use it as the \`x-api-key\` header on \`/api/v2/\` endpoints.`);
+        } catch (e) {
+            await sendMsg('❌ Failed to save key to KV. Ensure KV_REST_API_URL is set in Vercel. Error: ' + e.message);
+        }
+        return;
+    }
+
+    // /stats
+    if (text.startsWith('/stats')) {
+        try {
+            const kv = await getKV();
+            let total = 0;
+            try { total = (await kv.lrange('reports:list', 0, -1)).length; } catch(e){}
+            await sendMsg(`📊 *System Stats*\n\n- Reports recorded: ${total}\n- In-Memory Banned Bot IPs (Honeypot): ${bannedIPs.size}`);
+        } catch (e) {
+            await sendMsg('❌ Failed to get stats: ' + e.message);
+        }
     }
 });
 
