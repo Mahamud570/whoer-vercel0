@@ -596,6 +596,7 @@ app.post('/api/process-scan', async (req, res) => {
             const payload = JSON.stringify(report);
             kv.set(`report:${report.id}`, payload, { ex: 60 * 60 * 24 * 30 }) // 30 days TTL
               .catch(() => {});
+            kv.incr('visitor_count').catch(() => {});
             // Keep a list of recent report IDs (latest 1000)
             kv.lpush('reports:list', report.id)
               .then(() => kv.ltrim('reports:list', 0, 999))
@@ -640,7 +641,7 @@ app.post('/api/telegram-webhook', async (req, res) => {
                     [ {text: '🗝️ Generate 30D Key', callback_data: 'genkey_30'}, {text: '🚨 Toggle API Lockdown', callback_data: 'lockdown'} ]
                 ]
             };
-            await sendMsg(chatId, `🚀 *Whoer.live Admin Dashboard*\nYour ID: \`${chatId}\`\n\nChoose an action below:`, markup);
+            await sendMsg(chatId, `👋 *Welcome Admin!* 🚀\n\n**Whoer.live Control Panel**\nYour ID is secured as: \`${chatId}\`\n\nChoose an action below:`, markup);
             return;
         }
 
@@ -666,10 +667,10 @@ app.post('/api/telegram-webhook', async (req, res) => {
         if (command === 'stats' || command === '/stats') {
             try {
                 const kv = await getKV();
-                let total = 0;
+                let visits = 0;
                 let lockdown = await kv.get('api_lockdown') ? '🔴 ACTIVE' : '🟢 OFF';
-                try { total = (await kv.lrange('reports:list', 0, -1)).length; } catch(e){}
-                await sendMsg(chatId, `📊 *System Stats*\n\n- Reports recorded: ${total}\n- Banned Bot IPs: ${bannedIPs.size}\n- Emergency Lockdown: ${lockdown}`);
+                try { visits = await kv.get('visitor_count') || 0; } catch(e){}
+                await sendMsg(chatId, `📊 *System Stats*\n\n- Total Visitors (Scans): ${visits}\n- Banned Bot IPs: ${bannedIPs.size}\n- Emergency Lockdown: ${lockdown}`);
             } catch (e) {
                 await sendMsg(chatId, '❌ Failed to get stats: ' + e.message);
             }
