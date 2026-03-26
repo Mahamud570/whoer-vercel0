@@ -21,18 +21,66 @@ app.disable('x-powered-by');
 app.use(helmet({ contentSecurityPolicy: false, crossOriginEmbedderPolicy: false }));
 app.use(cors());
 
-// Rate limiting — best-effort on Vercel serverless (no shared state)
-const limiter = rateLimit({
-    windowMs: 1 * 60 * 1000,
-    limit: 60,
-    message: { error: 'Too many requests, please wait.' },
-    standardHeaders: true,
-    legacyHeaders: false,
-});
-app.use('/api/', limiter);
+
 
 app.use(bodyParser.json({ limit: '500kb' }));
 app.use(bodyParser.urlencoded({ extended: true }));
+
+// ─── LAYER 7 DDoS PROTECTION ──────────────────────────────────────────────────
+
+// 1. In-memory IP blacklist (resets on deploy — use KV for persistence)
+const bannedIPs = new Set();
+
+// 2. Per-endpoint strict rate limiters
+const limiter = rateLimit({
+    windowMs: 1 * 60 * 1000,
+    limit: 60,
+    keyGenerator: (req) => req.headers['cf-connecting-ip'] || req.ip,
+    message: { error: 'Too many requests, please wait.' },
+    standardHeaders: true, legacyHeaders: false,
+});
+const bulkLimiter = rateLimit({
+    windowMs: 60 * 1000, limit: 5, // 5 bulk scans/min per IP
+    keyGenerator: (req) => req.headers['cf-connecting-ip'] || req.ip,
+    message: { error: 'Bulk scan rate limit exceeded. Max 5/minute.' },
+    standardHeaders: true, legacyHeaders: false,
+});
+const heavyLimiter = rateLimit({
+    windowMs: 60 * 1000, limit: 10, // blacklist + port scan
+    keyGenerator: (req) => req.headers['cf-connecting-ip'] || req.ip,
+    message: { error: 'Too many requests on this endpoint.' },
+    standardHeaders: true, legacyHeaders: false,
+});
+app.use('/api/', limiter);
+app.use('/api/bulk-scan',       bulkLimiter);
+app.use('/api/blacklist-check', heavyLimiter);
+app.use('/api/port-scan',       heavyLimiter);
+
+// 3. Global middleware: block banned IPs + headless bot UAs
+app.use((req, res, next) => {
+    const ip = req.headers['cf-connecting-ip'] || req.ip || '';
+    if (bannedIPs.has(ip)) {
+        return res.status(429).json({ error: 'Banned.' });
+    }
+    const ua = (req.headers['user-agent'] || '').toLowerCase();
+    const badAgents = ['python-requests','curl/','go-http-client','java/','scrapy','wget/',
+                       'httpclient','libwww','masscan','zgrab','nmap','nikto','sqlmap'];
+    if (badAgents.some(b => ua.includes(b))) {
+        return res.status(403).json({ error: 'Forbidden.' });
+    }
+    next();
+});
+
+// 4. HONEYPOT TRAP — any bot that crawls hidden links gets their IP auto-banned
+// (This path is hidden in scan.ejs inside display:none — real users never click it)
+app.get('/api/ping-check', (req, res) => {
+    const ip = req.headers['cf-connecting-ip'] || req.ip;
+    bannedIPs.add(ip);
+    console.warn(`[HONEYPOT] Banned bot IP: ${ip}`);
+    // Return a fake 200 so bots don't know they've been caught
+    res.status(200).json({ status: 'ok', latency: Math.floor(Math.random()*30)+5 });
+});
+
 
 // ─── SEO: ROBOTS & SITEMAP (must be before express.static) ─────────────────
 app.get('/robots.txt', (req, res) => {
