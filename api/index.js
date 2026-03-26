@@ -32,7 +32,15 @@ app.use(bodyParser.urlencoded({ extended: true }));
 const bannedIPs = new Set();
 
 // 2. Middlewares: Origin Protector (V1) & API Key Validator (V2)
-const originProtector = (req, res, next) => {
+let isLockdown = false;
+let lastLockdownSync = 0;
+
+const originProtector = async (req, res, next) => {
+    if (Date.now() - lastLockdownSync > 30000) {
+        try { const kv = await getKV(); isLockdown = !!(await kv.get('api_lockdown')); lastLockdownSync = Date.now(); } catch(e){}
+    }
+    if (isLockdown) return res.status(503).json({ error: 'API is undergoing emergency maintenance.' });
+
     const origin = req.headers.origin || req.headers.referer || req.headers.host || '';
     if (!origin.includes('whoer.live') && !origin.includes('localhost') && !origin.includes('vercel.app')) {
         return res.status(403).json({ error: 'Direct API access forbidden. Subscribe for a V2 API Key.' });
@@ -606,95 +614,122 @@ app.post('/api/process-scan', async (req, res) => {
 app.post('/api/telegram-webhook', async (req, res) => {
     res.send('ok'); // Always ack quickly to Telegram
     
-    const message = req.body?.message;
-    if (!message || !message.text) return;
-    
-    const chatId = message.chat.id.toString();
-    const text = message.text.trim();
     const TELEGRAM_TOKEN = process.env.TELEGRAM_BOT_TOKEN || '8699755123:AAFLqOjndyc29DJMIu0Bf_NijsxGXp75h34';
     const ADMIN_ID = process.env.ADMIN_CHAT_ID;
     
-    const sendMsg = async (msg) => {
+    const sendMsg = async (chatId, msg, markup = null) => {
         try {
-            await axios.post(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`, {
-                chat_id: chatId, text: msg, parse_mode: 'Markdown'
-            });
+            const body = { chat_id: chatId, text: msg, parse_mode: 'Markdown' };
+            if (markup) body.reply_markup = markup;
+            await axios.post(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`, body);
         } catch (e) {
             console.error('Telegram reply error:', e.message);
         }
     };
 
-    // Global /start (open to anyone so user can find their ID)
-    if (text.startsWith('/start')) {
-        await sendMsg(`👋 *Whoer.live Admin Bot*\n\nYour Telegram User ID is: \`${chatId}\`\n\nIf you are the admin, put this ID in Vercel as \`ADMIN_CHAT_ID\`.`);
-        return;
-    }
-
-    // AUTHENTICATION BARRIER — Block unauthorized users
-    if (ADMIN_ID && chatId !== ADMIN_ID) {
-        await sendMsg('⛔ Unauthorized. You are not the admin.');
-        return;
-    }
-
-    // If ADMIN_ID is not set yet, warn them
-    if (!ADMIN_ID) {
-        await sendMsg(`⚠️ WARNING: \`ADMIN_CHAT_ID\` is not set in Vercel environment variables. Anyone can use these commands right now. Your ID is \`${chatId}\`. Put it in Vercel to lock this bot down.`);
-    }
-
-    // /genkey [days]
-    if (text.startsWith('/genkey')) {
-        const parts = text.split(' ');
-        const days = parseInt(parts[1]) || 30;
-        const key = 'whr_' + uuidv4().replace(/-/g, '');
-        
-        try {
-            const kv = await getKV();
-            // Store key with TTL in seconds
-            await kv.set(`apikey:${key}`, { created: Date.now(), days }, { ex: days * 24 * 60 * 60 });
-            await sendMsg(`✅ *API Key Generated*\n\n\`${key}\`\n\nExpires in: ${days} days.\nSend this to your customer. They must use it as the \`x-api-key\` header on \`/api/v2/\` endpoints.`);
-        } catch (e) {
-            await sendMsg('❌ Failed to save key to KV. Ensure KV_REST_API_URL is set in Vercel. Error: ' + e.message);
+    const processCommand = async (chatId, command) => {
+        if (ADMIN_ID && chatId !== ADMIN_ID) {
+            await sendMsg(chatId, '⛔ Unauthorized. You are not the admin.');
+            return;
         }
-        return;
-    }
 
-    // /ban [ip]
-    if (text.startsWith('/ban ')) {
-        const ip = text.split(' ')[1];
-        if (ip) {
-            bannedIPs.add(ip);
-            await sendMsg(`🔨 *BANNED:*\n\`${ip}\``);
+        if (command === '/admin' || command === '/start') {
+            const markup = {
+                inline_keyboard: [
+                    [ {text: '📊 View Stats', callback_data: 'stats'}, {text: '🧹 Clear Banlist', callback_data: 'clearban'} ],
+                    [ {text: '🗝️ Generate 30D Key', callback_data: 'genkey_30'}, {text: '🚨 Toggle API Lockdown', callback_data: 'lockdown'} ]
+                ]
+            };
+            await sendMsg(chatId, `🚀 *Whoer.live Admin Dashboard*\nYour ID: \`${chatId}\`\n\nChoose an action below:`, markup);
+            return;
         }
-        return;
-    }
 
-    // /unban [ip]
-    if (text.startsWith('/unban ')) {
-        const ip = text.split(' ')[1];
-        if (ip) {
-            bannedIPs.delete(ip);
-            await sendMsg(`🔓 *UNBANNED:*\n\`${ip}\``);
+        if (command.startsWith('genkey_') || command.startsWith('/genkey')) {
+            const days = parseInt(command.split('_')[1] || command.split(' ')[1]) || 30;
+            const key = 'whr_' + uuidv4().replace(/-/g, '');
+            try {
+                const kv = await getKV();
+                await kv.set(`apikey:${key}`, { created: Date.now(), days }, { ex: days * 24 * 60 * 60 });
+                await sendMsg(chatId, `✅ *API Key Generated*\n\n\`${key}\`\n\nExpires in: ${days} days.`);
+            } catch (e) {
+                await sendMsg(chatId, '❌ KV Error: ' + e.message);
+            }
+            return;
         }
-        return;
-    }
 
-    // /clearban
-    if (text === '/clearban') {
-        bannedIPs.clear();
-        await sendMsg(`🧹 *Banlist Cleared!*`);
-        return;
-    }
-
-    // /stats
-    if (text.startsWith('/stats')) {
-        try {
-            const kv = await getKV();
-            let total = 0;
-            try { total = (await kv.lrange('reports:list', 0, -1)).length; } catch(e){}
-            await sendMsg(`📊 *System Stats*\n\n- Reports recorded: ${total}\n- In-Memory Banned Bot IPs (Honeypot): ${bannedIPs.size}`);
-        } catch (e) {
-            await sendMsg('❌ Failed to get stats: ' + e.message);
+        if (command === 'clearban' || command === '/clearban') {
+            bannedIPs.clear();
+            await sendMsg(chatId, `🧹 *Banlist Cleared!*`);
+            return;
         }
+
+        if (command === 'stats' || command === '/stats') {
+            try {
+                const kv = await getKV();
+                let total = 0;
+                let lockdown = await kv.get('api_lockdown') ? '🔴 ACTIVE' : '🟢 OFF';
+                try { total = (await kv.lrange('reports:list', 0, -1)).length; } catch(e){}
+                await sendMsg(chatId, `📊 *System Stats*\n\n- Reports recorded: ${total}\n- Banned Bot IPs: ${bannedIPs.size}\n- Emergency Lockdown: ${lockdown}`);
+            } catch (e) {
+                await sendMsg(chatId, '❌ Failed to get stats: ' + e.message);
+            }
+            return;
+        }
+
+        if (command === 'lockdown') {
+            try {
+                const kv = await getKV();
+                const current = await kv.get('api_lockdown');
+                if (current) {
+                    await kv.del('api_lockdown');
+                    isLockdown = false;
+                    await sendMsg(chatId, `🟢 *Emergency Lockdown DISABLED.*\nFree API is fully open.`);
+                } else {
+                    await kv.set('api_lockdown', 'true');
+                    isLockdown = true;
+                    await sendMsg(chatId, `🚨 *Emergency Lockdown ACTIVATED.*\nFree API is strictly blocked!`);
+                }
+            } catch (e) {
+                await sendMsg(chatId, '❌ KV Error: ' + e.message);
+            }
+            return;
+        }
+
+        // Live IP Lookup
+        if (command.startsWith('/lookup ')) {
+            const ip = command.split(' ')[1];
+            try {
+                const r = await axios.get(`http://ip-api.com/json/${ip}?fields=status,country,city,isp,org`, { timeout: 3000 });
+                if (r.data.status === 'success') {
+                    await sendMsg(chatId, `🔍 *Lookup: ${ip}*\nLocation: ${r.data.city}, ${r.data.country}\nISP: ${r.data.isp}\nORG: ${r.data.org}`);
+                } else {
+                    await sendMsg(chatId, `❌ Lookup failed for ${ip}`);
+                }
+            } catch (e) {
+                await sendMsg(chatId, `❌ Lookup timeout for ${ip}`);
+            }
+            return;
+        }
+
+        if (command.startsWith('/ban ')) {
+            const ip = command.split(' ')[1];
+            if (ip) { bannedIPs.add(ip); await sendMsg(chatId, `🔨 *BANNED:*\n\`${ip}\``); }
+            return;
+        }
+        if (command.startsWith('/unban ')) {
+            const ip = command.split(' ')[1];
+            if (ip) { bannedIPs.delete(ip); await sendMsg(chatId, `🔓 *UNBANNED:*\n\`${ip}\``); }
+            return;
+        }
+    };
+
+    if (req.body.callback_query) {
+        // Answer callback query so it stops loading
+        try { axios.post(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/answerCallbackQuery`, { callback_query_id: req.body.callback_query.id }).catch(()=>{}); } catch(e){}
+        const cb = req.body.callback_query;
+        await processCommand(cb.message.chat.id.toString(), cb.data);
+    } else if (req.body.message && req.body.message.text) {
+        await processCommand(req.body.message.chat.id.toString(), req.body.message.text.trim());
     }
 });
 
