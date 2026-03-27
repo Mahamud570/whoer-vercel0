@@ -544,14 +544,12 @@ app.post('/api/process-scan', async (req, res) => {
         let warnings = [];
 
         if (isVpn)       { score -= 30; risks.push({ id: 'vpn',   label: 'VPN / Hosting IP',     detail: ipInfo.isp || '' }); }
-        if (timeMismatch){ score -= 15; risks.push({ id: 'time',  label: 'Timezone mismatch',    detail: `IP: ${ipTZ} / Browser: ${sysTZ}` }); }
-        if (isAutomation){ score -= 20; risks.push({ id: 'bot',   label: 'Antidetect / Bot',     detail: 'navigator.webdriver detected' }); }
+        if (isAutomation){ score -= 10; risks.push({ id: 'bot',   label: 'Antidetect / Bot',     detail: 'navigator.webdriver detected' }); }
+        if (timeMismatch){ score -= 5;  warnings.push({ id: 'time',  label: 'Timezone mismatch',    detail: `IP: ${ipTZ} / Browser: ${sysTZ}` }); }
         if (!clientData.canvasHash || clientData.canvasHash === 'error') {
-            score -= 10;
+            score -= 5;
             warnings.push({ id: 'canvas', label: 'Canvas blocked', detail: 'Fingerprint API restricted' });
         }
-        if (langMismatch){ score -= 10; warnings.push({ id: 'lang', label: 'Language mismatch', detail: `${browserLangCountry} vs ${ipInfo.countryCode}` }); }
-        if (clientData.webrtcLeaked){ score -= 15; risks.push({ id: 'webrtc', label: 'WebRTC IP leak', detail: clientData.webrtcIps?.join(', ') || '' }); }
 
         score = Math.max(0, score);
 

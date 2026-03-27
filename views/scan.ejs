@@ -201,7 +201,10 @@
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15 15 0 0 1 4 10 15 15 0 0 1-4 10A15 15 0 0 1 8 12a15 15 0 0 1 4-10z"/></svg>
                 Browser
             </div>
-            <div class="mini-value" id="browserVal">—</div>
+            <div class="mini-value" style="display:flex; align-items:baseline; gap:6px;">
+                <span id="browserVal">—</span>
+                <span id="checkFpLink" style="display:none; font-size:11px; color:var(--amber); text-decoration:underline; text-underline-offset:3px; text-decoration-style:dashed; cursor:pointer;" onclick="document.getElementById('fpGrid').scrollIntoView({behavior: 'smooth', block: 'center'})">Check fingerprint</span>
+            </div>
         </div>
         <div class="mini-card">
             <div class="mini-label">
@@ -369,6 +372,16 @@
         </div>
     </div>
 
+    <!-- ─── DEEP ANALYZER PREMIUM LOCK ──────────────────────────────────────── -->
+    <div class="panel" style="margin-bottom:20px; border-color: rgba(255, 79, 106, 0.4); background: rgba(255, 79, 106, 0.05); text-align:center; padding:40px 20px;">
+        <h3 style="color:var(--red); margin-bottom:10px; font-weight:700; font-family:var(--mono); letter-spacing:1px; font-size:16px;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;margin-right:6px;"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> 
+            DEEP FINGERPRINT TRACE LOCKED
+        </h3>
+        <p style="font-size:14px; color:var(--text); max-width:480px; margin:0 auto 20px; line-height:1.6;">We successfully captured the exact algorithms Meta, Google, and TikTok use to track this specific browser session. The full vulnerability trace and bypass instructions are restricted to API Subscribers.</p>
+        <a href="https://t.me/FIRE570" target="_blank" class="btn btn-primary" style="background:var(--red); color:#fff; border-color:var(--red); font-weight:700; border-radius:20px; padding:12px 28px; font-size:14px;">🔓 Unlock Full Tracking Trace</a>
+    </div>
+
     <!-- ─── DNS LEAK TEST ────────────────────────────────────────────────── -->
     <div class="panel" style="margin-bottom:20px;" id="dnsPanel">
         <div class="panel-head">
@@ -391,9 +404,9 @@
 
     <!-- ─── SEO / INFO BLOCK ─────────────────────────────────────────── -->
     <div class="info-block">
-        <h1>Free IP Address Checker &amp; VPN Test Tool</h1>
-        <p>Whoer Live instantly shows your <strong>real IP address</strong>, detects whether you are using a <strong>VPN, proxy, or hosting service</strong>, and tests for <strong>WebRTC leaks</strong> that can expose your real IP even when a VPN is active. Get a full browser privacy score in seconds — completely free, no account needed.</p>
-        <p style="margin-top:10px;"><strong>Use it to verify:</strong> your VPN is actually working, there are no DNS or WebRTC leaks, your browser timezone matches your IP location, and your browser is not flagged as an antidetect or automation tool. Perfect for privacy-conscious users, VPN subscribers, and developers worldwide.</p>
+        <h1 style="color:var(--red);">Advanced Anti-Detect Testing Laboratory</h1>
+        <p>Whoer Live instantly shows your <strong>real IP address</strong>, detects whether you are using a <strong>VPN, proxy, or hosting service</strong>, and runs aggressive <strong>WebRTC leaks</strong> tests that expose your real IP to ad networks. See exactly what Facebook, Google, and TikTok see when you visit their sites.</p>
+        <p style="margin-top:10px;"><strong>Use it to verify:</strong> your stealth setup is actually working, there are no DNS or WebRTC leaks, your browser timezone matches your IP location, and your system isn't bleeding hardware signatures. Perfect for multi-account automation and blackhat ad-runners.</p>
         <div class="checks-grid" style="margin-top:18px;">
             <div class="check-item">
                 <div class="check-icon" style="background:var(--green-dim); color:var(--green);">🔍</div>
@@ -703,10 +716,10 @@ function scoreClass(s) {
 }
 
 function scoreMsg(s) {
-    if (s === 100) return 'Fully protected';
-    if (s >= 85)  return 'Mostly clean';
-    if (s >= 55)  return 'Some risks detected';
-    return 'High risk — action needed';
+    if (s === 100) return 'Fully protected from tracking';
+    if (s >= 85)  return 'Mostly clean (Standard usage)';
+    if (s >= 55)  return '⚠️ EXPOSED: Ad accounts likely to flag';
+    return '🚨 CRITICAL RISK — High probability of account ban';
 }
 
 // ─── Render report ───────────────────────────────────────────────────────────
@@ -730,6 +743,7 @@ function renderReport(r) {
     document.getElementById('ispVal').textContent    = ip.isp || '—';
     document.getElementById('osVal').textContent     = br.os || '—';
     document.getElementById('browserVal').textContent = br.browser || '—';
+    if (br.browser) document.getElementById('checkFpLink').style.display = 'inline';
     document.getElementById('tzVal').textContent =
         `${ip.timezone} (${ip.utc_offset || ''})`;
 
@@ -748,8 +762,8 @@ function renderReport(r) {
     document.getElementById('dAnon').textContent = ip.is_hosting ? 'Yes' : 'No';
 
     document.getElementById('dBotBadge').innerHTML = br.is_antidetect
-        ? `<span class="badge badge-red">Antidetect / Bot</span>`
-        : `<span class="badge badge-green">Standard</span>`;
+        ? `<span class="badge badge-red">🚨 Automation Tool Detected</span>`
+        : `<span class="badge badge-green">Standard (You look like 90% of users)</span>`;
 
     // WebRTC badge in privacy panel
     const rtcLeaked = br.webrtcLeaked || false;
