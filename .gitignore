@@ -3,3 +3,8 @@ node_modules/
 .env
 .env.local
 *.log
+
+# Automation & Bot Scripts (Banned from public repo)
+ctr_bot.js
+load_test.js
+mobile_ctr_adb.js
