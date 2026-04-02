@@ -545,7 +545,7 @@ app.post('/api/process-scan', async (req, res) => {
 
         if (isVpn)       { score -= 30; risks.push({ id: 'vpn',   label: 'VPN / Hosting IP',     detail: ipInfo.isp || '' }); }
         if (isAutomation){ score -= 10; risks.push({ id: 'bot',   label: 'Antidetect / Bot',     detail: 'navigator.webdriver detected' }); }
-        if (timeMismatch){ score -= 5;  warnings.push({ id: 'time',  label: 'Timezone mismatch',    detail: `IP: ${ipTZ} / Browser: ${sysTZ}` }); }
+        if (timeMismatch){ score -= 15; risks.push({ id: 'time', label: 'Timezone mismatch', detail: `IP: ${ipTZ} / Browser: ${sysTZ}` }); }
         if (!clientData.canvasHash || clientData.canvasHash === 'error') {
             score -= 5;
             warnings.push({ id: 'canvas', label: 'Canvas blocked', detail: 'Fingerprint API restricted' });
