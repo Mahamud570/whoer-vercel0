@@ -46,9 +46,21 @@
         .btn-check:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(34,215,122,0.3); }
         .btn-check:disabled { opacity: 0.5; cursor: not-allowed; }
 
-        .progress-wrap { background: var(--border); border-radius: 10px; height: 3px; margin-top: 12px; overflow: hidden; display: none; }
-        .progress-wrap.on { display: block; }
-        .progress-bar { height: 100%; width: 0; background: var(--green); border-radius: 10px; transition: width 0.4s; }
+        /* Terminal Loader */
+        .scan-terminal { background: #0d1117; border: 1px solid var(--border); border-radius: var(--radius); margin-top: 16px; overflow: hidden; display: none; }
+        .scan-terminal.on { display: block; animation: fadeUp 0.3s ease; }
+        .term-head { background: #161b22; padding: 10px 14px; display: flex; align-items: center; border-bottom: 1px solid var(--border); }
+        .term-head .dot { width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; }
+        .term-head .d-red { background: #ff5f56; }
+        .term-head .d-yel { background: #ffbd2e; }
+        .term-head .d-grn { background: #27c93f; margin-right: 14px; }
+        .term-head .title { font-size: 11px; color: var(--muted); font-family: var(--mono); text-transform: uppercase; letter-spacing: 1px; }
+        .term-body { padding: 14px; height: 160px; overflow-y: auto; font-family: var(--mono); font-size: 11px; line-height: 1.6; color: #a5d6ff; scroll-behavior: smooth; }
+        .term-log { margin-bottom: 4px; }
+        .term-log .sys { color: #8b949e; }
+        .term-log .ip { color: #7ee787; font-weight: 700; }
+        .term-prog { height: 3px; background: #161b22; }
+        .term-bar { height: 100%; width: 0%; background: var(--green); transition: width 0.2s linear; }
 
         /* Results */
         .bulk-results { display: none; }
@@ -140,8 +152,14 @@
                 <textarea id="ipInput" class="bulk-textarea"
                     placeholder="Examples — any format works:&#10;1.2.3.4&#10;1.2.3.4:8080&#10;http://1.2.3.4:3128&#10;socks5://1.2.3.4:1080&#10;socks5://user:pass@1.2.3.4:1080&#10;ss://base64@1.2.3.4:8388&#10;1.2.3.4:8080:username:password"
                     oninput="updateCounter()"></textarea>
-                <div class="progress-wrap" id="progressWrap">
-                    <div class="progress-bar" id="progressBar"></div>
+                <!-- Terminal Overlay -->
+                <div class="scan-terminal" id="scanTerminal">
+                    <div class="term-head">
+                        <div class="dot d-red"></div><div class="dot d-yel"></div><div class="dot d-grn"></div>
+                        <div class="title">Live Scan Progress</div>
+                    </div>
+                    <div class="term-body" id="termLogs"></div>
+                    <div class="term-prog"><div class="term-bar" id="termBar"></div></div>
                 </div>
             </div>
             <div class="side-panel">
@@ -333,10 +351,40 @@ async function runBulkCheck() {
     btn.disabled = true;
     btn.textContent = 'Checking…';
 
-    const pw = document.getElementById('progressWrap');
-    const pb = document.getElementById('progressBar');
-    pw.classList.add('on');
-    pb.style.width = '15%';
+    const term = document.getElementById('scanTerminal');
+    const logs = document.getElementById('termLogs');
+    const tbar = document.getElementById('termBar');
+
+    term.classList.add('on');
+    logs.innerHTML = '';
+    tbar.style.width = '0%';
+
+    // Generate terminal stages
+    const stages = [
+        '<span class="sys">[SYS]</span> Initializing bulk scan container...',
+        '<span class="sys">[SYS]</span> Waking up proxy tester nodes...'
+    ];
+    
+    // Add fake logs per proxy
+    validIPs.forEach(ip => {
+        stages.push(`<span class="sys">[NET]</span> Connecting -> <span class="ip">${ip}</span>...`);
+        stages.push(`<span class="sys">[CHK]</span> Resolving GeoIP & ISP for <span class="ip">${ip}</span>...`);
+        stages.push(`<span class="sys">[SEC]</span> Cross-referencing <span class="ip">${ip}</span> against VPN blacklists...`);
+    });
+
+    let sIdx = 0;
+    const termItv = setInterval(() => {
+        if (sIdx < stages.length) {
+            const div = document.createElement('div');
+            div.className = 'term-log';
+            div.innerHTML = stages[sIdx];
+            logs.appendChild(div);
+            logs.scrollTop = logs.scrollHeight;
+            const pct = Math.floor((sIdx / stages.length) * 96);
+            tbar.style.width = pct + '%';
+            sIdx++;
+        }
+    }, Math.max(80, 2000 / stages.length)); // Speed it up based on total IPs
 
     try {
         const res = await fetch('/api/bulk-scan', {
@@ -344,9 +392,14 @@ async function runBulkCheck() {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ ips: validIPs }),
         });
-        pb.style.width = '85%';
+        clearInterval(termItv);
         const data = await res.json();
-        pb.style.width = '100%';
+        tbar.style.width = '100%';
+        const div = document.createElement('div');
+        div.className = 'term-log';
+        div.innerHTML = `<span class="sys" style="color:var(--green)">[SYS] Scan complete! Downloading artifacts...</span>`;
+        logs.appendChild(div);
+        logs.scrollTop = logs.scrollHeight;
 
         // Map results back by IP
         const byIP = {};
@@ -357,9 +410,12 @@ async function runBulkCheck() {
             geo: byIP[p.ip] || { error: true, ip: p.ip },
         }));
 
-        setTimeout(() => { pw.classList.remove('on'); pb.style.width = '0'; }, 500);
-        renderResults(allResults);
+        setTimeout(() => { 
+            term.classList.remove('on'); 
+            renderResults(allResults); 
+        }, 1200);
     } catch(e) {
+        clearInterval(termItv);
         alert('Error. Please try again.');
     } finally {
         btn.disabled = false;
