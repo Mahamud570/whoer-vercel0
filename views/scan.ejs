@@ -778,23 +778,7 @@ function renderReport(r) {
     const tsBox = document.getElementById('timeSyncBox');
     tsBox.className = 'time-sync-box ' + (br.time_mismatch ? 'bad' : 'ok');
 
-    // Turn score box red if ANY risk is detected (VPN, bot, timezone mismatch, etc.)
-    const scoreHeroEl = document.getElementById('scoreHero');
-    if (risks.length > 0) {
-        scoreHeroEl.style.border = '1.5px solid rgba(255,79,106,0.7)';
-        scoreHeroEl.style.background = 'linear-gradient(135deg, rgba(255,79,106,0.08) 0%, rgba(15,19,32,0.95) 100%)';
-        scoreHeroEl.style.boxShadow = '0 0 24px rgba(255,79,106,0.15)';
-        document.getElementById('scoreNum').className = 'score-num risk';
-        document.getElementById('scoreFill').className = 'score-fill risk';
-        document.getElementById('scPct').className = 'sc-pct risk';
-        document.getElementById('scFill').className = 'sc-fill risk';
-    } else {
-        scoreHeroEl.style.border = '';
-        scoreHeroEl.style.background = '';
-        scoreHeroEl.style.boxShadow = '';
-    }
 
-    // WebRTC detail panel
     const webrtcBox  = document.getElementById('webrtcBox');
     const webrtcStat = document.getElementById('webrtcStatus');
     const webrtcList = document.getElementById('webrtcIpList');
@@ -843,6 +827,23 @@ function renderReport(r) {
     pills.innerHTML = '';
     const risks    = r.risks    || [];
     const warnings = r.warnings || [];
+
+    // Turn score box red if ANY risk is detected (VPN, bot, timezone mismatch, etc.)
+    const scoreHeroEl = document.getElementById('scoreHero');
+    if (risks.length > 0) {
+        scoreHeroEl.style.border = '1.5px solid rgba(255,79,106,0.7)';
+        scoreHeroEl.style.background = 'linear-gradient(135deg, rgba(255,79,106,0.08) 0%, rgba(15,19,32,0.95) 100%)';
+        scoreHeroEl.style.boxShadow = '0 0 24px rgba(255,79,106,0.15)';
+        document.getElementById('scoreNum').className = 'score-num risk';
+        document.getElementById('scoreFill').className = 'score-fill risk';
+        document.getElementById('scPct').className = 'sc-pct risk';
+        document.getElementById('scFill').className = 'sc-fill risk';
+    } else {
+        scoreHeroEl.style.border = '';
+        scoreHeroEl.style.background = '';
+        scoreHeroEl.style.boxShadow = '';
+    }
+
     if (risks.length) {
         risks.forEach(risk => {
             const p = document.createElement('span');
