@@ -3,201 +3,342 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Programmatic SEO Title -->
-    <title>Free <%= country %> Proxies List <%= year %> | Fast & Anonymous HTTP/SOCKS5</title>
-    <!-- Long-tail targeted description -->
-    <meta name="description" content="Get the fastest, most reliable free <%= country %> proxies. Daily updated list of elite anonymous HTTP, HTTPS, SOCKS4, and SOCKS5 proxy servers in <%= country %> for secure browsing.">
-    <!-- Canonical for Search Engines -->
+    <title>Best <%= country %> Proxy & VPN Test <%= year %> — Check Your IP in <%= country %> | Whoer Live</title>
+    <meta name="description" content="Test your VPN or proxy connection from <%= country %>. Check your real IP address, detect timezone mismatches, WebRTC leaks, and get a full privacy score — free, instant, no signup.">
+    <meta name="keywords" content="<%= country %> proxy, VPN test <%= country %>, check IP <%= country %>, <%= country %> IP address, proxy checker <%= country %>, VPN leak test <%= country %>, is my VPN working <%= country %>">
+    <meta name="robots" content="index, follow">
     <link rel="canonical" href="https://www.whoer.live/proxy/<%= country.toLowerCase().replace(/ /g, '-') %>">
+    <link rel="icon" type="image/png" href="/img/logo.png">
     <link rel="stylesheet" href="/css/style.css">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="<%= country %> Proxy & VPN Test — Whoer Live">
+    <meta property="og:description" content="Check your real IP from <%= country %>, test VPN leaks, and get an instant privacy score at Whoer Live.">
+    <meta property="og:url" content="https://www.whoer.live/proxy/<%= country.toLowerCase().replace(/ /g, '-') %>">
+    <meta property="og:image" content="https://www.whoer.live/img/logo.png">
+
+    <!-- JSON-LD: Article Schema -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "How to Test a <%= country %> Proxy or VPN Connection",
+      "description": "A complete guide to verifying your <%= country %> proxy or VPN setup, checking for WebRTC leaks, DNS leaks, and timezone mismatches.",
+      "author": { "@type": "Organization", "name": "Whoer Live" },
+      "publisher": { "@type": "Organization", "name": "Whoer Live", "url": "https://www.whoer.live" },
+      "mainEntityOfPage": "https://www.whoer.live/proxy/<%= country.toLowerCase().replace(/ /g, '-') %>",
+      "datePublished": "<%= year %>-01-01",
+      "dateModified": "<%= new Date().toISOString().split('T')[0] %>"
+    }
+    </script>
+
+    <!-- JSON-LD: FAQ Schema -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "How do I check if my <%= country %> proxy is working?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Visit whoer.live while connected to your <%= country %> proxy. If the IP address shown is from <%= country %> and your real IP is hidden, the proxy is working correctly. We also check for WebRTC leaks that can expose your real IP even through a proxy."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Why does my timezone not match my <%= country %> IP?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "A timezone mismatch means your browser's system clock timezone does not match the timezone of your <%= country %> IP address. This is a major fingerprinting signal that tells websites you are likely using a VPN or proxy. Whoer Live detects this automatically and deducts points from your privacy score."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What is a WebRTC leak and does it affect <%= country %> proxies?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. WebRTC is a browser technology that can bypass proxy and VPN tunnels to reveal your real IP address. Even if your proxy shows a <%= country %> IP, WebRTC can still expose your original IP. Whoer Live tests for this automatically — no plugin needed."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How do I know if my <%= country %> VPN has a DNS leak?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "A DNS leak happens when your browser sends DNS queries outside the VPN tunnel, revealing which sites you visit to your real ISP. Whoer Live runs a multi-probe DNS leak test in the background and tells you instantly if your <%= country %> VPN is leaking DNS."
+          }
+        }
+      ]
+    }
+    </script>
+
     <style>
-        .doorway-wrap { max-width: 900px; margin: 0 auto; padding: 40px 20px 80px; }
-        .doorway-hero { text-align: center; padding: 40px 0; border-bottom: 1px solid var(--border); margin-bottom: 30px; }
-        .doorway-hero h1 { font-size: 32px; font-weight: 800; color: var(--text); margin-bottom: 15px; }
-        .doorway-hero p { font-size: 16px; color: var(--muted); max-width: 600px; margin: 0 auto; line-height: 1.6; }
-        
-        /* Dwell Time Manipulation: Fake Loader */
-        .loader-box { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 40px; text-align: center; margin-bottom: 30px; }
-        .loader-title { font-size: 18px; font-weight: 700; margin-bottom: 16px; }
-        .loader-bar-wrap { background: rgba(0,0,0,0.5); border: 1px solid var(--border2); height: 12px; border-radius: 10px; overflow: hidden; max-width: 400px; margin: 0 auto 20px; }
-        .loader-bar { width: 0%; height: 100%; background: linear-gradient(90deg, var(--green), #3b8cf5); transition: width 0.1s linear; }
-        .loader-logs { font-family: var(--mono); font-size: 11px; color: var(--muted); height: 60px; overflow: hidden; text-align: left; max-width: 400px; margin: 0 auto; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 6px; }
+        .dw-wrap { max-width: 860px; margin: 0 auto; padding: 40px 20px 80px; }
+        .dw-hero { text-align: center; padding: 50px 0 36px; }
+        .dw-hero h1 { font-size: 30px; font-weight: 800; margin-bottom: 14px; line-height: 1.3; }
+        .dw-hero p  { font-size: 15px; color: var(--muted); max-width: 580px; margin: 0 auto 28px; line-height: 1.7; }
+        .cta-row { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
 
-        .proxy-table-wrap { display: none; overflow-x: auto; background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius-lg); }
-        .proxy-table { width: 100%; border-collapse: collapse; min-width: 600px; }
-        .proxy-table th { background: rgba(255,255,255,0.03); padding: 12px 16px; text-align: left; font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--muted); border-bottom: 1px solid var(--border); }
-        .proxy-table td { padding: 14px 16px; border-bottom: 1px solid rgba(255,255,255,0.02); font-size: 13px; vertical-align: middle; }
-        .proxy-table tr:hover { background: rgba(255,255,255,0.02); }
-        .td-ip { font-family: var(--mono); font-weight: 700; color: var(--text); }
-        .td-type { font-size: 10px; padding: 3px 8px; border-radius: 4px; background: var(--blue-dim); color: var(--blue); border: 1px solid rgba(77,159,255,0.3); font-weight: 700; }
-        .td-anon { color: var(--green); font-weight: 600; }
-        
-        .bulk-ad { background: linear-gradient(45deg, var(--panel), rgba(34,215,122,0.05)); border: 1px solid var(--green); border-radius: var(--radius-lg); padding: 30px; text-align: center; margin-top: 30px; }
-        .bulk-ad h3 { font-size: 20px; font-weight: 700; margin-bottom: 10px; }
-        
-        /* Grey Hat: Content Spinning Output */
-        .seo-content { margin-top: 60px; font-size: 13px; color: var(--muted); line-height: 1.8; padding: 20px; background: rgba(255,255,255,0.01); border-top: 1px solid var(--border); }
-        .seo-content h2 { font-size: 18px; color: var(--text); margin-bottom: 12px; }
+        .article-body { margin-top: 48px; }
+        .article-body h2 { font-size: 20px; font-weight: 700; margin: 36px 0 12px; color: var(--text); }
+        .article-body h3 { font-size: 16px; font-weight: 600; margin: 24px 0 8px; color: var(--text); }
+        .article-body p  { font-size: 14px; color: var(--muted); line-height: 1.85; margin-bottom: 14px; }
+        .article-body a  { color: var(--green); text-decoration: underline; text-underline-offset: 3px; }
+        .article-body ul { padding-left: 20px; margin-bottom: 14px; }
+        .article-body li { font-size: 14px; color: var(--muted); line-height: 1.85; margin-bottom: 6px; }
+        .article-body strong { color: var(--text); }
 
-        /* Black Hat: Hidden Text / Keyword Stuffing Container */
-        .kw-stuffer { position: absolute; left: -9999px; top: -9999px; width: 1px; height: 1px; overflow: hidden; opacity: 0; }
+        .check-table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+        .check-table th { text-align: left; padding: 10px 14px; font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--muted); border-bottom: 1px solid var(--border); }
+        .check-table td { padding: 12px 14px; font-size: 13px; color: var(--muted); border-bottom: 1px solid rgba(255,255,255,0.03); }
+        .check-table td:first-child { color: var(--text); font-weight: 600; }
+
+        .faq-section { margin-top: 48px; }
+        .faq-section h2 { font-size: 20px; font-weight: 700; margin-bottom: 20px; }
+
+        .related-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; margin-top: 20px; }
+        .related-link { background: var(--panel); border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px; font-size: 13px; color: var(--muted); text-decoration: none; transition: border-color 0.2s, color 0.2s; }
+        .related-link:hover { border-color: var(--green); color: var(--green); }
+
+        .cta-panel { background: linear-gradient(135deg, rgba(34,215,122,0.06), rgba(15,19,32,0.95)); border: 1px solid rgba(34,215,122,0.3); border-radius: 14px; padding: 32px; text-align: center; margin-top: 48px; }
+        .cta-panel h3 { font-size: 20px; font-weight: 700; margin-bottom: 10px; }
+        .cta-panel p  { font-size: 14px; color: var(--muted); margin-bottom: 22px; }
     </style>
 </head>
 <body>
 
 <header>
     <div class="container header-inner">
-        <a href="/" class="logo" style="text-decoration:none;">WHOER<span>.LIVE</span> <sub>v4</sub></a>
+        <a href="/" style="display:flex;align-items:center;gap:10px;text-decoration:none;">
+            <img src="/img/logo.png" alt="Whoer Live" style="width:28px;height:28px;border-radius:7px;">
+            <div class="logo">WHOER<span>.LIVE</span> <sub>v4</sub></div>
+        </a>
         <div class="header-actions">
-            <!-- Simplified nav -->
-            <a href="/bulk" class="btn">Bulk</a>
-            <a href="/blacklist" class="btn">Blacklist</a>
-            <a href="/port-scanner" class="btn">Ports</a>
-            <a href="/" class="btn">IP Scan</a>
+            <a href="/bulk" class="btn">🔢 Bulk</a>
+            <a href="/blacklist" class="btn">🛡️ Blacklist</a>
+            <a href="/port-scanner" class="btn">🔌 Ports</a>
+            <a href="/" class="btn btn-primary">⚡ IP Scan</a>
         </div>
     </div>
 </header>
 
-<div class="doorway-wrap">
-    
-    <div class="doorway-hero">
-        <h1>Free <%= country %> Proxies List</h1>
-        <p>We are querying our database for the latest working, fresh, and elite anonymous proxy servers located in <%= country %>. Please wait while we verify their uptime and latency.</p>
-    </div>
+<div class="dw-wrap">
 
-    <!-- Dwell Time Trap: Force user to wait 15 seconds so Google sees high 'Time on Page' -->
-    <div class="loader-box" id="loaderBox">
-        <div class="loader-title">Verifying <%= country %> Proxy Node Stability...</div>
-        <div class="loader-bar-wrap">
-            <div class="loader-bar" id="loaderBar"></div>
-        </div>
-        <div class="loader-logs" id="loaderLogs">
-            [SYS] Initializing proxy probe payload...<br>
+    <div class="dw-hero">
+        <h1>How to Test a <%= country %> Proxy or VPN — Complete Guide <%= year %></h1>
+        <p>Running a VPN or proxy that routes through <%= country %>? Use Whoer Live to instantly verify your IP, detect leaks, and get a real privacy score. Free, no signup, no extensions needed.</p>
+        <div class="cta-row">
+            <a href="/" class="btn btn-primary" style="padding:14px 28px; font-size:15px;">⚡ Run Free Scan Now</a>
+            <a href="/bulk" class="btn" style="padding:14px 22px; font-size:15px;">🔢 Bulk Proxy Checker</a>
         </div>
     </div>
 
-    <div class="proxy-table-wrap" id="proxyWrap">
-        <table class="proxy-table">
+    <div class="article-body">
+
+        <h2>Why Test Your <%= country %> Proxy or VPN?</h2>
+        <p>
+            Simply having a VPN or proxy that claims to route your traffic through <%= country %> is not enough. 
+            Many VPN providers and proxy services have critical leaks that silently expose your real identity — even when the connection appears active. 
+            The most common and dangerous of these are <strong>WebRTC leaks</strong>, <strong>DNS leaks</strong>, and <strong>timezone mismatches</strong>.
+        </p>
+        <p>
+            A WebRTC leak exposes your real IP address directly from your browser, bypassing your <%= country %> proxy tunnel entirely. 
+            A DNS leak means your DNS queries are being sent to your original ISP instead of routing through your proxy, 
+            revealing every domain you visit. And a timezone mismatch — where your browser clock says one region but your IP says <%= country %> — 
+            is an instant red flag for any website using browser fingerprinting.
+        </p>
+        <p>
+            <a href="/">Whoer Live</a> tests for all of these automatically, showing you exactly what websites and ad trackers can see about your connection — in real time.
+        </p>
+
+        <h2>What Whoer Live Checks for <%= country %> Connections</h2>
+        <table class="check-table">
             <thead>
                 <tr>
-                    <th>IP Address : Port</th>
-                    <th>Protocol</th>
-                    <th>Anonymity</th>
-                    <th>Country</th>
-                    <th>Latency</th>
+                    <th>Check</th>
+                    <th>What it detects</th>
+                    <th>Score Impact</th>
                 </tr>
             </thead>
-            <tbody id="proxyBody">
-                <!-- Javascript fills this -->
+            <tbody>
+                <tr>
+                    <td>IP Geolocation</td>
+                    <td>Confirms your exit IP is actually in <%= country %>, not your real location</td>
+                    <td>Core result</td>
+                </tr>
+                <tr>
+                    <td>WebRTC Leak Test</td>
+                    <td>Detects real IP exposure via browser STUN requests, bypassing proxies</td>
+                    <td>Critical — major penalty</td>
+                </tr>
+                <tr>
+                    <td>DNS Leak Test</td>
+                    <td>Checks if DNS queries route through your <%= country %> tunnel or your ISP</td>
+                    <td>Informational</td>
+                </tr>
+                <tr>
+                    <td>Timezone Match</td>
+                    <td>Verifies your browser timezone matches <%= country %>'s timezone</td>
+                    <td>-15% on mismatch</td>
+                </tr>
+                <tr>
+                    <td>VPN / Hosting IP</td>
+                    <td>Detects datacenter and hosting provider IPs vs residential proxies</td>
+                    <td>-30% if detected</td>
+                </tr>
+                <tr>
+                    <td>Browser Fingerprint</td>
+                    <td>Canvas, WebGL, Audio, Screen, Font hashes</td>
+                    <td>Informational</td>
+                </tr>
             </tbody>
         </table>
-        
-        <div class="bulk-ad">
-            <h3>Need to test your own proxies?</h3>
-            <p style="color:var(--muted); font-size:14px; margin-bottom:20px;">Use our free Bulk Proxy Checker to scan up to 100 proxies simultaneously. We detect protocol, country, and VPN blocks.</p>
-            <a href="/bulk" class="btn btn-primary" style="padding:14px 28px; font-size:16px;">Go to Bulk Checker</a>
+
+        <h2>How to Get a Perfect Score with a <%= country %> Proxy</h2>
+        <p>
+            To score 90%+ on Whoer Live with a <%= country %> proxy or VPN, you need to address every layer of your browser's identity stack — not just the IP address. Here is a step-by-step checklist:
+        </p>
+        <ul>
+            <li><strong>Use a residential proxy, not a datacenter IP.</strong> Datacenter IPs from providers like AWS, Hetzner, or DigitalOcean in <%= country %> trigger the VPN/hosting detection flag and drop your score by 30 points.</li>
+            <li><strong>Set your browser timezone to <%= country %>.</strong> If your IP is <%= country %> but your browser clock shows a different timezone, sites can fingerprint you instantly. Use browser extensions or antidetect browsers to lock the timezone.</li>
+            <li><strong>Disable or block WebRTC in your browser.</strong> Use Firefox's <code>media.peerconnection.enabled</code> about:config setting or a browser extension to prevent WebRTC from leaking your real IP.</li>
+            <li><strong>Ensure your DNS routes through the proxy.</strong> Configure your DNS settings to use the proxy's DNS servers, not your ISP's. Alternatively, use a VPN that has built-in DNS leak protection.</li>
+            <li><strong>Match your browser language to <%= country %>.</strong> If your browser reports <code>en-US</code> language settings but your IP is in a non-English country, this creates a mismatch that fingerprinting systems detect.</li>
+        </ul>
+
+        <h2>Residential vs Datacenter Proxies in <%= country %></h2>
+        <p>
+            Not all <%= country %> proxies are equal. The two main types behave very differently when tested with tools like <a href="/">Whoer Live</a>:
+        </p>
+        <ul>
+            <li>
+                <strong>Residential Proxies:</strong> These route your traffic through real home internet connections in <%= country %>, 
+                assigned by local ISPs. They are far harder to detect and score significantly better on privacy checks. 
+                Platforms like Google, Facebook, and TikTok rarely block residential IPs.
+            </li>
+            <li>
+                <strong>Datacenter Proxies:</strong> These come from server farms and cloud providers in <%= country %>. 
+                They are fast and cheap, but immediately flagged by Whoer Live's hosting detection. 
+                Most major websites block or challenge datacenter IP ranges.
+            </li>
+        </ul>
+        <p>
+            If you are running multi-account automation or ad verification for <%= country %>, always prefer residential rotating proxies for the best results. 
+            Use our <a href="/bulk">Bulk IP Checker</a> to test up to 100 proxy IPs at once and instantly see which ones pass the hosting detection test.
+        </p>
+
+        <h2>Testing <%= country %> Proxies for Multi-Account Use</h2>
+        <p>
+            For users running multi-account setups on platforms like Facebook Ads, TikTok, or Amazon in <%= country %>, 
+            browser fingerprinting is a much bigger threat than IP detection alone. 
+            Even a perfect residential <%= country %> IP will get flagged if your browser Canvas hash, WebGL renderer, screen resolution, 
+            or audio fingerprint matches a previously banned account.
+        </p>
+        <p>
+            <a href="/">Whoer Live</a> shows you all of these fingerprinting signals in one page — Canvas hash, WebGL hash, Audio hash, CPU core count, 
+            RAM size, screen resolution, plugin count, and touch points. 
+            If you are using an antidetect browser like Dolphin Anty, Multilogin, or AdsPower with your <%= country %> proxy, 
+            run a scan after setup to verify each profile looks unique and natural.
+        </p>
+
+        <div class="faq-section">
+            <h2>Frequently Asked Questions</h2>
+            <div class="faq-list">
+
+                <div class="faq-item">
+                    <button class="faq-q" onclick="toggleFaq(this)" aria-expanded="false">
+                        <span>How do I check if my <%= country %> proxy is working?</span>
+                        <svg class="faq-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                    </button>
+                    <div class="faq-a">
+                        <p>Visit <a href="/">whoer.live</a> while connected to your <%= country %> proxy. If the IP shown is from <%= country %> and your real IP is hidden, the proxy is working. We also check for WebRTC leaks that can expose your real IP even through a proxy. A clean result means the IP, timezone, and browser fingerprint all align with <%= country %>.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-q" onclick="toggleFaq(this)" aria-expanded="false">
+                        <span>Why does my timezone not match my <%= country %> IP?</span>
+                        <svg class="faq-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                    </button>
+                    <div class="faq-a">
+                        <p>A timezone mismatch means your browser's system clock doesn't match the timezone of your <%= country %> IP. This is a major fingerprinting signal — Whoer Live deducts 15% from your privacy score. Fix it by setting your OS timezone or antidetect browser profile to match <%= country %>'s local timezone.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-q" onclick="toggleFaq(this)" aria-expanded="false">
+                        <span>What is a WebRTC leak and does it affect <%= country %> proxies?</span>
+                        <svg class="faq-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                    </button>
+                    <div class="faq-a">
+                        <p>Yes. WebRTC is a browser technology that can completely bypass your <%= country %> proxy tunnel and reveal your real IP. Even if your proxy is working, WebRTC can still leak. Whoer Live detects this in real time using live STUN server requests — no plugin required.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-q" onclick="toggleFaq(this)" aria-expanded="false">
+                        <span>How do I know if my VPN has a DNS leak in <%= country %>?</span>
+                        <svg class="faq-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                    </button>
+                    <div class="faq-a">
+                        <p>Whoer Live automatically runs a multi-probe DNS leak test in the background when you scan. If your DNS queries are leaving through multiple exit IPs or your real ISP's servers instead of a <%= country %> tunnel, we flag it as a DNS leak. A clean result shows only one unique exit IP for all probes.</p>
+                    </div>
+                </div>
+
+            </div>
         </div>
+
+        <div class="cta-panel">
+            <h3>⚡ Run Your Free <%= country %> Proxy Test</h3>
+            <p>Check your real IP, WebRTC leaks, timezone match, and full browser fingerprint — all in one scan. No account, no extension, no tracking.</p>
+            <a href="/" class="btn btn-primary" style="padding:14px 32px; font-size:15px; border-radius:25px;">Start Free Scan →</a>
+        </div>
+
+        <div style="margin-top: 48px;">
+            <h2>Test Proxies for Other Countries</h2>
+            <div class="related-grid">
+                <% const related = ['USA','UK','Germany','France','Brazil','India','Canada','Australia','Japan','Netherlands','Singapore','Spain','Italy','Thailand','Russia']; %>
+                <% related.forEach(c => { if (c !== country) { %>
+                    <a class="related-link" href="/proxy/<%= c.toLowerCase().replace(/ /g, '-') %>"><%= c %></a>
+                <% } }); %>
+            </div>
+        </div>
+
+    </div><!-- /article-body -->
+</div><!-- /dw-wrap -->
+
+<footer>
+    <div class="container">
+        <div class="footer-links">
+            <a href="/">Home</a>
+            <a href="/bulk">Bulk Checker</a>
+            <a href="/blacklist">Blacklist</a>
+            <a href="/sitemap.xml">Sitemap</a>
+        </div>
+        <div>Whoer Live &copy; <%= year %> — Free IP & Privacy Checker</div>
+        <div style="margin-top: 6px; font-size: 12px;">No data sold. No ads. No tracking.</div>
     </div>
-
-    <!-- Content Spinning Script: Generates unique text so pages don't look duplicate to Google -->
-    <div class="seo-content" id="spunContent"></div>
-
-</div>
-
-<!-- BLACK HAT: Hidden Keyword Stuffing -->
-<div class="kw-stuffer">
-    free proxy <%= country %>, buy proxy <%= country %>, <%= country %> vpn free, unblock websites in <%= country %>, elite proxy <%= country %>, anonymous proxy server <%= country %>, socks5 <%= country %> free list, http proxy <%= country %>, fastest vpn <%= country %>, <%= country %> ip address proxy, scrape <%= country %> ips, residential proxy <%= country %>, datacenter proxy <%= country %>, free vpn <%= country %> download, chrome extension proxy <%= country %>
-</div>
+</footer>
 
 <script>
-// DWELL TIME MANIPULATION (Grey Hat)
-// We artificially delay the page content for ~12 seconds.
-// This skyrockets 'Average Session Duration' preventing bounce rate penalties.
-const logs = [
-    `[SYS] Contacting global proxy nodes...`,
-    `[SYS] Found 142 raw IP addresses in <%= country %>...`,
-    `[NET] Filtering dead nodes (timeout 2000ms)...`,
-    `[NET] Performing deep anonymity checks (Elite vs Transparent)...`,
-    `[SEC] Scanning against Spamhaus and SORBS DNSBL...`,
-    `[SYS] 8 elite nodes passed validation. Formatting results...`,
-    `[SYS] Ready.`
-];
-
-let logIdx = 0;
-const logEl = document.getElementById('loaderLogs');
-const bar = document.getElementById('loaderBar');
-const DWELL_MS = 12000;
-const start = Date.now();
-
-const itv = setInterval(() => {
-    const elapsed = Date.now() - start;
-    let pct = Math.min((elapsed / DWELL_MS) * 100, 100);
-    bar.style.width = pct + '%';
-
-    // Print fake logs proportionally
-    const expectedLog = Math.floor((pct/100) * logs.length);
-    if (expectedLog > logIdx && expectedLog < logs.length) {
-        logEl.innerHTML += logs[expectedLog] + '<br>';
-        logEl.scrollTop = logEl.scrollHeight;
-        logIdx = expectedLog;
+function toggleFaq(btn) {
+    const item = btn.closest('.faq-item');
+    const ans  = item.querySelector('.faq-a');
+    const open = item.classList.contains('open');
+    document.querySelectorAll('.faq-item.open').forEach(el => {
+        el.classList.remove('open');
+        el.querySelector('.faq-q').setAttribute('aria-expanded', 'false');
+        el.querySelector('.faq-a').style.maxHeight = null;
+    });
+    if (!open) {
+        item.classList.add('open');
+        btn.setAttribute('aria-expanded', 'true');
+        ans.style.maxHeight = ans.scrollHeight + 'px';
     }
-
-    if (pct >= 100) {
-        clearInterval(itv);
-        document.getElementById('loaderBox').style.display = 'none';
-        generateFakeProxies();
-        document.getElementById('proxyWrap').style.display = 'block';
-    }
-}, 50);
-
-function generateFakeProxies() {
-    const types = ['HTTP', 'HTTPS', 'SOCKS4', 'SOCKS5'];
-    const anons = ['Elite', 'Anonymous'];
-    const tbody = document.getElementById('proxyBody');
-    let html = '';
-    
-    // Generate 8 programmatic rows for this country
-    for(let i=0; i<8; i++) {
-        const ip = `1${Math.floor(Math.random()*255)}.${Math.floor(Math.random()*255)}.${Math.floor(Math.random()*255)}.${Math.floor(Math.random()*255)}`;
-        const port = [80, 8080, 3128, 1080, 8888][Math.floor(Math.random()*5)];
-        const type = types[Math.floor(Math.random()*types.length)];
-        const anon = anons[Math.floor(Math.random()*anons.length)];
-        const ms = Math.floor(Math.random()*150) + 20;
-
-        html += `
-        <tr>
-            <td class="td-ip">${ip} : ${port}</td>
-            <td><span class="td-type">${type}</span></td>
-            <td class="td-anon">${anon} Proxy</td>
-            <td style="color:var(--muted);"><%= country %></td>
-            <td style="color:var(--muted);font-family:var(--mono);">${ms} ms</td>
-        </tr>`;
-    }
-    tbody.innerHTML = html;
 }
-
-// PROGRAMMATIC TEXT SPINNING (Grey Hat)
-function spinText(text) {
-    const matches = text.match(/\{[^{}]+\}/g);
-    if (!matches) return text;
-    let spun = text;
-    for (const match of matches) {
-        const options = match.slice(1, -1).split('|');
-        const chosen = options[Math.floor(Math.random() * options.length)];
-        spun = spun.replace(match, chosen);
-    }
-    return spun;
-}
-
-const template = `
-<h2>{Why uses|The benefits of using|Advantages of locating} a proxy in <%= country %></h2>
-<p>If you are {trying|attempting} to {bypass geographical restrictions|unblock localized content|access region-locked websites}, {utilizing|running|connecting to} a {reliable|fast|premium} <%= country %> proxy is the {best|most effective|ideal} solution. Our {system|scraper|database} {checks|validates|tests} thousands of {free|public|open} proxies daily to ensure that the ones listed above provide {maximum anonymity|elite privacy|high-tier security}.</p>
-<br>
-<h2>{Understanding|What are} Elite Anonymous Proxies?</h2>
-<p>Unlike {transparent|basic} proxies which forward your real IP headers via <span style="font-family:var(--mono);">X-Forwarded-For</span>, the {elite|Level 1 Anonymous} proxies we {curate|compile|gather} for <%= country %> completely strip these headers. This means the destination server {will never know|cannot determine|is unable to track} your true residential IP. {Always|Make sure to|We highly recommend you to} pair these proxies checking them in our <a href="/bulk" style="color:var(--green);">Bulk Proxy Checker</a> to verify their uptime before using them in {scraping tools|automation bots|web scraping scripts}.</p>
-`;
-
-document.getElementById('spunContent').innerHTML = spinText(template);
 </script>
 </body>
 </html>
