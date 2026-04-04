@@ -1,4 +1,34 @@
-<!DOCTYPE html><html lang="en"><head>    <meta charset="UTF-8">    <meta name="viewport" content="width=device-width, initial-scale=1.0">    <title>Ping & Speed Test — Latency Checker | Whoer Live</title>    <meta name="description" content="Test your connection latency (ping) to global servers directly from your browser.">    <link rel="canonical" href="https://www.whoer.live/ping">    <link rel="icon" type="image/png" href="/img/logo.png">        <style>        .tool-wrap { max-width: 760px; margin: 0 auto; padding: 40px 20px 120px; }        .tool-hero { text-align: center; padding: 40px 0 30px; }        .tool-hero h1 { font-size: 30px; font-weight: 700; margin-bottom: 12px; }        .tool-hero p { font-size: 15px; color: var(--muted); max-width: 500px; margin: 0 auto; line-height: 1.6; }        .ping-btn { display: block; width: 100%; max-width: 200px; margin: 0 auto 30px; padding: 14px 24px; font-weight: 700; font-size: 16px; background: var(--green); color: #000; border: none; border-radius: var(--radius); cursor: pointer; transition: all 0.2s; }        .ping-btn:hover { background: #2dfa8c; box-shadow: 0 4px 15px rgba(34,215,122,0.3); transform: translateY(-1px); }        .ping-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }        .ping-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }        .ping-item { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px 20px; position: relative; overflow: hidden; }        .ping-item::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--border2); transition: background 0.3s; }        .ping-name { font-weight: 700; font-size: 15px; margin-bottom: 2px; }        .ping-host { font-family: var(--mono); font-size: 11px; color: var(--muted); }        .ping-result { font-family: var(--mono); font-size: 24px; font-weight: 700; color: var(--text); margin-top: 12px; }        .ping-result small { font-size: 12px; color: var(--muted); }        .status-fast::before { background: var(--green); }        .status-med::before { background: var(--amber); }        .status-slow::before { background: var(--red); }        .loading-ring { display: inline-block; width: 14px; height: 14px; border: 2px solid rgba(0,0,0,0.2); border-left-color: #000; border-radius: 50%; animation: spin 1s linear infinite; vertical-align: middle; margin-right: 6px; }        @keyframes spin { 100% { transform: rotate(360deg); } }    </style>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ping & Speed Test — Latency Checker | Whoer Live</title>
+    <meta name="description" content="Test your connection latency (ping) to global servers directly from your browser.">
+    <link rel="canonical" href="https://www.whoer.live/ping">
+    <link rel="icon" type="image/png" href="/img/logo.png">
+    
+    <style>
+        .tool-wrap { max-width: 760px; margin: 0 auto; padding: 40px 20px 120px; }
+        .tool-hero { text-align: center; padding: 40px 0 30px; }
+        .tool-hero h1 { font-size: 30px; font-weight: 700; margin-bottom: 12px; }
+        .tool-hero p { font-size: 15px; color: var(--muted); max-width: 500px; margin: 0 auto; line-height: 1.6; }
+        .ping-btn { display: block; width: 100%; max-width: 200px; margin: 0 auto 30px; padding: 14px 24px; font-weight: 700; font-size: 16px; background: var(--green); color: #000; border: none; border-radius: var(--radius); cursor: pointer; transition: all 0.2s; }
+        .ping-btn:hover { background: #2dfa8c; box-shadow: 0 4px 15px rgba(34,215,122,0.3); transform: translateY(-1px); }
+        .ping-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
+        .ping-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+        .ping-item { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px 20px; position: relative; overflow: hidden; }
+        .ping-item::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--border2); transition: background 0.3s; }
+        .ping-name { font-weight: 700; font-size: 15px; margin-bottom: 2px; }
+        .ping-host { font-family: var(--mono); font-size: 11px; color: var(--muted); }
+        .ping-result { font-family: var(--mono); font-size: 24px; font-weight: 700; color: var(--text); margin-top: 12px; }
+        .ping-result small { font-size: 12px; color: var(--muted); }
+        .status-fast::before { background: var(--green); }
+        .status-med::before { background: var(--amber); }
+        .status-slow::before { background: var(--red); }
+        .loading-ring { display: inline-block; width: 14px; height: 14px; border: 2px solid rgba(0,0,0,0.2); border-left-color: #000; border-radius: 50%; animation: spin 1s linear infinite; vertical-align: middle; margin-right: 6px; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+    </style>
     <!-- Core Web Vitals: Preload & Async Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -6,4 +36,95 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" media="print" onload="this.media='all'">
     <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"></noscript>
     <link rel="stylesheet" href="/css/style.css">
-</head><body><header>    <div class="container header-inner">        <a href="/" style="display:flex;align-items:center;gap:10px;text-decoration:none;">            <img src="/img/logo.png" alt="Whoer Live Logo" style="width:32px;height:32px;border-radius:8px;">            <div class="logo">WHOER<span>.LIVE</span> <sub>v4</sub></div>        </a>        <div class="header-actions">            <!-- Simplified nav -->            <a href="/bulk" class="btn">Bulk</a>            <a href="/blacklist" class="btn">Blacklist</a>            <a href="/port-scanner" class="btn">Ports</a>            <a href="/ping" class="btn btn-primary" style="background:var(--green);color:#000;">Ping</a>        </div>    </div></header><div class="tool-wrap">    <div class="tool-hero">        <h1>Global Ping Test</h1>        <p>Measure your connection latency to major CDNs and Global DNS providers directly from your browser to test VPN performance.</p>    </div>    <button id="pingBtn" class="ping-btn" onclick="runPingTest()">Start Ping Test</button>    <div class="ping-grid" id="pingGrid">        <!-- Rendered by JS -->    </div></div><script>const SERVERS = [    { id: 'cf', name: 'Cloudflare', host: '1.1.1.1', url: 'https://1.1.1.1/cdn-cgi/trace' },    { id: 'gg', name: 'Google', host: '8.8.8.8', url: 'https://dns.google/resolve?name=google.com' },    { id: 'aw', name: 'AWS CloudFront', host: 'aws.amazon.com', url: 'https://aws.amazon.com/ping' },    { id: 'qd', name: 'Quad9', host: '9.9.9.9', url: 'https://dns.quad9.net/dns-query' }];// Initialize gridconst grid = document.getElementById('pingGrid');grid.innerHTML = SERVERS.map(s => `    <div class="ping-item" id="ping-${s.id}">        <div class="ping-name">${s.name}</div>        <div class="ping-host">${s.host}</div>        <div class="ping-result" id="res-${s.id}">— <small>ms</small></div>    </div>`).join('');async function measurePing(url) {    try {        const start = performance.now();        await fetch(url, { mode: 'no-cors', cache: 'no-store' });        return Math.round(performance.now() - start);    } catch (e) {        return null;    }}async function runPingTest() {    const btn = document.getElementById('pingBtn');    btn.disabled = true;    btn.innerHTML = '<span class="loading-ring"></span> Testing...';    // Reset UI    SERVERS.forEach(s => {        document.getElementById(`ping-${s.id}`).className = 'ping-item';        document.getElementById(`res-${s.id}`).innerHTML = 'Wait… <small>ms</small>';    });    for (const s of SERVERS) {        // Run 3 times, take average        let times = [];        for (let i = 0; i < 3; i++) {            const t = await measurePing(s.url);            if (t) times.push(t);            await new Promise(r => setTimeout(r, 100));        }        const el = document.getElementById(`res-${s.id}`);        const card = document.getElementById(`ping-${s.id}`);        if (times.length > 0) {            const avg = Math.round(times.reduce((a,b)=>a+b)/times.length);            el.innerHTML = `${avg} <small>ms</small>`;            if (avg < 50) card.classList.add('status-fast');            else if (avg < 150) card.classList.add('status-med');            else card.classList.add('status-slow');        } else {            el.innerHTML = 'Error';            card.classList.add('status-slow');        }    }    btn.disabled = false;    btn.textContent = 'Test Again';}</script></body></html>
+</head>
+<body>
+<header>
+    <div class="container header-inner">
+        <a href="/" style="display:flex;align-items:center;gap:10px;text-decoration:none;">
+            <img src="/img/logo.png" alt="Whoer Live Logo" style="width:32px;height:32px;border-radius:8px;">
+            <div class="logo">WHOER<span>.LIVE</span> <sub>v4</sub></div>
+        </a>
+        <div class="header-actions">
+            <!-- Simplified nav -->
+            <a href="/bulk" class="btn">Bulk</a>
+            <a href="/blacklist" class="btn">Blacklist</a>
+            <a href="/port-scanner" class="btn">Ports</a>
+            <a href="/ping" class="btn btn-primary" style="background:var(--green);color:#000;">Ping</a>
+        </div>
+    </div>
+</header>
+<div class="tool-wrap">
+    <div class="tool-hero">
+        <h1>Global Ping Test</h1>
+        <p>Measure your connection latency to major CDNs and Global DNS providers directly from your browser to test VPN performance.</p>
+    </div>
+    <button id="pingBtn" class="ping-btn" onclick="runPingTest()">Start Ping Test</button>
+    <div class="ping-grid" id="pingGrid">
+        <!-- Rendered by JS -->
+    </div>
+</div>
+<script>
+const SERVERS = [
+    { id: 'cf', name: 'Cloudflare', host: '1.1.1.1', url: 'https://1.1.1.1/cdn-cgi/trace' },
+    { id: 'gg', name: 'Google', host: '8.8.8.8', url: 'https://dns.google/resolve?name=google.com' },
+    { id: 'aw', name: 'AWS CloudFront', host: 'aws.amazon.com', url: 'https://aws.amazon.com/ping' },
+    { id: 'qd', name: 'Quad9', host: '9.9.9.9', url: 'https://dns.quad9.net/dns-query' }
+];
+// Initialize grid
+const grid = document.getElementById('pingGrid');
+grid.innerHTML = SERVERS.map(s => `
+    <div class="ping-item" id="ping-${s.id}">
+        <div class="ping-name">${s.name}</div>
+        <div class="ping-host">${s.host}</div>
+        <div class="ping-result" id="res-${s.id}">— <small>ms</small></div>
+    </div>
+`).join('');
+async function measurePing(url) {
+    try {
+        const start = performance.now();
+        await fetch(url, { mode: 'no-cors', cache: 'no-store' });
+        return Math.round(performance.now() - start);
+    } catch (e) {
+        return null;
+    }
+}
+async function runPingTest() {
+    const btn = document.getElementById('pingBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="loading-ring"></span> Testing...';
+    // Reset UI
+    SERVERS.forEach(s => {
+        document.getElementById(`ping-${s.id}`).className = 'ping-item';
+        document.getElementById(`res-${s.id}`).innerHTML = 'Wait… <small>ms</small>';
+    });
+    for (const s of SERVERS) {
+        // Run 3 times, take average
+        let times = [];
+        for (let i = 0; i < 3; i++) {
+            const t = await measurePing(s.url);
+            if (t) times.push(t);
+            await new Promise(r => setTimeout(r, 100));
+        }
+        const el = document.getElementById(`res-${s.id}`);
+        const card = document.getElementById(`ping-${s.id}`);
+        if (times.length > 0) {
+            const avg = Math.round(times.reduce((a,b)=>a+b)/times.length);
+            el.innerHTML = `${avg} <small>ms</small>`;
+            if (avg < 50) card.classList.add('status-fast');
+            else if (avg < 150) card.classList.add('status-med');
+            else card.classList.add('status-slow');
+        } else {
+            el.innerHTML = 'Error';
+            card.classList.add('status-slow');
+        }
+    }
+    btn.disabled = false;
+    btn.textContent = 'Test Again';
+}
+</script>
+<script>
+  window.si = window.si || function () { (window.siq = window.siq || []).push(arguments); };
+</script>
+<script defer src="/_vercel/speed-insights/script.js"></script>
+</body>
+</html>

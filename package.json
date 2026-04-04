@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "@vercel/kv": "^1.0.0",
+    "@vercel/speed-insights": "^2.0.0",
     "axios": "^1.13.6",
     "body-parser": "^1.20.2",
     "compression": "^1.7.4",
