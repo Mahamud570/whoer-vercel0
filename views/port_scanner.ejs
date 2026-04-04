@@ -1,4 +1,37 @@
-<!DOCTYPE html><html lang="en"><head>    <meta charset="UTF-8">    <meta name="viewport" content="width=device-width, initial-scale=1.0">    <title>Open Port Scanner — Test TCP Ports | Whoer Live</title>    <meta name="description" content="Free online port scanner. Check if ports like 80, 443, 21, 22, and 3389 are open or filtered on your IP address.">    <link rel="canonical" href="https://www.whoer.live/port-scanner">    <link rel="icon" type="image/png" href="/img/logo.png">        <style>        .tool-wrap { max-width: 760px; margin: 0 auto; padding: 40px 20px 120px; }        .tool-hero { text-align: center; padding: 40px 0 30px; }        .tool-hero h1 { font-size: 30px; font-weight: 700; margin-bottom: 12px; }        .tool-hero p { font-size: 15px; color: var(--muted); max-width: 500px; margin: 0 auto; line-height: 1.6; }        .search-box { display: flex; gap: 10px; background: var(--panel); border: 1px solid var(--border); padding: 12px; border-radius: var(--radius-lg); margin-bottom: 30px; }        .search-input { flex: 1; background: rgba(0,0,0,0.2); border: 1px solid var(--border2); border-radius: var(--radius); padding: 12px 16px; font-size: 16px; color: var(--text); font-family: var(--mono); outline: none; transition: border 0.2s; }        .search-input:focus { border-color: var(--green); }        .search-btn { padding: 0 24px; font-weight: 700; background: var(--blue); color: #fff; border: none; border-radius: var(--radius); cursor: pointer; transition: all 0.2s; }        .search-btn:hover { background: #3b8cf5; }        .search-btn:disabled { opacity: 0.5; cursor: not-allowed; }        .port-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; }        .port-item { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; display: flex; align-items: center; justify-content: space-between; transition: background 0.2s; }        .port-item:hover { background: var(--panel-hover); }        .port-num { font-size: 18px; font-weight: 700; font-family: var(--mono); color: var(--text); }        .port-desc { font-size: 11px; color: var(--muted); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.5px; }        .status-badge { padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }        .status-open { background: var(--red-dim); color: var(--red); border: 1px solid rgba(255,79,106,0.3); }        .status-closed { background: var(--green-dim); color: var(--green); border: 1px solid rgba(34,215,122,0.3); }        .status-filtered { background: var(--amber-dim); color: var(--amber); border: 1px solid rgba(245,166,35,0.3); }        .status-pending { background: rgba(255,255,255,0.05); color: var(--muted); border: 1px solid var(--border2); }        .loading-ring { display: inline-block; width: 14px; height: 14px; border: 2px solid rgba(255,255,255,0.2); border-left-color: #fff; border-radius: 50%; animation: spin 1s linear infinite; vertical-align: middle; margin-right: 6px; }        @keyframes spin { 100% { transform: rotate(360deg); } }    </style>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Open Port Scanner — Test TCP Ports | Whoer Live</title>
+    <meta name="description" content="Free online port scanner. Check if ports like 80, 443, 21, 22, and 3389 are open or filtered on your IP address.">
+    <link rel="canonical" href="https://www.whoer.live/port-scanner">
+    <link rel="icon" type="image/png" href="/img/logo.png">
+    
+    <style>
+        .tool-wrap { max-width: 760px; margin: 0 auto; padding: 40px 20px 120px; }
+        .tool-hero { text-align: center; padding: 40px 0 30px; }
+        .tool-hero h1 { font-size: 30px; font-weight: 700; margin-bottom: 12px; }
+        .tool-hero p { font-size: 15px; color: var(--muted); max-width: 500px; margin: 0 auto; line-height: 1.6; }
+        .search-box { display: flex; gap: 10px; background: var(--panel); border: 1px solid var(--border); padding: 12px; border-radius: var(--radius-lg); margin-bottom: 30px; }
+        .search-input { flex: 1; background: rgba(0,0,0,0.2); border: 1px solid var(--border2); border-radius: var(--radius); padding: 12px 16px; font-size: 16px; color: var(--text); font-family: var(--mono); outline: none; transition: border 0.2s; }
+        .search-input:focus { border-color: var(--green); }
+        .search-btn { padding: 0 24px; font-weight: 700; background: var(--blue); color: #fff; border: none; border-radius: var(--radius); cursor: pointer; transition: all 0.2s; }
+        .search-btn:hover { background: #3b8cf5; }
+        .search-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .port-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; }
+        .port-item { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; display: flex; align-items: center; justify-content: space-between; transition: background 0.2s; }
+        .port-item:hover { background: var(--panel-hover); }
+        .port-num { font-size: 18px; font-weight: 700; font-family: var(--mono); color: var(--text); }
+        .port-desc { font-size: 11px; color: var(--muted); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .status-badge { padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+        .status-open { background: var(--red-dim); color: var(--red); border: 1px solid rgba(255,79,106,0.3); }
+        .status-closed { background: var(--green-dim); color: var(--green); border: 1px solid rgba(34,215,122,0.3); }
+        .status-filtered { background: var(--amber-dim); color: var(--amber); border: 1px solid rgba(245,166,35,0.3); }
+        .status-pending { background: rgba(255,255,255,0.05); color: var(--muted); border: 1px solid var(--border2); }
+        .loading-ring { display: inline-block; width: 14px; height: 14px; border: 2px solid rgba(255,255,255,0.2); border-left-color: #fff; border-radius: 50%; animation: spin 1s linear infinite; vertical-align: middle; margin-right: 6px; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+    </style>
     <!-- Core Web Vitals: Preload & Async Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -6,4 +39,116 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" media="print" onload="this.media='all'">
     <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"></noscript>
     <link rel="stylesheet" href="/css/style.css">
-</head><body><header>    <div class="container header-inner">        <a href="/" style="display:flex;align-items:center;gap:10px;text-decoration:none;">            <img src="/img/logo.png" alt="Whoer Live Logo" style="width:32px;height:32px;border-radius:8px;">            <div class="logo">WHOER<span>.LIVE</span> <sub>v4</sub></div>        </a>        <div class="header-actions">            <!-- Simplified nav -->            <a href="/bulk" class="btn">Bulk</a>            <a href="/blacklist" class="btn">Blacklist</a>            <a href="/port-scanner" class="btn btn-primary" style="background:var(--blue);color:#fff;">Ports</a>            <a href="/ping" class="btn">Ping</a>        </div>    </div></header><div class="tool-wrap">    <div class="tool-hero">        <h1>Open Port Scanner</h1>        <p>Check if common ports on your router or server are exposed to the internet, creating security risks.</p>    </div>    <div class="search-box">        <input type="text" id="ipInput" class="search-input" placeholder="e.g. 1.2.3.4" onkeypress="if(event.key === 'Enter') scanPorts()">        <button id="checkBtn" class="search-btn" onclick="scanPorts()">Scan Ports</button>    </div>    <div class="port-grid" id="resultsList">        <!-- Initial empty state -->        <div style="grid-column: 1 / -1; text-align:center;color:var(--muted);font-size:13px;padding:20px;">            Enter an IP address above to test common ports.        </div>    </div></div><script>const COMMON_PORTS = [    { p: 21,   n: 'FTP' },    { p: 22,   n: 'SSH' },    { p: 23,   n: 'Telnet' },    { p: 25,   n: 'SMTP' },    { p: 53,   n: 'DNS' },    { p: 80,   n: 'HTTP' },    { p: 110,  n: 'POP3' },    { p: 143,  n: 'IMAP' },    { p: 443,  n: 'HTTPS' },    { p: 445,  n: 'SMB' },    { p: 1433, n: 'MSSQL' },    { p: 3306, n: 'MySQL' },    { p: 3389, n: 'RDP' },    { p: 5900, n: 'VNC' },    { p: 8080, n: 'HTTP Alt' }];// Auto-fill user's IPfetch('https://api.ipify.org?format=json').then(r=>r.json()).then(data=>{    if(data.ip && !document.getElementById('ipInput').value) {        document.getElementById('ipInput').value = data.ip;    }}).catch(()=>{});async function scanPorts() {    const ip = document.getElementById('ipInput').value.trim();    if (!ip) return alert('Please enter an IP address.');    const btn = document.getElementById('checkBtn');    const list = document.getElementById('resultsList');    btn.disabled = true;    btn.innerHTML = '<span class="loading-ring"></span> Scanning...';    // Set pending UI    list.innerHTML = COMMON_PORTS.map(p => `        <div class="port-item" id="port-${p.p}">            <div>                <div class="port-num">${p.p}</div>                <div class="port-desc">${p.n}</div>            </div>            <div class="status-badge status-pending">Wait…</div>        </div>    `).join('');    try {        const res = await fetch('/api/port-scan', {            method: 'POST',            headers: { 'Content-Type': 'application/json' },            body: JSON.stringify({ ip, ports: COMMON_PORTS.map(p => p.p) })        });        const data = await res.json();        if (data.results) {            data.results.forEach(r => {                const row = document.getElementById('port-' + r.port);                if (row) {                    const badge = row.querySelector('.status-badge');                    if (r.status === 'open') {                        badge.className = 'status-badge status-open';                        badge.textContent = 'OPEN';                    } else if (r.status === 'closed') {                        badge.className = 'status-badge status-closed';                        badge.textContent = 'CLOSED';                    } else {                        badge.className = 'status-badge status-filtered';                        badge.textContent = 'FILTERED';                    }                }            });        }    } catch (e) {        alert('Scan failed. Ensure IP is a valid IPv4 address.');    } finally {        btn.disabled = false;        btn.textContent = 'Scan Ports';    }}</script></body></html>
+</head>
+<body>
+<header>
+    <div class="container header-inner">
+        <a href="/" style="display:flex;align-items:center;gap:10px;text-decoration:none;">
+            <img src="/img/logo.png" alt="Whoer Live Logo" style="width:32px;height:32px;border-radius:8px;">
+            <div class="logo">WHOER<span>.LIVE</span> <sub>v4</sub></div>
+        </a>
+        <div class="header-actions">
+            <!-- Simplified nav -->
+            <a href="/bulk" class="btn">Bulk</a>
+            <a href="/blacklist" class="btn">Blacklist</a>
+            <a href="/port-scanner" class="btn btn-primary" style="background:var(--blue);color:#fff;">Ports</a>
+            <a href="/ping" class="btn">Ping</a>
+        </div>
+    </div>
+</header>
+<div class="tool-wrap">
+    <div class="tool-hero">
+        <h1>Open Port Scanner</h1>
+        <p>Check if common ports on your router or server are exposed to the internet, creating security risks.</p>
+    </div>
+    <div class="search-box">
+        <input type="text" id="ipInput" class="search-input" placeholder="e.g. 1.2.3.4" onkeypress="if(event.key === 'Enter') scanPorts()">
+        <button id="checkBtn" class="search-btn" onclick="scanPorts()">Scan Ports</button>
+    </div>
+    <div class="port-grid" id="resultsList">
+        <!-- Initial empty state -->
+        <div style="grid-column: 1 / -1; text-align:center;color:var(--muted);font-size:13px;padding:20px;">
+            Enter an IP address above to test common ports.
+        </div>
+    </div>
+</div>
+<script>
+const COMMON_PORTS = [
+    { p: 21,   n: 'FTP' },
+    { p: 22,   n: 'SSH' },
+    { p: 23,   n: 'Telnet' },
+    { p: 25,   n: 'SMTP' },
+    { p: 53,   n: 'DNS' },
+    { p: 80,   n: 'HTTP' },
+    { p: 110,  n: 'POP3' },
+    { p: 143,  n: 'IMAP' },
+    { p: 443,  n: 'HTTPS' },
+    { p: 445,  n: 'SMB' },
+    { p: 1433, n: 'MSSQL' },
+    { p: 3306, n: 'MySQL' },
+    { p: 3389, n: 'RDP' },
+    { p: 5900, n: 'VNC' },
+    { p: 8080, n: 'HTTP Alt' }
+];
+// Auto-fill user's IP
+fetch('https://api.ipify.org?format=json').then(r=>r.json()).then(data=>{
+    if(data.ip && !document.getElementById('ipInput').value) {
+        document.getElementById('ipInput').value = data.ip;
+    }
+}).catch(()=>{});
+async function scanPorts() {
+    const ip = document.getElementById('ipInput').value.trim();
+    if (!ip) return alert('Please enter an IP address.');
+    const btn = document.getElementById('checkBtn');
+    const list = document.getElementById('resultsList');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="loading-ring"></span> Scanning...';
+    // Set pending UI
+    list.innerHTML = COMMON_PORTS.map(p => `
+        <div class="port-item" id="port-${p.p}">
+            <div>
+                <div class="port-num">${p.p}</div>
+                <div class="port-desc">${p.n}</div>
+            </div>
+            <div class="status-badge status-pending">Wait…</div>
+        </div>
+    `).join('');
+    try {
+        const res = await fetch('/api/port-scan', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ ip, ports: COMMON_PORTS.map(p => p.p) })
+        });
+        const data = await res.json();
+        if (data.results) {
+            data.results.forEach(r => {
+                const row = document.getElementById('port-' + r.port);
+                if (row) {
+                    const badge = row.querySelector('.status-badge');
+                    if (r.status === 'open') {
+                        badge.className = 'status-badge status-open';
+                        badge.textContent = 'OPEN';
+                    } else if (r.status === 'closed') {
+                        badge.className = 'status-badge status-closed';
+                        badge.textContent = 'CLOSED';
+                    } else {
+                        badge.className = 'status-badge status-filtered';
+                        badge.textContent = 'FILTERED';
+                    }
+                }
+            });
+        }
+    } catch (e) {
+        alert('Scan failed. Ensure IP is a valid IPv4 address.');
+    } finally {
+        btn.disabled = false;
+        btn.textContent = 'Scan Ports';
+    }
+}
+</script>
+<script>
+  window.si = window.si || function () { (window.siq = window.siq || []).push(arguments); };
+</script>
+<script defer src="/_vercel/speed-insights/script.js"></script>
+</body>
+</html>

@@ -1,4 +1,36 @@
-<!DOCTYPE html><html lang="en"><head>    <meta charset="UTF-8">    <meta name="viewport" content="width=device-width, initial-scale=1.0">    <title>IP Blacklist Checker — Spamhaus & DNSBL Check | Whoer Live</title>    <meta name="description" content="Check if your IP address is blacklisted on spam databases (Spamhaus, Barracuda, SORBS). Free DNSBL blacklist check tool.">    <link rel="canonical" href="https://www.whoer.live/blacklist">    <link rel="icon" type="image/png" href="/img/logo.png">        <style>        .tool-wrap { max-width: 760px; margin: 0 auto; padding: 40px 20px 120px; }        .tool-hero { text-align: center; padding: 40px 0 30px; }        .tool-hero h1 { font-size: 30px; font-weight: 700; margin-bottom: 12px; }        .tool-hero p { font-size: 15px; color: var(--muted); max-width: 500px; margin: 0 auto; line-height: 1.6; }        .search-box { display: flex; gap: 10px; background: var(--panel); border: 1px solid var(--border); padding: 12px; border-radius: var(--radius-lg); margin-bottom: 30px; }        .search-input { flex: 1; background: rgba(0,0,0,0.2); border: 1px solid var(--border2); border-radius: var(--radius); padding: 12px 16px; font-size: 16px; color: var(--text); font-family: var(--mono); outline: none; transition: border 0.2s; }        .search-input:focus { border-color: var(--green); }        .search-btn { padding: 0 24px; font-weight: 700; background: var(--amber); color: #000; border: none; border-radius: var(--radius); cursor: pointer; transition: all 0.2s; }        .search-btn:hover { background: #ffbc42; }        .search-btn:disabled { opacity: 0.5; cursor: not-allowed; }        .bl-list { display: grid; gap: 8px; }        .bl-item { display: flex; align-items: center; justify-content: space-between; background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 20px; transition: background 0.2s; }        .bl-item:hover { background: var(--panel-hover); }        .bl-name { font-weight: 700; font-size: 14px; }        .bl-host { font-family: var(--mono); font-size: 11px; color: var(--muted); margin-top: 4px; }        .status-badge { padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }        .status-clean { background: var(--green-dim); color: var(--green); border: 1px solid rgba(34,215,122,0.3); }        .status-listed { background: var(--red-dim); color: var(--red); border: 1px solid rgba(255,79,106,0.3); }        .status-pending { background: rgba(255,255,255,0.05); color: var(--muted); border: 1px solid var(--border2); }        .loading-ring { display: inline-block; width: 14px; height: 14px; border: 2px solid rgba(255,255,255,0.2); border-left-color: #fff; border-radius: 50%; animation: spin 1s linear infinite; vertical-align: middle; margin-right: 6px; }        @keyframes spin { 100% { transform: rotate(360deg); } }    </style>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IP Blacklist Checker — Spamhaus & DNSBL Check | Whoer Live</title>
+    <meta name="description" content="Check if your IP address is blacklisted on spam databases (Spamhaus, Barracuda, SORBS). Free DNSBL blacklist check tool.">
+    <link rel="canonical" href="https://www.whoer.live/blacklist">
+    <link rel="icon" type="image/png" href="/img/logo.png">
+    
+    <style>
+        .tool-wrap { max-width: 760px; margin: 0 auto; padding: 40px 20px 120px; }
+        .tool-hero { text-align: center; padding: 40px 0 30px; }
+        .tool-hero h1 { font-size: 30px; font-weight: 700; margin-bottom: 12px; }
+        .tool-hero p { font-size: 15px; color: var(--muted); max-width: 500px; margin: 0 auto; line-height: 1.6; }
+        .search-box { display: flex; gap: 10px; background: var(--panel); border: 1px solid var(--border); padding: 12px; border-radius: var(--radius-lg); margin-bottom: 30px; }
+        .search-input { flex: 1; background: rgba(0,0,0,0.2); border: 1px solid var(--border2); border-radius: var(--radius); padding: 12px 16px; font-size: 16px; color: var(--text); font-family: var(--mono); outline: none; transition: border 0.2s; }
+        .search-input:focus { border-color: var(--green); }
+        .search-btn { padding: 0 24px; font-weight: 700; background: var(--amber); color: #000; border: none; border-radius: var(--radius); cursor: pointer; transition: all 0.2s; }
+        .search-btn:hover { background: #ffbc42; }
+        .search-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .bl-list { display: grid; gap: 8px; }
+        .bl-item { display: flex; align-items: center; justify-content: space-between; background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 20px; transition: background 0.2s; }
+        .bl-item:hover { background: var(--panel-hover); }
+        .bl-name { font-weight: 700; font-size: 14px; }
+        .bl-host { font-family: var(--mono); font-size: 11px; color: var(--muted); margin-top: 4px; }
+        .status-badge { padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+        .status-clean { background: var(--green-dim); color: var(--green); border: 1px solid rgba(34,215,122,0.3); }
+        .status-listed { background: var(--red-dim); color: var(--red); border: 1px solid rgba(255,79,106,0.3); }
+        .status-pending { background: rgba(255,255,255,0.05); color: var(--muted); border: 1px solid var(--border2); }
+        .loading-ring { display: inline-block; width: 14px; height: 14px; border: 2px solid rgba(255,255,255,0.2); border-left-color: #fff; border-radius: 50%; animation: spin 1s linear infinite; vertical-align: middle; margin-right: 6px; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+    </style>
     <!-- Core Web Vitals: Preload & Async Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -6,4 +38,102 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" media="print" onload="this.media='all'">
     <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"></noscript>
     <link rel="stylesheet" href="/css/style.css">
-</head><body><header>    <div class="container header-inner">        <a href="/" style="display:flex;align-items:center;gap:10px;text-decoration:none;">            <img src="/img/logo.png" alt="Whoer Live Logo" style="width:32px;height:32px;border-radius:8px;">            <div class="logo">WHOER<span>.LIVE</span> <sub>v4</sub></div>        </a>        <div class="header-actions">            <!-- Simplified nav -->            <a href="/bulk" class="btn">Bulk</a>            <a href="/blacklist" class="btn btn-primary" style="background:#f5a623;color:#000;">Blacklist</a>            <a href="/port-scanner" class="btn">Ports</a>            <a href="/ping" class="btn">Ping</a>        </div>    </div></header><div class="tool-wrap">    <div class="tool-hero">        <h1>IP Blacklist Checker</h1>        <p>Check if your IP address is flagged as spam or abusive by the world's top DNS Blackholes (DNSBL).</p>    </div>    <div class="search-box">        <input type="text" id="ipInput" class="search-input" placeholder="e.g. 1.1.1.1" onkeypress="if(event.key === 'Enter') checkIP()">        <button id="checkBtn" class="search-btn" onclick="checkIP()">Check IP</button>    </div>    <div class="bl-list" id="resultsList">        <!-- Initial empty state -->        <div style="text-align:center;color:var(--muted);font-size:13px;padding:20px;">            Enter an IP address above to begin the scan.        </div>    </div></div><script>// Auto-fill user's IP if we can fetch it via apifetch('https://api.ipify.org?format=json').then(r=>r.json()).then(data=>{    if(data.ip && !document.getElementById('ipInput').value) {        document.getElementById('ipInput').value = data.ip;    }}).catch(()=>{});async function checkIP() {    const ip = document.getElementById('ipInput').value.trim();    if (!ip || !/^(\d{1,3}\.){3}\d{1,3}$/.test(ip)) return alert('Please enter a valid IPv4 address.');    const btn = document.getElementById('checkBtn');    const list = document.getElementById('resultsList');    btn.disabled = true;    btn.innerHTML = '<span class="loading-ring"></span> Checking...';    // Set pending UI    list.innerHTML = [        { host: 'zen.spamhaus.org', name: 'Spamhaus ZEN' },        { host: 'b.barracudacentral.org', name: 'Barracuda' },        { host: 'bl.spamcop.net', name: 'SpamCop' },        { host: 'dnsbl.sorbs.net', name: 'SORBS' },        { host: 'cbl.abuseat.org', name: 'CBL' }    ].map(db => `        <div class="bl-item" id="bl-${db.name.replace(/\s+/g,'')}">            <div>                <div class="bl-name">${db.name}</div>                <div class="bl-host">${db.host}</div>            </div>            <div class="status-badge status-pending">Checking…</div>        </div>    `).join('');    try {        const res = await fetch('/api/blacklist-check', {            method: 'POST',            headers: { 'Content-Type': 'application/json' },            body: JSON.stringify({ ip })        });        const data = await res.json();        if (data.results) {            data.results.forEach(r => {                const row = document.getElementById('bl-' + r.list.replace(/\s+/g,''));                if (row) {                    const badge = row.querySelector('.status-badge');                    if (r.listed) {                        badge.className = 'status-badge status-listed';                        badge.textContent = 'Listed';                    } else {                        badge.className = 'status-badge status-clean';                        badge.textContent = 'Clean';                    }                }            });        }    } catch (e) {        alert('Could not complete the check. Please try again later.');    } finally {        btn.disabled = false;        btn.textContent = 'Check IP';    }}</script></body></html>
+</head>
+<body>
+<header>
+    <div class="container header-inner">
+        <a href="/" style="display:flex;align-items:center;gap:10px;text-decoration:none;">
+            <img src="/img/logo.png" alt="Whoer Live Logo" style="width:32px;height:32px;border-radius:8px;">
+            <div class="logo">WHOER<span>.LIVE</span> <sub>v4</sub></div>
+        </a>
+        <div class="header-actions">
+            <!-- Simplified nav -->
+            <a href="/bulk" class="btn">Bulk</a>
+            <a href="/blacklist" class="btn btn-primary" style="background:#f5a623;color:#000;">Blacklist</a>
+            <a href="/port-scanner" class="btn">Ports</a>
+            <a href="/ping" class="btn">Ping</a>
+        </div>
+    </div>
+</header>
+<div class="tool-wrap">
+    <div class="tool-hero">
+        <h1>IP Blacklist Checker</h1>
+        <p>Check if your IP address is flagged as spam or abusive by the world's top DNS Blackholes (DNSBL).</p>
+    </div>
+    <div class="search-box">
+        <input type="text" id="ipInput" class="search-input" placeholder="e.g. 1.1.1.1" onkeypress="if(event.key === 'Enter') checkIP()">
+        <button id="checkBtn" class="search-btn" onclick="checkIP()">Check IP</button>
+    </div>
+    <div class="bl-list" id="resultsList">
+        <!-- Initial empty state -->
+        <div style="text-align:center;color:var(--muted);font-size:13px;padding:20px;">
+            Enter an IP address above to begin the scan.
+        </div>
+    </div>
+</div>
+<script>
+// Auto-fill user's IP if we can fetch it via api
+fetch('https://api.ipify.org?format=json').then(r=>r.json()).then(data=>{
+    if(data.ip && !document.getElementById('ipInput').value) {
+        document.getElementById('ipInput').value = data.ip;
+    }
+}).catch(()=>{});
+async function checkIP() {
+    const ip = document.getElementById('ipInput').value.trim();
+    if (!ip || !/^(\d{1,3}\.){3}\d{1,3}$/.test(ip)) return alert('Please enter a valid IPv4 address.');
+    const btn = document.getElementById('checkBtn');
+    const list = document.getElementById('resultsList');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="loading-ring"></span> Checking...';
+    // Set pending UI
+    list.innerHTML = [
+        { host: 'zen.spamhaus.org', name: 'Spamhaus ZEN' },
+        { host: 'b.barracudacentral.org', name: 'Barracuda' },
+        { host: 'bl.spamcop.net', name: 'SpamCop' },
+        { host: 'dnsbl.sorbs.net', name: 'SORBS' },
+        { host: 'cbl.abuseat.org', name: 'CBL' }
+    ].map(db => `
+        <div class="bl-item" id="bl-${db.name.replace(/\s+/g,'')}">
+            <div>
+                <div class="bl-name">${db.name}</div>
+                <div class="bl-host">${db.host}</div>
+            </div>
+            <div class="status-badge status-pending">Checking…</div>
+        </div>
+    `).join('');
+    try {
+        const res = await fetch('/api/blacklist-check', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ ip })
+        });
+        const data = await res.json();
+        if (data.results) {
+            data.results.forEach(r => {
+                const row = document.getElementById('bl-' + r.list.replace(/\s+/g,''));
+                if (row) {
+                    const badge = row.querySelector('.status-badge');
+                    if (r.listed) {
+                        badge.className = 'status-badge status-listed';
+                        badge.textContent = 'Listed';
+                    } else {
+                        badge.className = 'status-badge status-clean';
+                        badge.textContent = 'Clean';
+                    }
+                }
+            });
+        }
+    } catch (e) {
+        alert('Could not complete the check. Please try again later.');
+    } finally {
+        btn.disabled = false;
+        btn.textContent = 'Check IP';
+    }
+}
+</script>
+<script>
+  window.si = window.si || function () { (window.siq = window.siq || []).push(arguments); };
+</script>
+<script defer src="/_vercel/speed-insights/script.js"></script>
+</body>
+</html>
