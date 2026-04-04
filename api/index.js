@@ -615,6 +615,7 @@ app.post('/api/process-scan', async (req, res) => {
 app.get('/api/live-threats', (req, res) => {
     const attacks = ['SQL Injection', 'SSH Brute Force', 'Port Scan', 'XSS Attempt', 'DDoS Probe', 'DirBuster', 'Masscan', 'ZGrab Payload'];
     const countries = ['CN', 'RU', 'US', 'NL', 'BR', 'IN', 'IR', 'KP', 'VN'];
+    const actions = ['BLOCKED', 'DROPPED', 'BANNED', 'FLAGGED', 'SINKHOLED'];
     
     // Generate 1-3 random events
     const count = Math.floor(Math.random() * 3) + 1;
@@ -622,13 +623,17 @@ app.get('/api/live-threats', (req, res) => {
     
     for (let i = 0; i < count; i++) {
         const ip = `${Math.floor(Math.random()*255)}.${Math.floor(Math.random()*255)}.${Math.floor(Math.random()*255)}.${Math.floor(Math.random()*255)}`;
+        // Make 'BLOCKED' the most common but mix in others
+        let action = actions[Math.floor(Math.random() * actions.length)];
+        if (Math.random() > 0.6) action = 'BLOCKED'; 
+        
         events.push({
             id: uuidv4().slice(0, 8),
             timestamp: new Date().toISOString(),
             ip: ip,
             attack_type: attacks[Math.floor(Math.random() * attacks.length)],
             country: countries[Math.floor(Math.random() * countries.length)],
-            action: 'BLOCKED'
+            action: action
         });
     }
     

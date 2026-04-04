@@ -168,12 +168,21 @@
             const time = data.timestamp.split('T')[1].slice(0, 8);
             const row = document.createElement('div');
             row.className = 'threat-row';
+            
+            let bClass = 'badge-red';
+            let bdColor = 'rgba(255,79,106,0.4)';
+            let bsColor = 'rgba(255,79,106,0.3)';
+            
+            if (data.action === 'DROPPED') { bClass = 'badge-amber'; bdColor = 'rgba(245,166,35,0.4)'; bsColor = 'rgba(245,166,35,0.3)'; }
+            else if (data.action === 'FLAGGED') { bClass = 'badge-blue'; bdColor = 'rgba(77,159,255,0.4)'; bsColor = 'rgba(77,159,255,0.3)'; }
+            else if (data.action === 'SINKHOLED') { bClass = 'badge-green'; bdColor = 'rgba(34,215,122,0.4)'; bsColor = 'rgba(34,215,122,0.3)'; }
+            
             row.innerHTML = `
                 <div class="t-time">${time}</div>
                 <div class="t-ip">${data.ip}</div>
                 <div class="t-attack">${data.attack_type}</div>
                 <div class="t-country">${data.country}</div>
-                <div class="t-action">${data.action}</div>
+                <div><span class="badge ${bClass}" style="box-shadow: 0 0 8px ${bsColor}; border: 1px solid ${bdColor};">${data.action}</span></div>
             `;
             stream.prepend(row);
             
