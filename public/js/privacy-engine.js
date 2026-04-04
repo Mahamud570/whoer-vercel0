@@ -1,6 +1,6 @@
 // ─── Fingerprint + WebRTC Leak Collector ─────────────────────────────────────
 
-async function collectFingerprint() {
+async function collectDeviceMetrics() {
     const data = {};
 
     // ── Basic Navigator ───────────────────────────────────────────────────────
