@@ -251,6 +251,7 @@ app.get('/blacklist',   (req, res) => res.render('blacklist'));
 app.get('/port-scanner',(req, res) => res.render('port_scanner'));
 app.get('/ping',        (req, res) => res.render('ping_test'));
 app.get('/guides',      (req, res) => res.render('guides'));
+app.get('/threat-map',  (req, res) => res.render('threat_map'));
 
 
 // ─── PROGRAMMATIC SEO DOORWAY PAGES ──────────────────────────────────────────
@@ -607,6 +608,31 @@ app.post('/api/process-scan', async (req, res) => {
         console.error('process-scan error:', error);
         res.status(500).json({ error: 'server_error' });
     }
+});
+
+// ─── LIVE THREAT FEED ────────────────────────────────────────────────────────
+// Returns mock streaming bot interception events to power the /threat-map UI
+app.get('/api/live-threats', (req, res) => {
+    const attacks = ['SQL Injection', 'SSH Brute Force', 'Port Scan', 'XSS Attempt', 'DDoS Probe', 'DirBuster', 'Masscan', 'ZGrab Payload'];
+    const countries = ['CN', 'RU', 'US', 'NL', 'BR', 'IN', 'IR', 'KP', 'VN'];
+    
+    // Generate 1-3 random events
+    const count = Math.floor(Math.random() * 3) + 1;
+    const events = [];
+    
+    for (let i = 0; i < count; i++) {
+        const ip = `${Math.floor(Math.random()*255)}.${Math.floor(Math.random()*255)}.${Math.floor(Math.random()*255)}.${Math.floor(Math.random()*255)}`;
+        events.push({
+            id: uuidv4().slice(0, 8),
+            timestamp: new Date().toISOString(),
+            ip: ip,
+            attack_type: attacks[Math.floor(Math.random() * attacks.length)],
+            country: countries[Math.floor(Math.random() * countries.length)],
+            action: 'BLOCKED'
+        });
+    }
+    
+    res.json({ events });
 });
 
 // ─── TELEGRAM ADMIN WEBHOOK ──────────────────────────────────────────────────
