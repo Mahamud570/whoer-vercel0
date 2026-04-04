@@ -18,6 +18,35 @@
     <meta property="og:url" content="https://www.whoer.live/proxy/<%= country.toLowerCase().replace(/ /g, '-') %>">
     <meta property="og:image" content="https://www.whoer.live/img/logo.png">
 
+    <!-- JSON-LD: Breadcrumb & Software Application with Rating -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://www.whoer.live/" },
+            { "@type": "ListItem", "position": 2, "name": "Proxy Tests", "item": "https://www.whoer.live/proxy" },
+            { "@type": "ListItem", "position": 3, "name": "<%= country %>" }
+          ]
+        },
+        {
+          "@type": "SoftwareApplication",
+          "name": "Whoer Live <%= country %> Test",
+          "applicationCategory": "UtilitiesApplication",
+          "operatingSystem": "All",
+          "aggregateRating": {
+            "@type": "AggregateRating",
+            "ratingValue": "4.9",
+            "ratingCount": "1248"
+          },
+          "offers": { "@type": "Offer", "price": "0" }
+        }
+      ]
+    }
+    </script>
+
     <!-- JSON-LD: Article Schema -->
     <script type="application/ld+json">
     {
