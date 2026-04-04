@@ -6,10 +6,7 @@
     <title>Live Threat & Honeypot Terminal — Whoer Live</title>
     <meta name="description" content="View real-time bot interceptions and malicious IP blocks across the Whoer Live network.">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🛡️</text></svg>">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
-    <link rel="stylesheet" href="/css/style.css">
+    
     <style>
         .terminal-container {
             background: #05080f;
@@ -31,9 +28,7 @@
         .terminal-title { color: var(--red); font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; text-shadow: 0 0 10px rgba(255, 79, 106, 0.5); }
         .terminal-pulse { display: flex; align-items: center; gap: 8px; color: var(--red); font-size: 12px; font-weight: 600; animation: blink 1.5s infinite; }
         .pulse-dot { width: 8px; height: 8px; background: var(--red); border-radius: 50%; box-shadow: 0 0 8px var(--red); }
-        
         @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
-        
         .threat-grid {
             display: grid;
             grid-template-columns: 100px 140px auto 70px 90px;
@@ -60,24 +55,20 @@
             from { opacity: 0; transform: translateY(-10px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        
         .t-time { color: var(--muted); }
         .t-ip { color: var(--blue); font-weight: 600; }
         .t-attack { color: var(--amber); }
         .t-country { color: #fff; }
         .t-action { color: var(--red); font-weight: 700; }
-        
         #threatStream {
             display: flex; flex-direction: column;
         }
-        
         .fade-overlay {
             position: absolute;
             bottom: 0; left: 0; right: 0; height: 120px;
             background: linear-gradient(to bottom, transparent, #05080f);
             pointer-events: none;
         }
-
         .stats-banner {
             display: grid; grid-template-columns: repeat(3, 1fr);
             gap: 16px; margin-bottom: 24px;
@@ -88,7 +79,6 @@
         }
         .stat-val { font-family: var(--mono); font-size: 24px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
         .stat-lbl { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
-
         @media (max-width: 600px) {
             .threat-grid, .threat-row { grid-template-columns: 80px 110px auto; }
             .threat-grid div:nth-child(4), .threat-grid div:nth-child(5),
@@ -96,6 +86,14 @@
             .stats-banner { grid-template-columns: 1fr; }
         }
     </style>
+
+    <!-- Core Web Vitals: Preload & Async Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"></noscript>
+    <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
     <div class="container">
@@ -110,25 +108,21 @@
                 </div>
             </div>
         </header>
-
         <!-- ─── HERO ────────────────────────────────────────────────────────── -->
         <section class="hero" style="padding-bottom: 20px;">
             <h1 class="ip-display" style="font-size: 36px; margin-bottom: 12px; letter-spacing: 2px; text-transform: uppercase;">Global <span style="color:var(--red);">Honeypot</span> Stream</h1>
             <p style="color: var(--muted); max-width: 600px; margin: 0 auto; font-size: 15px;">Real-time interception of malicious botnets, generic scrapers, and penetration testing payloads targeting the Whoer Live edge infrastructure.</p>
         </section>
-
         <div class="stats-banner">
             <div class="stat-box"><div class="stat-val" id="st-total">1,248</div><div class="stat-lbl">Blocked (24h)</div></div>
             <div class="stat-box"><div class="stat-val" id="st-rate">9.4/s</div><div class="stat-lbl">Interception Rate</div></div>
             <div class="stat-box"><div class="stat-val" style="color:var(--red);">ACTIVE</div><div class="stat-lbl">WAF Status</div></div>
         </div>
-
         <div class="terminal-container">
             <div class="terminal-header">
                 <div class="terminal-title">WAF Security Log (Live)</div>
                 <div class="terminal-pulse"><div class="pulse-dot"></div> INTERCEPTING</div>
             </div>
-            
             <div class="threat-grid">
                 <div>TIME (UTC)</div>
                 <div>SOURCE IP</div>
@@ -136,19 +130,16 @@
                 <div>GEO</div>
                 <div>ACTION</div>
             </div>
-            
             <div id="threatStream">
                 <!-- Rows injected dynamically -->
             </div>
             <div class="fade-overlay"></div>
         </div>
-
         <div class="info-block" style="margin-top: 40px;">
             <h2>About The Threat Stream</h2>
             <p>Whoer Live operates a network of honeypots disguised as vulnerable web applications. When automated scanners, script kiddies, or botnets scan the internet for vulnerabilities (like open SSH ports or exposed environmental files), they hit our nodes.</p>
             <p>Every IP shown on this dashboard is permanently banned from accessing the main Whoer platform and added to our global blacklist database in real-time.</p>
         </div>
-
         <!-- ─── FOOTER ──────────────────────────────────────────────────────── -->
         <footer>
             <div class="footer-links">
@@ -159,24 +150,19 @@
             <p>© <%= new Date().getFullYear() %> Whoer Live - Anti-Detect Sandbox</p>
         </footer>
     </div>
-    
     <script>
         const stream = document.getElementById('threatStream');
         let totalVal = 1248;
-        
         function addRow(data) {
             const time = data.timestamp.split('T')[1].slice(0, 8);
             const row = document.createElement('div');
             row.className = 'threat-row';
-            
             let bClass = 'badge-red';
             let bdColor = 'rgba(255,79,106,0.4)';
             let bsColor = 'rgba(255,79,106,0.3)';
-            
             if (data.action === 'DROPPED') { bClass = 'badge-amber'; bdColor = 'rgba(245,166,35,0.4)'; bsColor = 'rgba(245,166,35,0.3)'; }
             else if (data.action === 'FLAGGED') { bClass = 'badge-blue'; bdColor = 'rgba(77,159,255,0.4)'; bsColor = 'rgba(77,159,255,0.3)'; }
             else if (data.action === 'SINKHOLED') { bClass = 'badge-green'; bdColor = 'rgba(34,215,122,0.4)'; bsColor = 'rgba(34,215,122,0.3)'; }
-            
             row.innerHTML = `
                 <div class="t-time">${time}</div>
                 <div class="t-ip">${data.ip}</div>
@@ -185,18 +171,15 @@
                 <div><span class="badge ${bClass}" style="box-shadow: 0 0 8px ${bsColor}; border: 1px solid ${bdColor};">${data.action}</span></div>
             `;
             stream.prepend(row);
-            
             // Keep max 20 rows to prevent lag
             if (stream.children.length > 20) {
                 stream.removeChild(stream.lastChild);
             }
-            
             // Update stats slowly
             totalVal++;
             document.getElementById('st-total').innerText = totalVal.toLocaleString();
             document.getElementById('st-rate').innerText = (Math.random() * 5 + 5).toFixed(1) + '/s';
         }
-
         async function fetchThreats() {
             try {
                 const res = await fetch('/api/live-threats');
@@ -210,7 +193,6 @@
                 console.error('Threat stream error:', e);
             }
         }
-
         // Start stream
         fetchThreats();
         setInterval(fetchThreats, 1500);

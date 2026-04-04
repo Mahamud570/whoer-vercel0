@@ -1,492 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bulk Proxy & IP Checker — HTTP/SOCKS4/SOCKS5/Shadowsocks | Whoer Live</title>
-    <meta name="description" content="Free bulk proxy and IP checker. Paste up to 100 proxies in any format — HTTP, HTTPS, SOCKS4, SOCKS5, Shadowsocks, IP:PORT. Instant country, ISP, and VPN lookup.">
-    <meta name="robots" content="index, follow">
-    <link rel="canonical" href="https://www.whoer.live/bulk">
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🛡️</text></svg>">
+<!DOCTYPE html><html lang="en"><head>    <meta charset="UTF-8">    <meta name="viewport" content="width=device-width, initial-scale=1.0">    <title>Bulk Proxy & IP Checker — HTTP/SOCKS4/SOCKS5/Shadowsocks | Whoer Live</title>    <meta name="description" content="Free bulk proxy and IP checker. Paste up to 100 proxies in any format — HTTP, HTTPS, SOCKS4, SOCKS5, Shadowsocks, IP:PORT. Instant country, ISP, and VPN lookup.">    <meta name="robots" content="index, follow">    <link rel="canonical" href="https://www.whoer.live/bulk">    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🛡️</text></svg>">        <style>        .bulk-wrap { max-width: 960px; margin: 0 auto; padding: 40px 20px 120px; }        .bulk-hero { text-align: center; padding: 40px 0 28px; }        .bulk-hero h1 { font-size: 30px; font-weight: 700; margin-bottom: 10px; }        .bulk-hero p  { font-size: 14px; color: var(--muted); max-width: 560px; margin: 0 auto; line-height: 1.65; }        .bulk-badge { display: inline-flex; align-items: center; gap: 6px; background: var(--green-dim); border: 1px solid rgba(34,215,122,0.3); color: var(--green); border-radius: 20px; padding: 4px 14px; font-size: 11px; font-weight: 700; margin-bottom: 18px; letter-spacing: 0.5px; }        /* Format chips */        .format-chips { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-bottom: 24px; }        .chip { display: inline-flex; align-items: center; gap: 5px; background: var(--panel); border: 1px solid var(--border2); border-radius: 6px; padding: 4px 10px; font-family: var(--mono); font-size: 11px; color: var(--muted); }        .chip.http    { border-color: rgba(77,159,255,0.3);  color: var(--blue);  background: var(--blue-dim);  }        .chip.socks   { border-color: rgba(245,166,35,0.3);  color: var(--amber); background: var(--amber-dim); }        .chip.ss      { border-color: rgba(255,79,106,0.3);  color: var(--red);   background: var(--red-dim);   }        .chip.plain   { border-color: rgba(34,215,122,0.3);  color: var(--green); background: var(--green-dim); }        .bulk-form { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 24px; margin-bottom: 20px; }        .form-row { display: grid; grid-template-columns: 1fr auto; gap: 16px; align-items: start; }        @media(max-width:640px){ .form-row { grid-template-columns: 1fr; } }        .bulk-form label { display: block; font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }        .bulk-textarea {            width: 100%; height: 220px; resize: vertical;            background: rgba(255,255,255,0.03); border: 1px solid var(--border2);            border-radius: var(--radius); padding: 12px;            font-family: var(--mono); font-size: 12px;            color: var(--text); transition: border-color 0.2s; outline: none;        }        .bulk-textarea:focus { border-color: var(--green); }        .bulk-textarea::placeholder { color: var(--hint); line-height: 1.8; }        .side-panel { display: flex; flex-direction: column; gap: 12px; min-width: 180px; }        .side-info { background: rgba(255,255,255,0.02); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; font-size: 12px; color: var(--muted); line-height: 1.7; }        .side-info strong { color: var(--text); display: block; margin-bottom: 6px; }        .bulk-counter { font-family: var(--mono); font-size: 12px; color: var(--muted); text-align: center; }        .bulk-counter span { color: var(--green); font-size: 20px; font-weight: 700; display: block; }        .btn-check { width: 100%; padding: 12px; font-size: 14px; font-weight: 700; background: var(--green); color: #000; border: none; border-radius: var(--radius); cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; }        .btn-check:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(34,215,122,0.3); }        .btn-check:disabled { opacity: 0.5; cursor: not-allowed; }        /* Terminal Loader */        .scan-terminal { background: #0d1117; border: 1px solid var(--border); border-radius: var(--radius); margin-top: 16px; overflow: hidden; display: none; }        .scan-terminal.on { display: block; animation: fadeUp 0.3s ease; }        .term-head { background: #161b22; padding: 10px 14px; display: flex; align-items: center; border-bottom: 1px solid var(--border); }        .term-head .dot { width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; }        .term-head .d-red { background: #ff5f56; }        .term-head .d-yel { background: #ffbd2e; }        .term-head .d-grn { background: #27c93f; margin-right: 14px; }        .term-head .title { font-size: 11px; color: var(--muted); font-family: var(--mono); text-transform: uppercase; letter-spacing: 1px; }        .term-body { padding: 14px; height: 160px; overflow-y: auto; font-family: var(--mono); font-size: 11px; line-height: 1.6; color: #a5d6ff; scroll-behavior: smooth; }        .term-log { margin-bottom: 4px; }        .term-log .sys { color: #8b949e; }        .term-log .ip { color: #7ee787; font-weight: 700; }        .term-prog { height: 3px; background: #161b22; }        .term-bar { height: 100%; width: 0%; background: var(--green); transition: width 0.2s linear; }        /* Results */        .bulk-results { display: none; }        .bulk-results.visible { display: block; animation: fadeUp 0.4s ease; }        .results-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; flex-wrap: wrap; gap: 10px; }        .results-title { font-size: 14px; font-weight: 700; }        .results-meta  { font-size: 11px; color: var(--muted); font-family: var(--mono); margin-top: 2px; }        .results-actions { display: flex; gap: 8px; }        .btn-sm { padding: 6px 14px; font-size: 11px; font-weight: 700; border-radius: 20px; cursor: pointer; transition: all 0.2s; border: 1px solid; }        .btn-csv  { background: var(--blue-dim);  border-color: rgba(77,159,255,0.3);  color: var(--blue);  }        .btn-csv:hover  { background: var(--blue);  color: #fff; }        .btn-clear{ background: var(--panel);     border-color: var(--border2);         color: var(--muted); }        .btn-clear:hover{ color: var(--text); }        .ip-table-wrap { overflow-x: auto; border-radius: var(--radius-lg); border: 1px solid var(--border); }        .ip-table { width: 100%; border-collapse: collapse; min-width: 700px; }        .ip-table thead th { font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); padding: 12px 14px; text-align: left; background: rgba(255,255,255,0.02); border-bottom: 1px solid var(--border); white-space: nowrap; }        .ip-table tbody tr { transition: background 0.15s; }        .ip-table tbody tr:hover { background: var(--panel-hover); }        .ip-table tbody tr:not(:last-child) td { border-bottom: 1px solid rgba(255,255,255,0.04); }        .ip-table td { padding: 10px 14px; font-size: 12px; vertical-align: middle; }        .ip-table td.mono { font-family: var(--mono); font-weight: 600; font-size: 12px; }        .ip-table td.muted { color: var(--muted); }        .flag-img { width: 18px; height: 12px; border-radius: 2px; vertical-align: middle; margin-right: 6px; }        /* Type badges */        .type-badge { display: inline-flex; align-items: center; padding: 2px 7px; border-radius: 4px; font-size: 10px; font-weight: 700; letter-spacing: 0.5px; border: 1px solid; white-space: nowrap; }        .t-http  { background: var(--blue-dim);  color: var(--blue);  border-color: rgba(77,159,255,0.3); }        .t-https { background: var(--green-dim); color: var(--green); border-color: rgba(34,215,122,0.3); }        .t-socks4{ background: var(--amber-dim); color: var(--amber); border-color: rgba(245,166,35,0.3); }        .t-socks5{ background: var(--amber-dim); color: var(--amber); border-color: rgba(245,166,35,0.3); }        .t-socks { background: var(--amber-dim); color: var(--amber); border-color: rgba(245,166,35,0.3); }        .t-ss    { background: var(--red-dim);   color: var(--red);   border-color: rgba(255,79,106,0.3); }        .t-ip    { background: var(--panel);     color: var(--muted); border-color: var(--border2); }        .vpn-yes { background: var(--red-dim);   color: var(--red);   padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: 700; }        .vpn-no  { background: var(--green-dim); color: var(--green); padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: 700; }        .vpn-err { color: var(--muted); font-size: 11px; }    </style>
+    <!-- Core Web Vitals: Preload & Async Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"></noscript>
     <link rel="stylesheet" href="/css/style.css">
-    <style>
-        .bulk-wrap { max-width: 960px; margin: 0 auto; padding: 40px 20px 120px; }
-        .bulk-hero { text-align: center; padding: 40px 0 28px; }
-        .bulk-hero h1 { font-size: 30px; font-weight: 700; margin-bottom: 10px; }
-        .bulk-hero p  { font-size: 14px; color: var(--muted); max-width: 560px; margin: 0 auto; line-height: 1.65; }
-        .bulk-badge { display: inline-flex; align-items: center; gap: 6px; background: var(--green-dim); border: 1px solid rgba(34,215,122,0.3); color: var(--green); border-radius: 20px; padding: 4px 14px; font-size: 11px; font-weight: 700; margin-bottom: 18px; letter-spacing: 0.5px; }
-
-        /* Format chips */
-        .format-chips { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-bottom: 24px; }
-        .chip { display: inline-flex; align-items: center; gap: 5px; background: var(--panel); border: 1px solid var(--border2); border-radius: 6px; padding: 4px 10px; font-family: var(--mono); font-size: 11px; color: var(--muted); }
-        .chip.http    { border-color: rgba(77,159,255,0.3);  color: var(--blue);  background: var(--blue-dim);  }
-        .chip.socks   { border-color: rgba(245,166,35,0.3);  color: var(--amber); background: var(--amber-dim); }
-        .chip.ss      { border-color: rgba(255,79,106,0.3);  color: var(--red);   background: var(--red-dim);   }
-        .chip.plain   { border-color: rgba(34,215,122,0.3);  color: var(--green); background: var(--green-dim); }
-
-        .bulk-form { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 24px; margin-bottom: 20px; }
-        .form-row { display: grid; grid-template-columns: 1fr auto; gap: 16px; align-items: start; }
-        @media(max-width:640px){ .form-row { grid-template-columns: 1fr; } }
-        .bulk-form label { display: block; font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
-        .bulk-textarea {
-            width: 100%; height: 220px; resize: vertical;
-            background: rgba(255,255,255,0.03); border: 1px solid var(--border2);
-            border-radius: var(--radius); padding: 12px;
-            font-family: var(--mono); font-size: 12px;
-            color: var(--text); transition: border-color 0.2s; outline: none;
-        }
-        .bulk-textarea:focus { border-color: var(--green); }
-        .bulk-textarea::placeholder { color: var(--hint); line-height: 1.8; }
-        .side-panel { display: flex; flex-direction: column; gap: 12px; min-width: 180px; }
-        .side-info { background: rgba(255,255,255,0.02); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; font-size: 12px; color: var(--muted); line-height: 1.7; }
-        .side-info strong { color: var(--text); display: block; margin-bottom: 6px; }
-        .bulk-counter { font-family: var(--mono); font-size: 12px; color: var(--muted); text-align: center; }
-        .bulk-counter span { color: var(--green); font-size: 20px; font-weight: 700; display: block; }
-        .btn-check { width: 100%; padding: 12px; font-size: 14px; font-weight: 700; background: var(--green); color: #000; border: none; border-radius: var(--radius); cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; }
-        .btn-check:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(34,215,122,0.3); }
-        .btn-check:disabled { opacity: 0.5; cursor: not-allowed; }
-
-        /* Terminal Loader */
-        .scan-terminal { background: #0d1117; border: 1px solid var(--border); border-radius: var(--radius); margin-top: 16px; overflow: hidden; display: none; }
-        .scan-terminal.on { display: block; animation: fadeUp 0.3s ease; }
-        .term-head { background: #161b22; padding: 10px 14px; display: flex; align-items: center; border-bottom: 1px solid var(--border); }
-        .term-head .dot { width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; }
-        .term-head .d-red { background: #ff5f56; }
-        .term-head .d-yel { background: #ffbd2e; }
-        .term-head .d-grn { background: #27c93f; margin-right: 14px; }
-        .term-head .title { font-size: 11px; color: var(--muted); font-family: var(--mono); text-transform: uppercase; letter-spacing: 1px; }
-        .term-body { padding: 14px; height: 160px; overflow-y: auto; font-family: var(--mono); font-size: 11px; line-height: 1.6; color: #a5d6ff; scroll-behavior: smooth; }
-        .term-log { margin-bottom: 4px; }
-        .term-log .sys { color: #8b949e; }
-        .term-log .ip { color: #7ee787; font-weight: 700; }
-        .term-prog { height: 3px; background: #161b22; }
-        .term-bar { height: 100%; width: 0%; background: var(--green); transition: width 0.2s linear; }
-
-        /* Results */
-        .bulk-results { display: none; }
-        .bulk-results.visible { display: block; animation: fadeUp 0.4s ease; }
-        .results-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; flex-wrap: wrap; gap: 10px; }
-        .results-title { font-size: 14px; font-weight: 700; }
-        .results-meta  { font-size: 11px; color: var(--muted); font-family: var(--mono); margin-top: 2px; }
-        .results-actions { display: flex; gap: 8px; }
-        .btn-sm { padding: 6px 14px; font-size: 11px; font-weight: 700; border-radius: 20px; cursor: pointer; transition: all 0.2s; border: 1px solid; }
-        .btn-csv  { background: var(--blue-dim);  border-color: rgba(77,159,255,0.3);  color: var(--blue);  }
-        .btn-csv:hover  { background: var(--blue);  color: #fff; }
-        .btn-clear{ background: var(--panel);     border-color: var(--border2);         color: var(--muted); }
-        .btn-clear:hover{ color: var(--text); }
-
-        .ip-table-wrap { overflow-x: auto; border-radius: var(--radius-lg); border: 1px solid var(--border); }
-        .ip-table { width: 100%; border-collapse: collapse; min-width: 700px; }
-        .ip-table thead th { font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); padding: 12px 14px; text-align: left; background: rgba(255,255,255,0.02); border-bottom: 1px solid var(--border); white-space: nowrap; }
-        .ip-table tbody tr { transition: background 0.15s; }
-        .ip-table tbody tr:hover { background: var(--panel-hover); }
-        .ip-table tbody tr:not(:last-child) td { border-bottom: 1px solid rgba(255,255,255,0.04); }
-        .ip-table td { padding: 10px 14px; font-size: 12px; vertical-align: middle; }
-        .ip-table td.mono { font-family: var(--mono); font-weight: 600; font-size: 12px; }
-        .ip-table td.muted { color: var(--muted); }
-        .flag-img { width: 18px; height: 12px; border-radius: 2px; vertical-align: middle; margin-right: 6px; }
-
-        /* Type badges */
-        .type-badge { display: inline-flex; align-items: center; padding: 2px 7px; border-radius: 4px; font-size: 10px; font-weight: 700; letter-spacing: 0.5px; border: 1px solid; white-space: nowrap; }
-        .t-http  { background: var(--blue-dim);  color: var(--blue);  border-color: rgba(77,159,255,0.3); }
-        .t-https { background: var(--green-dim); color: var(--green); border-color: rgba(34,215,122,0.3); }
-        .t-socks4{ background: var(--amber-dim); color: var(--amber); border-color: rgba(245,166,35,0.3); }
-        .t-socks5{ background: var(--amber-dim); color: var(--amber); border-color: rgba(245,166,35,0.3); }
-        .t-socks { background: var(--amber-dim); color: var(--amber); border-color: rgba(245,166,35,0.3); }
-        .t-ss    { background: var(--red-dim);   color: var(--red);   border-color: rgba(255,79,106,0.3); }
-        .t-ip    { background: var(--panel);     color: var(--muted); border-color: var(--border2); }
-
-        .vpn-yes { background: var(--red-dim);   color: var(--red);   padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: 700; }
-        .vpn-no  { background: var(--green-dim); color: var(--green); padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: 700; }
-        .vpn-err { color: var(--muted); font-size: 11px; }
-    </style>
-</head>
-<body>
-
-<header>
-    <div class="container header-inner">
-        <a href="/" class="logo" style="text-decoration:none;">WHOER<span>.LIVE</span> <sub>v4</sub></a>
-        <div class="header-actions">
-            <!-- Dropdown for Tools -->
-            <div style="position:relative; display:inline-block;" tabindex="0" onblur="setTimeout(()=>this.querySelector('div').style.display='none', 200)">
-                <button class="btn" onclick="const d=this.nextElementSibling; d.style.display=d.style.display==='block'?'none':'block';">🛠 Tools</button>
-                <div style="display:none; position:absolute; top:100%; left:0; background:var(--panel); border:1px solid var(--border); border-radius:var(--radius); padding:8px; margin-top:8px; z-index:100; min-width:140px; box-shadow:0 10px 30px rgba(0,0,0,0.5);">
-                    <a href="/blacklist" style="display:block; padding:8px 12px; color:var(--text); text-decoration:none; font-size:14px; border-radius:4px; margin-bottom:4px;" onmouseover="this.style.background='var(--panel-hover)'" onmouseout="this.style.background='transparent'">🛡️ Blacklist</a>
-                    <a href="/port-scanner" style="display:block; padding:8px 12px; color:var(--text); text-decoration:none; font-size:14px; border-radius:4px; margin-bottom:4px;" onmouseover="this.style.background='var(--panel-hover)'" onmouseout="this.style.background='transparent'">🔌 Ports</a>
-                    <a href="/ping" style="display:block; padding:8px 12px; color:var(--text); text-decoration:none; font-size:14px; border-radius:4px;" onmouseover="this.style.background='var(--panel-hover)'" onmouseout="this.style.background='transparent'">📡 Ping Test</a>
-                </div>
-            </div>
-            
-            <a href="/bulk"     class="btn btn-primary">🔢 Bulk Check</a>
-            <a href="/api-docs" class="btn">⚡ API</a>
-            <a href="/guides"   class="btn">Guides</a>
-        </div>
-    </div>
-</header>
-
-<div class="bulk-wrap">
-
-    <div class="bulk-hero">
-        <div class="bulk-badge">✓ 100% FREE — NO SIGNUP — NO LIMITS</div>
-        <h1>Bulk Proxy &amp; IP Checker</h1>
-        <p>Paste up to <strong>100 proxies or IPs</strong> in any format. We extract the IP, detect the proxy type, and instantly look up country, city, ISP, and VPN/datacenter status.</p>
-    </div>
-
-    <div class="format-chips">
-        <span class="chip plain">1.2.3.4</span>
-        <span class="chip plain">1.2.3.4:8080</span>
-        <span class="chip http">http://1.2.3.4:8080</span>
-        <span class="chip http">https://1.2.3.4:3128</span>
-        <span class="chip socks">socks://1.2.3.4:1080</span>
-        <span class="chip socks">socks4://1.2.3.4:1080</span>
-        <span class="chip socks">socks5://1.2.3.4:1080</span>
-        <span class="chip ss">ss://...@1.2.3.4:8388</span>
-        <span class="chip plain">user:pass@1.2.3.4:8080</span>
-        <span class="chip plain">1.2.3.4:port:user:pass</span>
-    </div>
-
-    <div class="bulk-form">
-        <div class="form-row">
-            <div>
-                <label for="ipInput">Proxies / IPs (one per line, max 100)</label>
-                <textarea id="ipInput" class="bulk-textarea"
-                    placeholder="Examples — any format works:&#10;1.2.3.4&#10;1.2.3.4:8080&#10;http://1.2.3.4:3128&#10;socks5://1.2.3.4:1080&#10;socks5://user:pass@1.2.3.4:1080&#10;ss://base64@1.2.3.4:8388&#10;1.2.3.4:8080:username:password"
-                    oninput="updateCounter()"></textarea>
-                <!-- Terminal Overlay -->
-                <div class="scan-terminal" id="scanTerminal">
-                    <div class="term-head">
-                        <div class="dot d-red"></div><div class="dot d-yel"></div><div class="dot d-grn"></div>
-                        <div class="title">Live Scan Progress</div>
-                    </div>
-                    <div class="term-body" id="termLogs"></div>
-                    <div class="term-prog"><div class="term-bar" id="termBar"></div></div>
-                </div>
-            </div>
-            <div class="side-panel">
-                <div class="bulk-counter">
-                    <span id="ipCount">0</span>
-                    entries / 100
-                </div>
-                <div class="side-info">
-                    <strong>Supported formats</strong>
-                    HTTP · HTTPS<br>
-                    SOCKS · SOCKS4 · SOCKS5<br>
-                    Shadowsocks (ss://)<br>
-                    IP only · IP:PORT<br>
-                    user:pass@ip:port<br>
-                    ip:port:user:pass
-                </div>
-                <button class="btn-check" id="checkBtn" onclick="runBulkCheck()">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-                    Check All
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <div class="bulk-results" id="bulkResults">
-        <div class="results-header">
-            <div>
-                <div class="results-title">Results</div>
-                <div class="results-meta" id="resultsMeta"></div>
-            </div>
-            <div class="results-actions">
-                <button class="btn-sm btn-csv"   onclick="downloadCSV()">⬇ CSV</button>
-                <button class="btn-sm btn-clear" onclick="clearResults()">✕ Clear</button>
-            </div>
-        </div>
-        <div class="ip-table-wrap">
-            <table class="ip-table" id="resultsTable">
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Type</th>
-                        <th>IP Address</th>
-                        <th>Port</th>
-                        <th>Country</th>
-                        <th>City</th>
-                        <th>ISP / Org</th>
-                        <th>VPN / DC</th>
-                    </tr>
-                </thead>
-                <tbody id="resultsBody"></tbody>
-            </table>
-        </div>
-    </div>
-
-</div>
-
-<footer>
-    <div class="container">
-        <div class="footer-links">
-            <a href="/">Home</a>
-            <a href="/bulk">Bulk Check</a>
-            <a href="/api-docs">Free API</a>
-            <a href="/sitemap.xml">Sitemap</a>
-        </div>
-        <div>Whoer Live &copy; <span id="yr"></span> — Free Proxy &amp; IP Checker</div>
-        <div style="margin-top:6px;font-size:12px;">No data sold. No ads. No tracking.</div>
-    </div>
-</footer>
-
-<script>
-document.getElementById('yr').textContent = new Date().getFullYear();
-let allResults = [];
-let allParsed  = [];
-
-// ─── Parser: extract IP, port, type, credentials from any proxy string ────────
-function parseProxyLine(raw) {
-    const line = (raw || '').trim();
-    if (!line) return null;
-
-    let type = 'IP', ip = '', port = '', user = '', pass = '';
-
-    // Detect scheme prefix
-    const schemeMatch = line.match(/^(https?|socks5?|socks4a?|ss):\/\//i);
-    if (schemeMatch) {
-        const scheme = schemeMatch[1].toLowerCase();
-        type = scheme === 'http' ? 'HTTP'
-             : scheme === 'https' ? 'HTTPS'
-             : scheme === 'ss'    ? 'SS'
-             : scheme === 'socks4' || scheme === 'socks4a' ? 'SOCKS4'
-             : scheme === 'socks5' ? 'SOCKS5'
-             : 'SOCKS';
-
-        let rest = line.slice(schemeMatch[0].length);
-
-        // Shadowsocks: ss://base64encodedMethod@host:port or ss://base64@host:port
-        if (type === 'SS') {
-            const atIdx = rest.lastIndexOf('@');
-            if (atIdx !== -1) rest = rest.slice(atIdx + 1);
-            else {
-                // Try base64 decode to extract host
-                try {
-                    const decoded = atob(rest.split('#')[0].split('/')[0]);
-                    const m = decoded.match(/@([\d.a-fA-F:]+):(\d+)/);
-                    if (m) { ip = m[1]; port = m[2]; return { type, ip, port, user, pass }; }
-                } catch(_) {}
-            }
-        }
-
-        // user:pass@host:port
-        const atMatch = rest.match(/^([^@]+):([^@]+)@(.+)/);
-        if (atMatch) { user = atMatch[1]; pass = atMatch[2]; rest = atMatch[3]; }
-
-        const hostPort = rest.split('/')[0]; // strip path
-        const hp = splitHostPort(hostPort);
-        ip = hp.ip; port = hp.port;
-        if (type === 'IP' && port) type = 'HTTP';
-        return { type, ip, port, user, pass };
-    }
-
-    // No scheme — try various plain formats
-    // user:pass@ip:port
-    const atMatch = line.match(/^([^@:]+):([^@]+)@([\d.a-fA-F:]+):(\d+)$/);
-    if (atMatch) {
-        user = atMatch[1]; pass = atMatch[2];
-        ip = atMatch[3]; port = atMatch[4];
-        type = 'HTTP';
-        return { type, ip, port, user, pass };
-    }
-
-    // ip:port:user:pass
-    const colonSplit = line.split(':');
-    if (colonSplit.length >= 4 && /^\d+$/.test(colonSplit[1])) {
-        ip   = colonSplit[0];
-        port = colonSplit[1];
-        user = colonSplit[2];
-        pass = colonSplit.slice(3).join(':');
-        type = 'HTTP';
-        return { type, ip, port, user, pass };
-    }
-
-    // ip:port
-    if (colonSplit.length === 2 && /^\d+$/.test(colonSplit[1])) {
-        ip   = colonSplit[0];
-        port = colonSplit[1];
-        type = 'HTTP';
-        return { type, ip, port, user, pass };
-    }
-
-    // bare IP or IPv6
-    if (/^[\d.]+$/.test(line) || /^[a-fA-F0-9:]+$/.test(line)) {
-        ip = line; type = 'IP';
-        return { type, ip, port, user, pass };
-    }
-
-    return null; // unrecognised
-}
-
-function splitHostPort(str) {
-    // Handle IPv6 [::1]:port
-    const ipv6 = str.match(/^\[([^\]]+)\]:(\d+)$/);
-    if (ipv6) return { ip: ipv6[1], port: ipv6[2] };
-    const parts = str.split(':');
-    if (parts.length === 2) return { ip: parts[0], port: parts[1] };
-    return { ip: str, port: '' };
-}
-
-function isValidIP(ip) {
-    return /^(\d{1,3}\.){3}\d{1,3}$/.test(ip) || /^[a-fA-F0-9:]{2,39}$/.test(ip);
-}
-
-function updateCounter() {
-    const lines = document.getElementById('ipInput').value
-        .split('\n').map(l => l.trim()).filter(Boolean);
-    document.getElementById('ipCount').textContent = Math.min(lines.length, 100);
-}
-
-async function runBulkCheck() {
-    const raw = document.getElementById('ipInput').value
-        .split('\n').map(l => l.trim()).filter(Boolean).slice(0, 100);
-    if (!raw.length) return;
-
-    // Parse all lines
-    allParsed = raw.map(line => parseProxyLine(line)).filter(Boolean);
-    const validIPs = [...new Set(allParsed.map(p => p.ip).filter(isValidIP))];
-
-    if (!validIPs.length) { alert('No valid IP addresses found.'); return; }
-
-    const btn = document.getElementById('checkBtn');
-    btn.disabled = true;
-    btn.textContent = 'Checking…';
-
-    const term = document.getElementById('scanTerminal');
-    const logs = document.getElementById('termLogs');
-    const tbar = document.getElementById('termBar');
-
-    term.classList.add('on');
-    logs.innerHTML = '';
-    tbar.style.width = '0%';
-
-    // Generate terminal stages
-    const stages = [
-        '<span class="sys">[SYS]</span> Initializing bulk scan container...',
-        '<span class="sys">[SYS]</span> Waking up proxy tester nodes...'
-    ];
-    
-    // Add fake logs per proxy
-    validIPs.forEach(ip => {
-        stages.push(`<span class="sys">[NET]</span> Connecting -> <span class="ip">${ip}</span>...`);
-        stages.push(`<span class="sys">[CHK]</span> Resolving GeoIP & ISP for <span class="ip">${ip}</span>...`);
-        stages.push(`<span class="sys">[SEC]</span> Cross-referencing <span class="ip">${ip}</span> against VPN blacklists...`);
-    });
-
-    let sIdx = 0;
-    const termItv = setInterval(() => {
-        if (sIdx < stages.length) {
-            const div = document.createElement('div');
-            div.className = 'term-log';
-            div.innerHTML = stages[sIdx];
-            logs.appendChild(div);
-            logs.scrollTop = logs.scrollHeight;
-            const pct = Math.floor((sIdx / stages.length) * 96);
-            tbar.style.width = pct + '%';
-            sIdx++;
-        }
-    }, Math.max(80, 2000 / stages.length)); // Speed it up based on total IPs
-
-    try {
-        const res = await fetch('/api/bulk-scan', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ ips: validIPs }),
-        });
-        clearInterval(termItv);
-        const data = await res.json();
-        tbar.style.width = '100%';
-        const div = document.createElement('div');
-        div.className = 'term-log';
-        div.innerHTML = `<span class="sys" style="color:var(--green)">[SYS] Scan complete! Downloading artifacts...</span>`;
-        logs.appendChild(div);
-        logs.scrollTop = logs.scrollHeight;
-
-        // Map results back by IP
-        const byIP = {};
-        (data.results || []).forEach(r => { byIP[r.ip] = r; });
-
-        allResults = allParsed.map(p => ({
-            ...p,
-            geo: byIP[p.ip] || { error: true, ip: p.ip },
-        }));
-
-        setTimeout(() => { 
-            term.classList.remove('on'); 
-            renderResults(allResults); 
-        }, 1200);
-    } catch(e) {
-        clearInterval(termItv);
-        alert('Error. Please try again.');
-    } finally {
-        btn.disabled = false;
-        btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg> Check All`;
-    }
-}
-
-function typeBadge(type) {
-    const cls = { HTTP:'t-http', HTTPS:'t-https', SOCKS:'t-socks', SOCKS4:'t-socks4', SOCKS5:'t-socks5', SS:'t-ss', IP:'t-ip' }[type] || 't-ip';
-    return `<span class="type-badge ${cls}">${type}</span>`;
-}
-
-function renderResults(results) {
-    const body = document.getElementById('resultsBody');
-    const meta = document.getElementById('resultsMeta');
-    const ok   = results.filter(r => !r.geo.error).length;
-    meta.textContent = `${ok} of ${results.length} resolved`;
-
-    body.innerHTML = results.map((r, i) => {
-        const g = r.geo;
-        if (g.error) return `
-            <tr>
-                <td class="muted">${i+1}</td>
-                <td>${typeBadge(r.type)}</td>
-                <td class="mono">${r.ip || '—'}</td>
-                <td class="muted">${r.port || '—'}</td>
-                <td class="muted vpn-err" colspan="3">Could not resolve</td>
-                <td><span class="vpn-err">—</span></td>
-            </tr>`;
-        const flag = g.countryCode
-            ? `<img class="flag-img" src="https://flagcdn.com/w40/${g.countryCode.toLowerCase()}.png" alt="${g.country}">`
-            : '';
-        return `
-            <tr>
-                <td class="muted">${i+1}</td>
-                <td>${typeBadge(r.type)}</td>
-                <td class="mono">${g.ip}</td>
-                <td class="muted">${r.port || '—'}</td>
-                <td>${flag}${g.country}</td>
-                <td class="muted">${g.city}</td>
-                <td class="muted" style="max-width:200px;word-break:break-word;font-size:11px;">${g.isp}</td>
-                <td>${g.is_vpn ? '<span class="vpn-yes">VPN/DC</span>' : '<span class="vpn-no">Clean</span>'}</td>
-            </tr>`;
-    }).join('');
-
-    document.getElementById('bulkResults').classList.add('visible');
-}
-
-function clearResults() {
-    document.getElementById('bulkResults').classList.remove('visible');
-    document.getElementById('ipInput').value = '';
-    document.getElementById('ipCount').textContent = '0';
-    allResults = []; allParsed = [];
-}
-
-function downloadCSV() {
-    if (!allResults.length) return;
-    const header = ['#','Type','IP','Port','User','Country','City','ISP','Timezone','VPN/DC'];
-    const rows = allResults.map((r, i) => {
-        const g = r.geo;
-        return [i+1, r.type, g.ip||r.ip, r.port, r.user,
-            g.error?'Error':g.country, g.error?'':g.city,
-            g.error?'':g.isp, g.error?'':g.timezone,
-            g.error?'':g.is_vpn?'Yes':'No'];
-    });
-    const csv = [header,...rows].map(r=>r.map(c=>`"${(c||'').toString().replace(/"/g,'""')}"`).join(',')).join('\n');
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
-    a.download = 'whoer-bulk-results.csv';
-    a.click();
-}
-</script>
-</body>
-</html>
+</head><body><header>    <div class="container header-inner">        <a href="/" class="logo" style="text-decoration:none;">WHOER<span>.LIVE</span> <sub>v4</sub></a>        <div class="header-actions">            <!-- Dropdown for Tools -->            <div style="position:relative; display:inline-block;" tabindex="0" onblur="setTimeout(()=>this.querySelector('div').style.display='none', 200)">                <button class="btn" onclick="const d=this.nextElementSibling; d.style.display=d.style.display==='block'?'none':'block';">🛠 Tools</button>                <div style="display:none; position:absolute; top:100%; left:0; background:var(--panel); border:1px solid var(--border); border-radius:var(--radius); padding:8px; margin-top:8px; z-index:100; min-width:140px; box-shadow:0 10px 30px rgba(0,0,0,0.5);">                    <a href="/blacklist" style="display:block; padding:8px 12px; color:var(--text); text-decoration:none; font-size:14px; border-radius:4px; margin-bottom:4px;" onmouseover="this.style.background='var(--panel-hover)'" onmouseout="this.style.background='transparent'">🛡️ Blacklist</a>                    <a href="/port-scanner" style="display:block; padding:8px 12px; color:var(--text); text-decoration:none; font-size:14px; border-radius:4px; margin-bottom:4px;" onmouseover="this.style.background='var(--panel-hover)'" onmouseout="this.style.background='transparent'">🔌 Ports</a>                    <a href="/ping" style="display:block; padding:8px 12px; color:var(--text); text-decoration:none; font-size:14px; border-radius:4px;" onmouseover="this.style.background='var(--panel-hover)'" onmouseout="this.style.background='transparent'">📡 Ping Test</a>                </div>            </div>            <a href="/bulk"     class="btn btn-primary">🔢 Bulk Check</a>            <a href="/api-docs" class="btn">⚡ API</a>            <a href="/guides"   class="btn">Guides</a>        </div>    </div></header><div class="bulk-wrap">    <div class="bulk-hero">        <div class="bulk-badge">✓ 100% FREE — NO SIGNUP — NO LIMITS</div>        <h1>Bulk Proxy &amp; IP Checker</h1>        <p>Paste up to <strong>100 proxies or IPs</strong> in any format. We extract the IP, detect the proxy type, and instantly look up country, city, ISP, and VPN/datacenter status.</p>    </div>    <div class="format-chips">        <span class="chip plain">1.2.3.4</span>        <span class="chip plain">1.2.3.4:8080</span>        <span class="chip http">http://1.2.3.4:8080</span>        <span class="chip http">https://1.2.3.4:3128</span>        <span class="chip socks">socks://1.2.3.4:1080</span>        <span class="chip socks">socks4://1.2.3.4:1080</span>        <span class="chip socks">socks5://1.2.3.4:1080</span>        <span class="chip ss">ss://...@1.2.3.4:8388</span>        <span class="chip plain">user:pass@1.2.3.4:8080</span>        <span class="chip plain">1.2.3.4:port:user:pass</span>    </div>    <div class="bulk-form">        <div class="form-row">            <div>                <label for="ipInput">Proxies / IPs (one per line, max 100)</label>                <textarea id="ipInput" class="bulk-textarea"                    placeholder="Examples — any format works:&#10;1.2.3.4&#10;1.2.3.4:8080&#10;http://1.2.3.4:3128&#10;socks5://1.2.3.4:1080&#10;socks5://user:pass@1.2.3.4:1080&#10;ss://base64@1.2.3.4:8388&#10;1.2.3.4:8080:username:password"                    oninput="updateCounter()"></textarea>                <!-- Terminal Overlay -->                <div class="scan-terminal" id="scanTerminal">                    <div class="term-head">                        <div class="dot d-red"></div><div class="dot d-yel"></div><div class="dot d-grn"></div>                        <div class="title">Live Scan Progress</div>                    </div>                    <div class="term-body" id="termLogs"></div>                    <div class="term-prog"><div class="term-bar" id="termBar"></div></div>                </div>            </div>            <div class="side-panel">                <div class="bulk-counter">                    <span id="ipCount">0</span>                    entries / 100                </div>                <div class="side-info">                    <strong>Supported formats</strong>                    HTTP · HTTPS<br>                    SOCKS · SOCKS4 · SOCKS5<br>                    Shadowsocks (ss://)<br>                    IP only · IP:PORT<br>                    user:pass@ip:port<br>                    ip:port:user:pass                </div>                <button class="btn-check" id="checkBtn" onclick="runBulkCheck()">                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>                    Check All                </button>            </div>        </div>    </div>    <div class="bulk-results" id="bulkResults">        <div class="results-header">            <div>                <div class="results-title">Results</div>                <div class="results-meta" id="resultsMeta"></div>            </div>            <div class="results-actions">                <button class="btn-sm btn-csv"   onclick="downloadCSV()">⬇ CSV</button>                <button class="btn-sm btn-clear" onclick="clearResults()">✕ Clear</button>            </div>        </div>        <div class="ip-table-wrap">            <table class="ip-table" id="resultsTable">                <thead>                    <tr>                        <th>#</th>                        <th>Type</th>                        <th>IP Address</th>                        <th>Port</th>                        <th>Country</th>                        <th>City</th>                        <th>ISP / Org</th>                        <th>VPN / DC</th>                    </tr>                </thead>                <tbody id="resultsBody"></tbody>            </table>        </div>    </div></div><footer>    <div class="container">        <div class="footer-links">            <a href="/">Home</a>            <a href="/bulk">Bulk Check</a>            <a href="/api-docs">Free API</a>            <a href="/sitemap.xml">Sitemap</a>        </div>        <div>Whoer Live &copy; <span id="yr"></span> — Free Proxy &amp; IP Checker</div>        <div style="margin-top:6px;font-size:12px;">No data sold. No ads. No tracking.</div>    </div></footer><script>document.getElementById('yr').textContent = new Date().getFullYear();let allResults = [];let allParsed  = [];// ─── Parser: extract IP, port, type, credentials from any proxy string ────────function parseProxyLine(raw) {    const line = (raw || '').trim();    if (!line) return null;    let type = 'IP', ip = '', port = '', user = '', pass = '';    // Detect scheme prefix    const schemeMatch = line.match(/^(https?|socks5?|socks4a?|ss):\/\//i);    if (schemeMatch) {        const scheme = schemeMatch[1].toLowerCase();        type = scheme === 'http' ? 'HTTP'             : scheme === 'https' ? 'HTTPS'             : scheme === 'ss'    ? 'SS'             : scheme === 'socks4' || scheme === 'socks4a' ? 'SOCKS4'             : scheme === 'socks5' ? 'SOCKS5'             : 'SOCKS';        let rest = line.slice(schemeMatch[0].length);        // Shadowsocks: ss://base64encodedMethod@host:port or ss://base64@host:port        if (type === 'SS') {            const atIdx = rest.lastIndexOf('@');            if (atIdx !== -1) rest = rest.slice(atIdx + 1);            else {                // Try base64 decode to extract host                try {                    const decoded = atob(rest.split('#')[0].split('/')[0]);                    const m = decoded.match(/@([\d.a-fA-F:]+):(\d+)/);                    if (m) { ip = m[1]; port = m[2]; return { type, ip, port, user, pass }; }                } catch(_) {}            }        }        // user:pass@host:port        const atMatch = rest.match(/^([^@]+):([^@]+)@(.+)/);        if (atMatch) { user = atMatch[1]; pass = atMatch[2]; rest = atMatch[3]; }        const hostPort = rest.split('/')[0]; // strip path        const hp = splitHostPort(hostPort);        ip = hp.ip; port = hp.port;        if (type === 'IP' && port) type = 'HTTP';        return { type, ip, port, user, pass };    }    // No scheme — try various plain formats    // user:pass@ip:port    const atMatch = line.match(/^([^@:]+):([^@]+)@([\d.a-fA-F:]+):(\d+)$/);    if (atMatch) {        user = atMatch[1]; pass = atMatch[2];        ip = atMatch[3]; port = atMatch[4];        type = 'HTTP';        return { type, ip, port, user, pass };    }    // ip:port:user:pass    const colonSplit = line.split(':');    if (colonSplit.length >= 4 && /^\d+$/.test(colonSplit[1])) {        ip   = colonSplit[0];        port = colonSplit[1];        user = colonSplit[2];        pass = colonSplit.slice(3).join(':');        type = 'HTTP';        return { type, ip, port, user, pass };    }    // ip:port    if (colonSplit.length === 2 && /^\d+$/.test(colonSplit[1])) {        ip   = colonSplit[0];        port = colonSplit[1];        type = 'HTTP';        return { type, ip, port, user, pass };    }    // bare IP or IPv6    if (/^[\d.]+$/.test(line) || /^[a-fA-F0-9:]+$/.test(line)) {        ip = line; type = 'IP';        return { type, ip, port, user, pass };    }    return null; // unrecognised}function splitHostPort(str) {    // Handle IPv6 [::1]:port    const ipv6 = str.match(/^\[([^\]]+)\]:(\d+)$/);    if (ipv6) return { ip: ipv6[1], port: ipv6[2] };    const parts = str.split(':');    if (parts.length === 2) return { ip: parts[0], port: parts[1] };    return { ip: str, port: '' };}function isValidIP(ip) {    return /^(\d{1,3}\.){3}\d{1,3}$/.test(ip) || /^[a-fA-F0-9:]{2,39}$/.test(ip);}function updateCounter() {    const lines = document.getElementById('ipInput').value        .split('\n').map(l => l.trim()).filter(Boolean);    document.getElementById('ipCount').textContent = Math.min(lines.length, 100);}async function runBulkCheck() {    const raw = document.getElementById('ipInput').value        .split('\n').map(l => l.trim()).filter(Boolean).slice(0, 100);    if (!raw.length) return;    // Parse all lines    allParsed = raw.map(line => parseProxyLine(line)).filter(Boolean);    const validIPs = [...new Set(allParsed.map(p => p.ip).filter(isValidIP))];    if (!validIPs.length) { alert('No valid IP addresses found.'); return; }    const btn = document.getElementById('checkBtn');    btn.disabled = true;    btn.textContent = 'Checking…';    const term = document.getElementById('scanTerminal');    const logs = document.getElementById('termLogs');    const tbar = document.getElementById('termBar');    term.classList.add('on');    logs.innerHTML = '';    tbar.style.width = '0%';    // Generate terminal stages    const stages = [        '<span class="sys">[SYS]</span> Initializing bulk scan container...',        '<span class="sys">[SYS]</span> Waking up proxy tester nodes...'    ];    // Add fake logs per proxy    validIPs.forEach(ip => {        stages.push(`<span class="sys">[NET]</span> Connecting -> <span class="ip">${ip}</span>...`);        stages.push(`<span class="sys">[CHK]</span> Resolving GeoIP & ISP for <span class="ip">${ip}</span>...`);        stages.push(`<span class="sys">[SEC]</span> Cross-referencing <span class="ip">${ip}</span> against VPN blacklists...`);    });    let sIdx = 0;    const termItv = setInterval(() => {        if (sIdx < stages.length) {            const div = document.createElement('div');            div.className = 'term-log';            div.innerHTML = stages[sIdx];            logs.appendChild(div);            logs.scrollTop = logs.scrollHeight;            const pct = Math.floor((sIdx / stages.length) * 96);            tbar.style.width = pct + '%';            sIdx++;        }    }, Math.max(80, 2000 / stages.length)); // Speed it up based on total IPs    try {        const res = await fetch('/api/bulk-scan', {            method: 'POST',            headers: { 'Content-Type': 'application/json' },            body: JSON.stringify({ ips: validIPs }),        });        clearInterval(termItv);        const data = await res.json();        tbar.style.width = '100%';        const div = document.createElement('div');        div.className = 'term-log';        div.innerHTML = `<span class="sys" style="color:var(--green)">[SYS] Scan complete! Downloading artifacts...</span>`;        logs.appendChild(div);        logs.scrollTop = logs.scrollHeight;        // Map results back by IP        const byIP = {};        (data.results || []).forEach(r => { byIP[r.ip] = r; });        allResults = allParsed.map(p => ({            ...p,            geo: byIP[p.ip] || { error: true, ip: p.ip },        }));        setTimeout(() => {             term.classList.remove('on');             renderResults(allResults);         }, 1200);    } catch(e) {        clearInterval(termItv);        alert('Error. Please try again.');    } finally {        btn.disabled = false;        btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg> Check All`;    }}function typeBadge(type) {    const cls = { HTTP:'t-http', HTTPS:'t-https', SOCKS:'t-socks', SOCKS4:'t-socks4', SOCKS5:'t-socks5', SS:'t-ss', IP:'t-ip' }[type] || 't-ip';    return `<span class="type-badge ${cls}">${type}</span>`;}function renderResults(results) {    const body = document.getElementById('resultsBody');    const meta = document.getElementById('resultsMeta');    const ok   = results.filter(r => !r.geo.error).length;    meta.textContent = `${ok} of ${results.length} resolved`;    body.innerHTML = results.map((r, i) => {        const g = r.geo;        if (g.error) return `            <tr>                <td class="muted">${i+1}</td>                <td>${typeBadge(r.type)}</td>                <td class="mono">${r.ip || '—'}</td>                <td class="muted">${r.port || '—'}</td>                <td class="muted vpn-err" colspan="3">Could not resolve</td>                <td><span class="vpn-err">—</span></td>            </tr>`;        const flag = g.countryCode            ? `<img class="flag-img" src="https://flagcdn.com/w40/${g.countryCode.toLowerCase()}.png" alt="${g.country}">`            : '';        return `            <tr>                <td class="muted">${i+1}</td>                <td>${typeBadge(r.type)}</td>                <td class="mono">${g.ip}</td>                <td class="muted">${r.port || '—'}</td>                <td>${flag}${g.country}</td>                <td class="muted">${g.city}</td>                <td class="muted" style="max-width:200px;word-break:break-word;font-size:11px;">${g.isp}</td>                <td>${g.is_vpn ? '<span class="vpn-yes">VPN/DC</span>' : '<span class="vpn-no">Clean</span>'}</td>            </tr>`;    }).join('');    document.getElementById('bulkResults').classList.add('visible');}function clearResults() {    document.getElementById('bulkResults').classList.remove('visible');    document.getElementById('ipInput').value = '';    document.getElementById('ipCount').textContent = '0';    allResults = []; allParsed = [];}function downloadCSV() {    if (!allResults.length) return;    const header = ['#','Type','IP','Port','User','Country','City','ISP','Timezone','VPN/DC'];    const rows = allResults.map((r, i) => {        const g = r.geo;        return [i+1, r.type, g.ip||r.ip, r.port, r.user,            g.error?'Error':g.country, g.error?'':g.city,            g.error?'':g.isp, g.error?'':g.timezone,            g.error?'':g.is_vpn?'Yes':'No'];    });    const csv = [header,...rows].map(r=>r.map(c=>`"${(c||'').toString().replace(/"/g,'""')}"`).join(',')).join('\n');    const a = document.createElement('a');    a.href = URL.createObjectURL(new Blob([csv],{type:'text/csv'}));    a.download = 'whoer-bulk-results.csv';    a.click();}</script></body></html>

@@ -1,80 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Privacy Guides & VPN Tests | Whoer Live</title>
-    <meta name="description" content="Learn how to protect your privacy online, prevent WebRTC leaks, and test your VPN connection.">
-    <link rel="canonical" href="https://www.whoer.live/guides">
-    <link rel="icon" type="image/png" href="/img/logo.png">
+<!DOCTYPE html><html lang="en"><head>    <meta charset="UTF-8">    <meta name="viewport" content="width=device-width, initial-scale=1.0">    <title>Privacy Guides & VPN Tests | Whoer Live</title>    <meta name="description" content="Learn how to protect your privacy online, prevent WebRTC leaks, and test your VPN connection.">    <link rel="canonical" href="https://www.whoer.live/guides">    <link rel="icon" type="image/png" href="/img/logo.png">        <style>        .guides-wrap { max-width: 800px; margin: 0 auto; padding: 40px 20px 120px; }        .guides-hero { text-align: center; padding: 40px 0 50px; }        .guides-hero h1 { font-size: 36px; font-weight: 700; margin-bottom: 12px; }        .guides-hero p { font-size: 16px; color: var(--muted); max-width: 500px; margin: 0 auto; line-height: 1.6; }        .article-card { display: block; text-decoration: none; background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 24px 30px; margin-bottom: 16px; transition: all 0.2s; }        .article-card:hover { background: var(--panel-hover); border-color: var(--border2); transform: translateY(-2px); box-shadow: 0 4px 20px rgba(0,0,0,0.2); }        .article-title { font-size: 20px; font-weight: 700; color: var(--text); margin-bottom: 8px; }        .article-excerpt { font-size: 14px; color: var(--muted); line-height: 1.6; margin-bottom: 16px; }        .article-meta { font-size: 12px; font-family: var(--mono); color: var(--blue); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }        .article-badge { display: inline-block; padding: 4px 8px; border-radius: 4px; background: rgba(255,255,255,0.05); font-size: 10px; margin-right: 8px; }    </style>
+    <!-- Core Web Vitals: Preload & Async Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"></noscript>
     <link rel="stylesheet" href="/css/style.css">
-    <style>
-        .guides-wrap { max-width: 800px; margin: 0 auto; padding: 40px 20px 120px; }
-        .guides-hero { text-align: center; padding: 40px 0 50px; }
-        .guides-hero h1 { font-size: 36px; font-weight: 700; margin-bottom: 12px; }
-        .guides-hero p { font-size: 16px; color: var(--muted); max-width: 500px; margin: 0 auto; line-height: 1.6; }
-        
-        .article-card { display: block; text-decoration: none; background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 24px 30px; margin-bottom: 16px; transition: all 0.2s; }
-        .article-card:hover { background: var(--panel-hover); border-color: var(--border2); transform: translateY(-2px); box-shadow: 0 4px 20px rgba(0,0,0,0.2); }
-        .article-title { font-size: 20px; font-weight: 700; color: var(--text); margin-bottom: 8px; }
-        .article-excerpt { font-size: 14px; color: var(--muted); line-height: 1.6; margin-bottom: 16px; }
-        .article-meta { font-size: 12px; font-family: var(--mono); color: var(--blue); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
-
-        .article-badge { display: inline-block; padding: 4px 8px; border-radius: 4px; background: rgba(255,255,255,0.05); font-size: 10px; margin-right: 8px; }
-    </style>
-</head>
-<body>
-
-<header>
-    <div class="container header-inner">
-        <a href="/" style="display:flex;align-items:center;gap:10px;text-decoration:none;">
-            <img src="/img/logo.png" alt="Whoer Live Logo" style="width:32px;height:32px;border-radius:8px;">
-            <div class="logo">WHOER<span>.LIVE</span> <sub>v4</sub></div>
-        </a>
-        <div class="header-actions">
-            <!-- Simplified nav -->
-            <a href="/bulk" class="btn">Bulk</a>
-            <a href="/blacklist" class="btn">Blacklist</a>
-            <a href="/port-scanner" class="btn">Ports</a>
-            <a href="/ping" class="btn">Ping</a>
-            <a href="/guides" class="btn btn-primary" style="background:#fff;color:#000;">Guides</a>
-        </div>
-    </div>
-</header>
-
-<div class="guides-wrap">
-    <div class="guides-hero">
-        <h1>Privacy Guides</h1>
-        <p>Expert articles on securing your digital footprint, detecting IP leaks, and maintaining anonymity online.</p>
-    </div>
-
-    <!-- Article 1 -->
-    <a href="/guides" class="article-card">
-        <div class="article-title">What is a WebRTC Leak and How to Fix It?</div>
-        <div class="article-excerpt">WebRTC is a browser feature that enables real-time communication like video calls. However, it can leak your real IP address even if you are connected to a premium VPN. Learn how to test your browser and disable WebRTC to stay hidden.</div>
-        <div class="article-meta">
-            <span class="article-badge">SECURITY</span> 5 MIN READ
-        </div>
-    </a>
-
-    <!-- Article 2 -->
-    <a href="/guides" class="article-card">
-        <div class="article-title">How to Test if Your VPN is Actually Working</div>
-        <div class="article-excerpt">Not all VPNs are created equal. Some leak your DNS queries, others drop your connection briefly exposing your real IP. Here is a step-by-step guide to testing your VPN connection using Whoer.live's advanced leak detection tools.</div>
-        <div class="article-meta">
-            <span class="article-badge">TUTORIAL</span> 4 MIN READ
-        </div>
-    </a>
-
-    <!-- Article 3 -->
-    <a href="/guides" class="article-card">
-        <div class="article-title">SOCKS5 vs HTTP Proxies: Which is Better for Anonymity?</div>
-        <div class="article-excerpt">When using our Bulk Checker, you'll encounter different proxy protocols. What is the difference between an HTTP proxy, an Elite Proxy, and a SOCKS5 proxy? We break down which protocols provide the best encryption and anonymity.</div>
-        <div class="article-meta">
-            <span class="article-badge">NETWORKING</span> 7 MIN READ
-        </div>
-    </a>
-</div>
-
-</body>
-</html>
+</head><body><header>    <div class="container header-inner">        <a href="/" style="display:flex;align-items:center;gap:10px;text-decoration:none;">            <img src="/img/logo.png" alt="Whoer Live Logo" style="width:32px;height:32px;border-radius:8px;">            <div class="logo">WHOER<span>.LIVE</span> <sub>v4</sub></div>        </a>        <div class="header-actions">            <!-- Simplified nav -->            <a href="/bulk" class="btn">Bulk</a>            <a href="/blacklist" class="btn">Blacklist</a>            <a href="/port-scanner" class="btn">Ports</a>            <a href="/ping" class="btn">Ping</a>            <a href="/guides" class="btn btn-primary" style="background:#fff;color:#000;">Guides</a>        </div>    </div></header><div class="guides-wrap">    <div class="guides-hero">        <h1>Privacy Guides</h1>        <p>Expert articles on securing your digital footprint, detecting IP leaks, and maintaining anonymity online.</p>    </div>    <!-- Article 1 -->    <a href="/guides" class="article-card">        <div class="article-title">What is a WebRTC Leak and How to Fix It?</div>        <div class="article-excerpt">WebRTC is a browser feature that enables real-time communication like video calls. However, it can leak your real IP address even if you are connected to a premium VPN. Learn how to test your browser and disable WebRTC to stay hidden.</div>        <div class="article-meta">            <span class="article-badge">SECURITY</span> 5 MIN READ        </div>    </a>    <!-- Article 2 -->    <a href="/guides" class="article-card">        <div class="article-title">How to Test if Your VPN is Actually Working</div>        <div class="article-excerpt">Not all VPNs are created equal. Some leak your DNS queries, others drop your connection briefly exposing your real IP. Here is a step-by-step guide to testing your VPN connection using Whoer.live's advanced leak detection tools.</div>        <div class="article-meta">            <span class="article-badge">TUTORIAL</span> 4 MIN READ        </div>    </a>    <!-- Article 3 -->    <a href="/guides" class="article-card">        <div class="article-title">SOCKS5 vs HTTP Proxies: Which is Better for Anonymity?</div>        <div class="article-excerpt">When using our Bulk Checker, you'll encounter different proxy protocols. What is the difference between an HTTP proxy, an Elite Proxy, and a SOCKS5 proxy? We break down which protocols provide the best encryption and anonymity.</div>        <div class="article-meta">            <span class="article-badge">NETWORKING</span> 7 MIN READ        </div>    </a></div></body></html>
