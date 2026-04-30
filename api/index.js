@@ -416,17 +416,17 @@ app.post('/api/process-scan', async (req, res) => {
             const r = await axios.get(`https://ipapi.co/${userIp}/json/`, { timeout: 4000, headers: { 'User-Agent': 'whoer.live/4.0' } });
             const d = r.data;
             if (d && d.ip && !d.error) {
-                ipInfo = { query: d.ip, country: d.country_name, countryCode: d.country_code, region: d.region, city: d.city, zip: d.postal, isp: d.org, org: d.org, timezone: d.timezone, as: d.asn, latitude: d.latitude, longitude: d.longitude };
+                ipInfo = { ip: d.ip, country: d.country_name, countryCode: d.country_code, region: d.region, city: d.city, zip: d.postal, isp: d.org, org: d.org, timezone: d.timezone, as: d.asn, latitude: d.latitude, longitude: d.longitude };
             } else throw new Error();
         } catch (e) {
             try {
                 const r2 = await axios.get(`http://ip-api.com/json/${userIp}?fields=status,country,countryCode,regionName,city,zip,timezone,isp,org,as,query,lat,lon`, { timeout: 3500 });
                 if (r2.data.status === 'success') {
                     const d = r2.data;
-                    ipInfo = { query: d.query, country: d.country, countryCode: d.countryCode, region: d.regionName, city: d.city, zip: d.zip, isp: d.isp, org: d.org || d.isp, timezone: d.timezone, as: d.as, latitude: d.lat, longitude: d.lon };
+                    ipInfo = { ip: d.query, country: d.country, countryCode: d.countryCode, region: d.regionName, city: d.city, zip: d.zip, isp: d.isp, org: d.org || d.isp, timezone: d.timezone, as: d.as, latitude: d.lat, longitude: d.lon };
                 } else throw new Error();
             } catch (e2) {
-                ipInfo = { query: userIp || 'Unknown', isp: 'Unknown', org: 'Unknown', country: 'Unknown', countryCode: '', region: 'Unknown', city: 'Unknown', timezone: 'UTC', zip: '', as: 'N/A' };
+                ipInfo = { ip: userIp || 'Unknown', isp: 'Unknown', org: 'Unknown', country: 'Unknown', countryCode: '', region: 'Unknown', city: 'Unknown', timezone: 'UTC', zip: '', as: 'N/A' };
             }
         }
 

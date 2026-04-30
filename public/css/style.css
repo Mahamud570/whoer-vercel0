@@ -175,8 +175,8 @@ header {
 .flag-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
 .ip-row {
-    display: flex; justify-content: center; align-items: center; gap: 12px;
-    flex-wrap: wrap;
+    display: flex; justify-content: center; align-items: center; gap: 16px;
+    margin-bottom: 4px;
 }
 .ip-display {
     font-family: var(--mono);
