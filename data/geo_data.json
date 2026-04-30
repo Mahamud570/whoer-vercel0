@@ -1,0 +1,22 @@
+{
+  "usa": ["new-york", "los-angeles", "chicago", "houston", "phoenix", "philadelphia", "san-antonio", "san-diego", "dallas", "san-jose", "austin", "jacksonville", "fort-worth", "columbus", "charlotte", "san-francisco", "indianapolis", "seattle", "denver", "oklahoma-city", "nashville", "el-paso", "washington-dc", "boston", "las-vegas", "portland", "detroit", "louisville", "memphis", "baltimore", "milwaukee", "albuquerque", "tucson", "fresno", "sacramento", "mesa", "kansas-city", "atlanta", "long-beach", "colorado-springs", "raleigh", "miami", "virginia-beach", "oakland", "minneapolis", "tulsa", "tampa", "arlington", "new-orleans", "wichita"],
+  "uk": ["london", "birmingham", "manchester", "glasgow", "liverpool", "bristol", "edinburgh", "leeds", "sheffield", "leicester", "coventry", "hull", "bradford", "cardiff", "belfast", "nottingham", "southampton", "reading", "plymouth", "derby", "wolverhampton", "milton-keynes", "northampton", "norwich", "luton", "solihull", "aberdeen", "york", "cambridge", "oxford"],
+  "india": ["mumbai", "delhi", "bangalore", "hyderabad", "ahmedabad", "chennai", "kolkata", "surat", "pune", "jaipur", "lucknow", "kanpur", "nagpur", "indore", "thane", "bhopal", "visakhapatnam", "pimpri-chinchwad", "patna", "vadodara", "ghaziabad", "ludhiana", "agra", "nashik", "faridabad", "meerut", "rajkot", "kalyan-dombivli", "vasai-virar", "varanasi"],
+  "germany": ["berlin", "hamburg", "munich", "cologne", "frankfurt", "stuttgart", "dusseldorf", "leipzig", "dortmund", "essen", "bremen", "dresden", "hanover", "nuremberg", "duisburg", "bochum", "wuppertal", "bielefeld", "bonn", "munster"],
+  "canada": ["toronto", "montreal", "vancouver", "calgary", "edmonton", "ottawa", "winnipeg", "quebec-city", "hamilton", "kitchener", "london-ontario", "victoria", "halifax", "oshawa", "windsor"],
+  "australia": ["sydney", "melbourne", "brisbane", "perth", "adelaide", "gold-coast", "canberra", "newcastle", "central-coast", "sunshine-coast"],
+  "bangladesh": ["dhaka", "chittagong", "khulna", "rajshahi", "sylhet", "barisal", "rangpur", "mymensingh", "comilla", "gazipur"],
+  "france": ["paris", "marseille", "lyon", "toulouse", "nice", "nantes", "strasbourg", "montpellier", "bordeaux", "lille"],
+  "brazil": ["sao-paulo", "rio-de-janeiro", "brasilia", "salvador", "fortaleza", "belo-horizonte", "manaus", "curitiba", "recife", "porto-alegre"],
+  "russia": ["moscow", "saint-petersburg", "novosibirsk", "yekaterinburg", "kazan", "nizhny-novgorod", "chelyabinsk", "samara", "omsk", "rostov-on-don"],
+  "spain": ["madrid", "barcelona", "valencia", "seville", "zaragoza", "malaga", "murcia", "palma", "las-palmas", "bilbao"],
+  "japan": ["tokyo", "yokohama", "osaka", "nagoya", "sapporo", "fukuoka", "kobe", "kyoto", "kawasaki", "saitama"],
+  "china": ["shanghai", "beijing", "guangzhou", "shenzhen", "tianjin", "chengdu", "nanjing", "wuhan", "xian", "hangzhou"],
+  "turkey": ["istanbul", "ankara", "izmir", "bursa", "antalya", "adana", "konya", "gaziantep", "sanliurfa", "mersin"],
+  "mexico": ["mexico-city", "guadalajara", "monterrey", "puebla", "toluca", "tijuana", "leon", "juarez", "torreon", "queretaro"],
+  "italy": ["rome", "milan", "naples", "turin", "palermo", "genoa", "bologna", "florence", "bari", "catania"],
+  "indonesia": ["jakarta", "surabaya", "bandung", "medan", "semarang", "makassar", "palembang", "tangerang", "depok", "batam"],
+  "vietnam": ["ho-chi-minh-city", "hanoi", "da-nang", "hai-phong", "can-tho"],
+  "thailand": ["bangkok", "nonthaburi", "nakhon-ratchasima", "chiang-mai", "hat-yai"],
+  "philippines": ["manila", "quezon-city", "davao-city", "caloocan", "cebu-city"]
+}

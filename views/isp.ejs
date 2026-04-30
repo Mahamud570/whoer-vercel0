@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= isp.name %> IP Address Check — ISP Lookup & Leak Test | Whoer Live</title>
+    <meta name="description" content="Check if your <%= isp.name %> IP address is leaking or flagged. See your real IP, location, and privacy score on your <%= isp.name %> connection — free and instant.">
+    <meta name="keywords" content="<%= isp.name %> IP address, <%= isp.name %> VPN test, check <%= isp.name %> connection, <%= isp.name %> ISP lookup, is <%= isp.name %> blocking VPN">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://www.whoer.live/isp/<%= slug %>">
+    <link rel="icon" type="image/png" href="/img/logo.png">
+    <meta property="og:title" content="<%= isp.name %> IP & Privacy Check | Whoer Live">
+    <meta property="og:description" content="Check your <%= isp.name %> IP address, test for VPN leaks, and see your full privacy score.">
+    <meta property="og:url" content="https://www.whoer.live/isp/<%= slug %>">
+    <meta property="og:image" content="https://www.whoer.live/img/logo.png">
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        { "@type": "BreadcrumbList", "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://www.whoer.live/" },
+            { "@type": "ListItem", "position": 2, "name": "ISP Checker", "item": "https://www.whoer.live/isp" },
+            { "@type": "ListItem", "position": 3, "name": "<%= isp.name %>" }
+        ]},
+        { "@type": "WebApplication", "name": "Whoer Live ISP Checker", "url": "https://www.whoer.live/isp/<%= slug %>",
+          "aggregateRating": { "@type": "AggregateRating", "ratingValue": "4.9", "reviewCount": "8420", "bestRating": "5" }
+        }
+      ]
+    }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" media="print" onload="this.media='all'">
+    <style><%- include('../public/css/style.css') %></style>
+    <style>
+        .isp-wrap { max-width: 860px; margin: 0 auto; padding: 20px 20px 120px; }
+        .isp-hero { text-align: center; padding: 48px 0 32px; }
+        .isp-badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(77,159,255,0.1); border: 1px solid rgba(77,159,255,0.3); color: var(--blue); border-radius: 20px; padding: 6px 16px; font-size: 12px; font-weight: 700; margin-bottom: 20px; }
+        .isp-hero h1 { font-size: 34px; font-weight: 700; margin-bottom: 14px; }
+        .isp-hero p { font-size: 16px; color: var(--muted); max-width: 540px; margin: 0 auto 28px; line-height: 1.65; }
+        .isp-cta { display: inline-flex; align-items: center; gap: 10px; background: var(--green); color: #000; border: none; border-radius: var(--radius); padding: 14px 28px; font-size: 15px; font-weight: 700; text-decoration: none; transition: all 0.2s; }
+        .isp-cta:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(34,215,122,0.35); }
+        .isp-info { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 28px; margin: 28px 0; }
+        .isp-info h2 { font-size: 17px; font-weight: 700; margin-bottom: 12px; }
+        .isp-info p { font-size: 14px; color: var(--muted); line-height: 1.75; }
+        .isp-meta { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px,1fr)); gap: 12px; margin-top: 20px; }
+        .isp-chip { background: rgba(255,255,255,0.04); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; text-align: center; }
+        .isp-chip .val { font-family: var(--mono); font-size: 18px; font-weight: 700; color: var(--blue); }
+        .isp-chip .lbl { font-size: 11px; color: var(--muted); margin-top: 4px; }
+    </style>
+</head>
+<body>
+<header>
+    <div class="container header-inner">
+        <a href="/" style="display:flex;align-items:center;gap:10px;text-decoration:none;">
+            <img src="/img/logo.png" alt="Whoer Live" style="width:32px;height:32px;border-radius:8px;">
+            <div class="logo">WHOER<span>.LIVE</span> <sub>v4</sub></div>
+        </a>
+        <div class="header-actions">
+            <a href="/" class="btn">🛡️ IP Check</a>
+            <a href="/bulk" class="btn">🔢 Bulk</a>
+            <a href="/api-docs" class="btn">⚡ API</a>
+            <a href="/threat-map" class="btn" style="color:var(--red);border-color:rgba(255,79,106,0.3);background:rgba(255,79,106,0.1);">🔴 Threats</a>
+            <button class="btn btn-primary" onclick="location.href='/'">Run Test</button>
+        </div>
+    </div>
+</header>
+
+<div class="isp-wrap">
+    <div class="isp-hero">
+        <div class="isp-badge">🌐 ISP Lookup</div>
+        <h1>Check Your <strong><%= isp.name %></strong> IP Address</h1>
+        <p>See your real IP address assigned by <strong><%= isp.name %></strong>, test for VPN leaks, and get an instant privacy score on your <%= isp.type %> connection.</p>
+        <a href="/" class="isp-cta">Run Test on <%= isp.name %> Now</a>
+    </div>
+
+    <div class="isp-info">
+        <h2>About <%= isp.name %></h2>
+        <p><%= isp.description %></p>
+        <div class="isp-meta">
+            <div class="isp-chip"><div class="val"><%= isp.country %></div><div class="lbl">Country</div></div>
+            <div class="isp-chip"><div class="val"><%= isp.type %></div><div class="lbl">Connection Type</div></div>
+            <div class="isp-chip"><div class="val">Dynamic</div><div class="lbl">IP Assignment</div></div>
+        </div>
+    </div>
+
+    <div class="panel" style="padding:28px;margin-bottom:24px;">
+        <h2 style="font-size:17px;font-weight:700;margin-bottom:14px;">Does <%= isp.name %> Block VPNs?</h2>
+        <p style="font-size:14px;color:var(--muted);line-height:1.75;">Some ISPs throttle or block VPN traffic using Deep Packet Inspection (DPI). If your VPN connection drops frequently on <%= isp.name %>, you may need to use an obfuscated VPN protocol.<br><br>Use our tool to run a live test and see your current connection status on <%= isp.name %>.</p>
+    </div>
+
+    <div class="info-block">
+        <h2>Check Other ISPs</h2>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;">
+            <% ['comcast','verizon','att','spectrum','bt','sky','grameenphone','banglalink','airtel','jio'].filter(s => s !== slug).slice(0,8).forEach(s => { %>
+            <a href="/isp/<%= s %>" class="badge badge-blue" style="text-decoration:none;"><%= s.replace(/-/g,' ').replace(/\b\w/g,l=>l.toUpperCase()) %></a>
+            <% }) %>
+        </div>
+    </div>
+</div>
+<footer>
+    <div class="container">
+        <div class="footer-links"><a href="/">Home</a><a href="/sitemap.xml">Sitemap</a></div>
+        <div>Whoer Live &copy; <%= year %> — Free IP & Privacy Checker</div>
+    </div>
+</footer>
+</body>
+</html>

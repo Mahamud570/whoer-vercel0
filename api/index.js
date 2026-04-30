@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const helmet = require('helmet');
+const fs = require('fs');
 const path = require('path');
 const cors = require('cors');
 const { v4: uuidv4 } = require('uuid');
@@ -11,149 +12,193 @@ const compression = require('compression');
 const dns = require('dns').promises;
 const net = require('net');
 
+// ─── LOAD DATA ───────────────────────────────────────────────────────────────
+const vpnBrandsPath = path.join(__dirname, '..', 'data', 'vpn_brands.json');
+const ispsPath = path.join(__dirname, '..', 'data', 'isps.json');
+const geoDataPath = path.join(__dirname, '..', 'data', 'geo_data.json');
+
+let VPN_BRANDS = {};
+let ISP_DATA = {};
+let GEO_DATA = {};
+
+try {
+    console.log('--- STARTING DATA LOAD ---');
+    VPN_BRANDS = JSON.parse(fs.readFileSync(vpnBrandsPath, 'utf8'));
+    ISP_DATA = JSON.parse(fs.readFileSync(ispsPath, 'utf8'));
+    GEO_DATA = JSON.parse(fs.readFileSync(geoDataPath, 'utf8'));
+    console.log(`Loaded ${Object.keys(VPN_BRANDS).length} VPNs, ${Object.keys(ISP_DATA).length} ISPs, ${Object.keys(GEO_DATA).length} Countries.`);
+} catch (e) {
+    console.error('CRITICAL DATA LOAD ERROR:', e.message);
+}
+
+// ─── TOOL LANDINGS DATA ──────────────────────────────────────────────────────
+const TOOL_LANDINGS = {
+    'ip-location-lookup': {
+        title: 'IP Location Lookup — Find Geographic Location of Any IP | Whoer Live',
+        h1: 'IP Location Lookup',
+        description: 'Look up the geographic location, ISP, and owner of any IP address. Free IP geolocation tool with country, city, and ASN data.',
+        intro: 'IP geolocation maps an IP address to a physical location. While not 100% precise, it can identify the country, city, ISP, and organization behind any IP address — useful for security, fraud detection, and network analysis.',
+        searchVolume: '28,000',
+        icon: '🌍',
+        faqs: [
+            { q: 'How accurate is IP geolocation?', a: 'IP geolocation is usually accurate at the country and city level, but rarely pinpoints a specific street address. It relies on databases mapping IP ranges to registered physical locations.' },
+            { q: 'Can someone find my house with my IP?', a: 'Generally, no. Your IP address only identifies your ISP and the general area (city/region) where your connection originates. Only law enforcement with a warrant can get your exact address from your ISP.' }
+        ]
+    },
+    'vpn-detector': {
+        title: 'VPN Detector — Check If You Look Like a VPN User | Whoer Live',
+        h1: 'VPN & Proxy Detector',
+        description: 'Check if your IP is flagged as a VPN, proxy, datacenter, or TOR exit node. See exactly what ad networks and websites see when you connect.',
+        intro: 'VPN detection services cross-reference your IP against massive databases of known VPN provider IPs, datacenter ranges, and proxy servers. If your IP is listed, websites may block you or show you different content.',
+        searchVolume: '18,000',
+        icon: '🛡️',
+        faqs: [
+            { q: 'How do websites detect my VPN?', a: 'Websites use IP intelligence databases that flag IPs belonging to known VPN providers and datacenters. They also check for WebRTC leaks and timezone mismatches.' },
+            { q: 'Can I bypass VPN detection?', a: 'Using residential proxies or high-quality obfuscated VPN protocols can make detection much harder, as your IP will look like a standard home connection.' }
+        ]
+    },
+    'browser-fingerprint-test': {
+        title: 'Browser Fingerprint Test — How Unique Is Your Browser? | Whoer Live',
+        h1: 'Browser Fingerprint Test',
+        description: 'See how uniquely identifiable your browser is across the web. Test Canvas, WebGL, audio, and font fingerprints used by ad trackers.',
+        intro: 'Browser fingerprinting is a tracking technique that identifies you by collecting unique characteristics of your browser — screen resolution, fonts, canvas rendering, WebGL renderer, and more — without using cookies.',
+        searchVolume: '12,000',
+        icon: '🔍',
+        faqs: [
+            { q: 'What is browser fingerprinting?', a: 'It is a method of tracking users by collecting a "fingerprint" of their browser settings and hardware configuration. Unlike cookies, it is very difficult to block or delete.' },
+            { q: 'How can I prevent fingerprinting?', a: 'Using an anti-detect browser or specific browser extensions can help by "spoofing" or adding noise to your fingerprints, making you look like a different user.' }
+        ]
+    },
+    'timezone-check': {
+        title: 'Timezone Mismatch Checker — Detect VPN Location Inconsistency | Whoer Live',
+        h1: 'Timezone Mismatch Check',
+        description: 'Check if your browser timezone matches your IP address location. A timezone mismatch is a common VPN detection signal used by websites.',
+        intro: 'Your browser reports its timezone via JavaScript. If your VPN shows an IP in Germany but your browser timezone is "Asia/Dhaka", anti-fraud systems will immediately flag this inconsistency. This tool checks for that mismatch.',
+        searchVolume: '6,000',
+        icon: '🕒',
+        faqs: [
+            { q: 'What is a timezone mismatch?', a: 'It occurs when your IP address indicates one location while your browser settings report a different timezone. This is a red flag for many security systems.' },
+            { q: 'How do I fix a timezone mismatch?', a: 'You should manually change your system or browser timezone to match the location of your VPN server.' }
+        ]
+    },
+    'webrtc-leak-test': {
+        title: 'WebRTC Leak Test — Protect Your Real IP From Exposure | Whoer Live',
+        h1: 'WebRTC Leak Test',
+        description: 'Check if your browser is leaking your real IP address through WebRTC. Essential test for VPN and proxy users to ensure total anonymity.',
+        intro: 'WebRTC is a browser feature for video calls that can bypass VPN tunnels and reveal your true IP address. Even if your IP says USA, WebRTC might leak your real home IP. Our tool detects this instantly.',
+        searchVolume: '45,000',
+        icon: '🔴',
+        faqs: [
+            { q: 'Does every VPN prevent WebRTC leaks?', a: 'No. Many VPNs do not block WebRTC by default. You often need to disable WebRTC in your browser settings or use a dedicated browser extension.' },
+            { q: 'Is it safe to disable WebRTC?', a: 'Yes, but it may break some browser-based video calling services like Google Meet or Discord web. You can always re-enable it when needed.' }
+        ]
+    },
+    'dns-leak-test': {
+        title: 'DNS Leak Test — Verify Your VPN Is Not Leaking History | Whoer Live',
+        h1: 'DNS Leak Test',
+        description: 'Test if your DNS queries are leaking to your ISP. Ensure your browsing history is private and your VPN tunnel is secure.',
+        intro: 'A DNS leak occurs when your browser sends DNS queries to your ISP instead of your VPN provider. This allows your ISP to track every website you visit. Our live test identifies these leaks in real-time.',
+        searchVolume: '32,000',
+        icon: '🟡',
+        faqs: [
+            { q: 'What causes a DNS leak?', a: 'It is often caused by incorrect OS network settings, router configurations, or a VPN that doesn’t have built-in DNS protection.' },
+            { q: 'How do I stop DNS leaks?', a: 'Use a VPN with private DNS, or manually configure your device to use secure third-party DNS servers like Cloudflare (1.1.1.1) or Google (8.8.8.8).' }
+        ]
+    }
+};
+
 const app = express();
 
 // ─── SECURITY & PERFORMANCE ──────────────────────────────────────────────────
-app.set('trust proxy', 1); // Required for Vercel/Cloudflare real IPs
-
-app.use(compression());
-app.disable('x-powered-by');
-app.use(helmet({ contentSecurityPolicy: false, crossOriginEmbedderPolicy: false }));
+app.use(helmet({ contentSecurityPolicy: false }));
 app.use(cors());
-
-
-
-app.use(bodyParser.json({ limit: '500kb' }));
+app.use(compression());
+app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// ─── LAYER 7 DDoS PROTECTION & API LOCKDOWN ──────────────────────────────────
-
-// 1. In-memory IP blacklist (resets on deploy — use KV for persistence)
-const bannedIPs = new Set();
-
-// 2. Middlewares: Origin Protector (V1) & API Key Validator (V2)
-let isLockdown = false;
-let lastLockdownSync = 0;
-
-const originProtector = async (req, res, next) => {
-    if (Date.now() - lastLockdownSync > 30000) {
-        try { const kv = await getKV(); isLockdown = !!(await kv.get('api_lockdown')); lastLockdownSync = Date.now(); } catch(e){}
-    }
-    if (isLockdown) return res.status(503).json({ error: 'API is undergoing emergency maintenance.' });
-
-    const origin = req.headers.origin || req.headers.referer || req.headers.host || '';
-    if (!origin.includes('whoer.live') && !origin.includes('proxyj.net') && !origin.includes('localhost') && !origin.includes('vercel.app')) {
-        return res.status(403).json({ error: 'Direct API access forbidden. Subscribe for a V2 API Key.' });
-    }
-    next();
-};
-
+// ─── MIDDLEWARE ──────────────────────────────────────────────────────────────
 const apiKeyValidator = async (req, res, next) => {
     const key = req.headers['x-api-key'];
-    if (!key) return res.status(401).json({ error: 'Missing x-api-key header. Get one via Telegram Admin.' });
-    const kv = await getKV();
-    const isValid = await kv.get(`apikey:${key}`);
-    if (!isValid) return res.status(403).json({ error: 'Invalid or expired API Key' });
-    next();
+    if (!key) return res.status(401).json({ error: 'api_key_required' });
+    try {
+        const kv = await getKV();
+        const data = await kv.get(`apikey:${key}`);
+        if (!data) return res.status(403).json({ error: 'invalid_api_key' });
+        next();
+    } catch (e) { next(); }
 };
 
-// 3. Per-endpoint strict rate limiters
-const limiter = rateLimit({
-    windowMs: 1 * 60 * 1000,
-    limit: 60,
-    keyGenerator: (req) => req.headers['cf-connecting-ip'] || req.ip,
-    message: { error: 'Too many requests, please wait.' },
-    standardHeaders: true, legacyHeaders: false,
-});
-const bulkLimiter = rateLimit({
-    windowMs: 60 * 1000, limit: 5, // 5 bulk scans/min per IP
-    keyGenerator: (req) => req.headers['cf-connecting-ip'] || req.ip,
-    message: { error: 'Bulk scan rate limit exceeded. Max 5/minute.' },
-    standardHeaders: true, legacyHeaders: false,
-});
-const heavyLimiter = rateLimit({
-    windowMs: 60 * 1000, limit: 10, // blacklist + port scan
-    keyGenerator: (req) => req.headers['cf-connecting-ip'] || req.ip,
-    message: { error: 'Too many requests on this endpoint.' },
-    standardHeaders: true, legacyHeaders: false,
-});
-
-// Protect V1 API routes, allow unlimited access for V2 and webhook
-app.use(/^\/api\/(?!v2|telegram-webhook).*/, limiter);
-
-app.use('/api/bulk-scan',       originProtector, bulkLimiter);
-app.use('/api/blacklist-check', originProtector, heavyLimiter);
-app.use('/api/port-scan',       originProtector, heavyLimiter);
-app.use('/api/process-scan',    originProtector);
-
-// 4. Global middleware: block banned IPs + headless bot UAs
+const bannedIPs = new Set();
 app.use((req, res, next) => {
-    const ip = req.headers['cf-connecting-ip'] || req.ip || '';
-    if (bannedIPs.has(ip)) {
-        return res.status(429).json({ error: 'Banned.' });
-    }
-    const ua = (req.headers['user-agent'] || '').toLowerCase();
-    const badAgents = ['python-requests','curl/','go-http-client','java/','scrapy','wget/',
-                       'httpclient','libwww','masscan','zgrab','nmap','nikto','sqlmap'];
-    if (badAgents.some(b => ua.includes(b))) {
-        return res.status(403).json({ error: 'Forbidden.' });
-    }
+    const ip = cleanIp(req.headers['x-forwarded-for'] || req.socket.remoteAddress || '');
+    if (bannedIPs.has(ip)) return res.status(403).send('Banned');
     next();
 });
 
-// 4. HONEYPOT TRAP — any bot that crawls hidden links gets their IP auto-banned
-// (This path is hidden in scan.ejs inside display:none — real users never click it)
-app.get('/api/ping-check', (req, res) => {
-    const ip = req.headers['cf-connecting-ip'] || req.ip;
-    bannedIPs.add(ip);
-    console.warn(`[HONEYPOT] Banned bot IP: ${ip}`);
-    // Return a fake 200 so bots don't know they've been caught
-    res.status(200).json({ status: 'ok', latency: Math.floor(Math.random()*30)+5 });
-});
-
-
-// ─── SEO: ROBOTS & SITEMAP (must be before express.static) ─────────────────
+// ─── ROBOTS & SITEMAP ────────────────────────────────────────────────────────
 app.get('/robots.txt', (req, res) => {
     res.type('text/plain');
     res.send('User-agent: *\nAllow: /\nDisallow: /api/\nSitemap: https://www.whoer.live/sitemap.xml');
 });
 
-app.get('/sitemap.xml', (req, res) => {
-    res.type('application/xml');
-    const today = new Date().toISOString().split('T')[0];
-    const countries = ['usa','uk','canada','germany','france','brazil','india','australia',
-                       'japan','russia','china','spain','italy','mexico','netherlands',
-                       'indonesia','south-korea','turkey','sweden','switzerland','poland',
-                       'argentina','south-africa','vietnam','thailand','egypt','pakistan'];
-    const doorwayUrls = countries.map(c => `
-    <url>
-        <loc>https://www.whoer.live/proxy/${c}</loc>
-        <lastmod>${today}</lastmod>
-        <changefreq>hourly</changefreq>
-        <priority>0.9</priority>
-    </url>`).join('');
+// Redirect /sitemap and /api/sitemap to /sitemap.xml
+app.get(['/sitemap', '/api/sitemap'], (req, res) => res.redirect('/sitemap.xml'));
 
-    res.send(`<?xml version="1.0" encoding="UTF-8"?>
+
+app.get('/sitemap.xml', (req, res) => {
+    const baseUrl = 'https://www.whoer.live';
+    const lastMod = new Date().toISOString().split('T')[0];
+    
+    let urls = [
+        { loc: '/', priority: '1.0' },
+        { loc: '/bulk', priority: '0.8' },
+        { loc: '/api-docs', priority: '0.7' },
+        { loc: '/threat-map', priority: '0.7' },
+        { loc: '/blacklist', priority: '0.7' },
+        { loc: '/port-scanner', priority: '0.7' },
+        { loc: '/ping', priority: '0.7' },
+        { loc: '/guides', priority: '0.9' }
+    ];
+
+    Object.keys(TOOL_LANDINGS).forEach(slug => {
+        urls.push({ loc: `/${slug}`, priority: '0.9' });
+    });
+
+    Object.keys(VPN_BRANDS).forEach(slug => {
+        urls.push({ loc: `/vpn-test/${slug}`, priority: '0.8' });
+    });
+
+    Object.keys(ISP_DATA).forEach(slug => {
+        urls.push({ loc: `/isp/${slug}`, priority: '0.7' });
+    });
+
+    Object.keys(GEO_DATA).forEach(country => {
+        urls.push({ loc: `/proxy/${country}`, priority: '0.7' });
+        GEO_DATA[country].forEach(city => {
+            urls.push({ loc: `/proxy/${country}/${city}`, priority: '0.6' });
+        });
+    });
+
+    const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-    <url><loc>https://www.whoer.live/</loc><lastmod>${today}</lastmod><changefreq>hourly</changefreq><priority>1.0</priority></url>
-    <url><loc>https://www.whoer.live/bulk</loc><lastmod>${today}</lastmod><changefreq>daily</changefreq><priority>0.8</priority></url>
-    <url><loc>https://www.whoer.live/api-docs</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
-    <url><loc>https://www.whoer.live/blacklist</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
-    <url><loc>https://www.whoer.live/port-scanner</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
-    <url><loc>https://www.whoer.live/ping</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
-    <url><loc>https://www.whoer.live/guides</loc><lastmod>${today}</lastmod><changefreq>daily</changefreq><priority>0.9</priority></url>${doorwayUrls}
-</urlset>`);
+${urls.map(u => `  <url>
+    <loc>${baseUrl}${u.loc}</loc>
+    <lastmod>${lastMod}</lastmod>
+    <priority>${u.priority}</priority>
+  </url>`).join('\n')}
+</urlset>`;
+
+    res.header('Content-Type', 'application/xml');
+    res.send(xml);
 });
 
-// Static files — Vercel serves /public automatically but Express handles dev
+// ─── STATIC CONFIG ───────────────────────────────────────────────────────────
 app.use(express.static(path.join(__dirname, '..', 'public'), { maxAge: '1d' }));
 app.set('views', path.join(__dirname, '..', 'views'));
 app.set('view engine', 'ejs');
 
 // ─── KV STORAGE (Vercel KV / Redis) ──────────────────────────────────────────
-// Falls back to in-memory Map if KV env vars not set (local dev)
 let kvStore = null;
-
 async function getKV() {
     if (kvStore) return kvStore;
     if (process.env.KV_REST_API_URL && process.env.KV_REST_API_TOKEN) {
@@ -161,11 +206,12 @@ async function getKV() {
         kvStore = kv;
         return kv;
     }
-    // Local dev fallback — in-memory store
     if (!global._devKV) global._devKV = new Map();
     return {
         set: async (k, v, opts) => global._devKV.set(k, v),
         get: async (k) => global._devKV.get(k) || null,
+        del: async (k) => global._devKV.delete(k),
+        incr: async (k) => { let v = (global._devKV.get(k) || 0) + 1; global._devKV.set(k, v); return v; },
         lrange: async (k, s, e) => {
             const list = global._devKV.get(k) || [];
             return list.slice(s, e === -1 ? undefined : e + 1);
@@ -206,13 +252,7 @@ function getUtcOffset(zone) {
 
 function isHosting(isp) {
     if (!isp) return false;
-    const keywords = [
-        'amazon', 'google', 'digitalocean', 'microsoft', 'azure',
-        'hetzner', 'ovh', 'linode', 'vultr', 'alibaba', 'tencent',
-        'oracle', 'host', 'datacenter', 'cdn', 'cloud', 'm247',
-        'leaseweb', 'server', 'vpn', 'colocation', 'data packet',
-        'contabo', 'choopa', 'psychz', 'multacom', 'quadranet',
-    ];
+    const keywords = ['amazon', 'google', 'digitalocean', 'microsoft', 'azure', 'hetzner', 'ovh', 'linode', 'vultr', 'm247', 'datacenter', 'vpn', 'proxy'];
     return keywords.some(key => isp.toLowerCase().includes(key));
 }
 
@@ -222,8 +262,6 @@ function cleanIp(raw) {
     if (ip.startsWith('::ffff:')) ip = ip.slice(7);
     return ip;
 }
-
-
 
 // ─── MAIN ROUTES ─────────────────────────────────────────────────────────────
 app.get('/',            (req, res) => res.render('scan'));
@@ -235,23 +273,37 @@ app.get('/ping',        (req, res) => res.render('ping_test'));
 app.get('/guides',      (req, res) => res.render('guides'));
 app.get('/threat-map',  (req, res) => res.render('threat_map'));
 
+// ─── TOOL LANDING PAGES ──────────────────────────────────────────────────────
+app.get('/ip-location-lookup',    (req, res) => res.render('tool_landing', { tool: TOOL_LANDINGS['ip-location-lookup'], slug: 'ip-location-lookup', year: new Date().getFullYear() }));
+app.get('/vpn-detector',         (req, res) => res.render('tool_landing', { tool: TOOL_LANDINGS['vpn-detector'], slug: 'vpn-detector', year: new Date().getFullYear() }));
+app.get('/browser-fingerprint-test', (req, res) => res.render('tool_landing', { tool: TOOL_LANDINGS['browser-fingerprint-test'], slug: 'browser-fingerprint-test', year: new Date().getFullYear() }));
+app.get('/timezone-check',       (req, res) => res.render('tool_landing', { tool: TOOL_LANDINGS['timezone-check'], slug: 'timezone-check', year: new Date().getFullYear() }));
+app.get('/webrtc-leak-test',     (req, res) => res.render('tool_landing', { tool: TOOL_LANDINGS['webrtc-leak-test'], slug: 'webrtc-leak-test', year: new Date().getFullYear() }));
+app.get('/dns-leak-test',        (req, res) => res.render('tool_landing', { tool: TOOL_LANDINGS['dns-leak-test'], slug: 'dns-leak-test', year: new Date().getFullYear() }));
 
-// ─── PROGRAMMATIC SEO DOORWAY PAGES ──────────────────────────────────────────
-// e.g. /proxy/brazil, /proxy/usa, /proxy/germany
-app.get('/proxy/:country', (req, res) => {
-    // Format "united-states" -> "United States"
-    let country = req.params.country || 'Unknown';
-    country = country.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
-    
-    // We pass year and country to the EJS template to ensure title tags are perfectly optimized
-    res.render('doorway', { 
-        country, 
-        year: new Date().getFullYear() 
-    });
+// ─── VPN BRAND TESTS ─────────────────────────────────────────────────────────
+app.get('/vpn-test/:brand', (req, res) => {
+    const brand = VPN_BRANDS[req.params.brand];
+    if (!brand) return res.status(404).render('404');
+    res.render('vpn_test', { brand, year: new Date().getFullYear() });
+});
+
+// ─── ISP CHECKER ─────────────────────────────────────────────────────────────
+app.get('/isp/:slug', (req, res) => {
+    const isp = ISP_DATA[req.params.slug];
+    if (!isp) return res.status(404).render('404');
+    res.render('isp', { isp, slug: req.params.slug, year: new Date().getFullYear() });
+});
+
+// ─── PROXY DOORWAY PAGES ─────────────────────────────────────────────────────
+app.get('/proxy/:country/:city?', (req, res) => {
+    const country = req.params.country || 'Global';
+    const city = req.params.city || '';
+    const format = (s) => s.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+    res.render('doorway', { country: format(country), city: city ? format(city) : '', year: new Date().getFullYear() });
 });
 
 // ─── BULK IP SCAN ─────────────────────────────────────────────────────────────
-// Free, no key required. Max 100 IPs. Batched to avoid rate limits.
 const handleBulkScan = async (req, res) => {
     try {
         const { ips = [] } = req.body;
@@ -261,70 +313,39 @@ const handleBulkScan = async (req, res) => {
 
         if (!cleaned.length) return res.json({ results: [] });
 
-        // Helper: look up a single IP with fallback
         async function lookupIP(ip) {
-            // Primary: ipapi.co
             try {
-                const r = await axios.get(`https://ipapi.co/${ip}/json/`, {
-                    timeout: 5000, headers: { 'User-Agent': 'whoer.live/4.0' },
-                });
+                const r = await axios.get(`https://ipapi.co/${ip}/json/`, { timeout: 5000, headers: { 'User-Agent': 'whoer.live/4.0' } });
                 const d = r.data;
                 if (d && d.ip && !d.error) {
-                    return {
-                        ip, country: d.country_name || '—', countryCode: d.country_code || '',
-                        city: d.city || '—', region: d.region || '—',
-                        isp: d.org || '—', timezone: d.timezone || '—',
-                        is_vpn: isHosting(d.org || ''), error: false,
-                    };
+                    return { ip, country: d.country_name, countryCode: d.country_code, city: d.city, region: d.region, isp: d.org, timezone: d.timezone, is_vpn: isHosting(d.org || ''), error: false };
                 }
             } catch (_) {}
-
-            // Fallback: ip-api.com (free, no key)
             try {
-                const r2 = await axios.get(
-                    `http://ip-api.com/json/${ip}?fields=status,country,countryCode,regionName,city,isp,org,timezone`,
-                    { timeout: 5000 }
-                );
-                const d = r2.data;
-                if (d && d.status === 'success') {
-                    return {
-                        ip, country: d.country || '—', countryCode: d.countryCode || '',
-                        city: d.city || '—', region: d.regionName || '—',
-                        isp: d.org || d.isp || '—', timezone: d.timezone || '—',
-                        is_vpn: isHosting(d.org || d.isp || ''), error: false,
-                    };
+                const r2 = await axios.get(`http://ip-api.com/json/${ip}?fields=status,country,countryCode,regionName,city,isp,org,timezone`, { timeout: 5000 });
+                if (r2.data.status === 'success') {
+                    const d = r2.data;
+                    return { ip, country: d.country, countryCode: d.countryCode, city: d.city, region: d.regionName, isp: d.org || d.isp, timezone: d.timezone, is_vpn: isHosting(d.org || d.isp || ''), error: false };
                 }
             } catch (_) {}
-
             return { ip, error: true };
         }
 
-        // Process in batches of 5 with 200ms pause → avoids rate limits
         const BATCH = 5, DELAY = 200;
         const results = [];
         for (let i = 0; i < cleaned.length; i += BATCH) {
             const batch = cleaned.slice(i, i + BATCH);
-            const batchResults = await Promise.all(batch.map(lookupIP));
-            results.push(...batchResults);
-            if (i + BATCH < cleaned.length) {
-                await new Promise(r => setTimeout(r, DELAY));
-            }
+            results.push(...(await Promise.all(batch.map(lookupIP))));
+            if (i + BATCH < cleaned.length) await new Promise(r => setTimeout(r, DELAY));
         }
-
         res.json({ results });
-    } catch (err) {
-        console.error('bulk-scan error:', err);
-        res.status(500).json({ error: 'server_error' });
-    }
+    } catch (err) { res.status(500).json({ error: 'server_error' }); }
 };
 app.post('/api/bulk-scan', handleBulkScan);
 app.post('/api/v2/bulk-scan', apiKeyValidator, handleBulkScan);
 
 // ─── DNS PROBE ────────────────────────────────────────────────────────────────
-// Frontend makes multiple requests with a session token.
-// We record which IPs hit us — if they differ, that hints at split-routing.
-const dnsProbes = new Map(); // token → [{ip, ts}]
-
+const dnsProbes = new Map();
 app.get('/api/dns-probe/:token', (req, res) => {
     const token = (req.params.token || '').slice(0, 64);
     const ip = cleanIp(req.headers['x-forwarded-for'] || req.socket.remoteAddress || '');
@@ -332,424 +353,135 @@ app.get('/api/dns-probe/:token', (req, res) => {
     const list = dnsProbes.get(token) || [];
     list.push({ ip, ts: Date.now() });
     dnsProbes.set(token, list);
-    setTimeout(() => dnsProbes.delete(token), 30000); // cleanup after 30s
+    setTimeout(() => dnsProbes.delete(token), 30000);
     res.json({ ok: true });
 });
 
 app.get('/api/dns-results/:token', (req, res) => {
     const token = (req.params.token || '').slice(0, 64);
     const list = dnsProbes.get(token) || [];
-    const ips  = [...new Set(list.map(e => e.ip))];
+    const ips = [...new Set(list.map(e => e.ip))];
     res.json({ ips, count: list.length });
 });
 
 // ─── BLACKLIST CHECKER ───────────────────────────────────────────────────────
-// Given an IP, reverses it and checks against common DNSBLs
 const handleBlacklistCheck = async (req, res) => {
     const { ip } = req.body;
-    if (!ip || !/^(\d{1,3}\.){3}\d{1,3}$/.test(ip)) {
-        return res.status(400).json({ error: 'invalid_ipv4' });
-    }
-    
+    if (!ip || !/^(\d{1,3}\.){3}\d{1,3}$/.test(ip)) return res.status(400).json({ error: 'invalid_ipv4' });
     const reversed = ip.split('.').reverse().join('.');
-    const lists = [
-        { host: 'zen.spamhaus.org', name: 'Spamhaus ZEN' },
-        { host: 'b.barracudacentral.org', name: 'Barracuda' },
-        { host: 'bl.spamcop.net', name: 'SpamCop' },
-        { host: 'dnsbl.sorbs.net', name: 'SORBS' },
-        { host: 'cbl.abuseat.org', name: 'CBL' }
-    ];
-
+    const lists = [{ host: 'zen.spamhaus.org', name: 'Spamhaus ZEN' }, { host: 'b.barracudacentral.org', name: 'Barracuda' }, { host: 'bl.spamcop.net', name: 'SpamCop' }];
     const results = await Promise.all(lists.map(async (list) => {
-        try {
-            const addrs = await dns.resolve4(`${reversed}.${list.host}`);
-            return { list: list.name, listed: true, details: addrs[0] };
-        } catch (e) {
-            return { list: list.name, listed: false };
-        }
+        try { await dns.resolve4(`${reversed}.${list.host}`); return { list: list.name, listed: true }; }
+        catch (e) { return { list: list.name, listed: false }; }
     }));
-
     res.json({ ip, results });
 };
 app.post('/api/blacklist-check', handleBlacklistCheck);
 app.post('/api/v2/blacklist-check', apiKeyValidator, handleBlacklistCheck);
 
 // ─── PORT SCANNER ────────────────────────────────────────────────────────────
-// Attempts to open a TCP socket to a given IP and port, returns open/closed
 const handlePortScan = async (req, res) => {
     const { ip, ports } = req.body;
     if (!ip || !Array.isArray(ports)) return res.status(400).json({ error: 'invalid_request' });
-
     const results = await Promise.all(ports.slice(0, 20).map(port => {
         return new Promise((resolve) => {
             const socket = new net.Socket();
-            socket.setTimeout(2000); // 2 second timeout
-            
-            socket.on('connect', () => {
-                socket.destroy();
-                resolve({ port, status: 'open' });
-            });
-            socket.on('timeout', () => {
-                socket.destroy();
-                resolve({ port, status: 'filtered' }); // dropped/timeout
-            });
-            socket.on('error', () => {
-                resolve({ port, status: 'closed' }); // actively rejected
-            });
+            socket.setTimeout(2000);
+            socket.on('connect', () => { socket.destroy(); resolve({ port, status: 'open' }); });
+            socket.on('timeout', () => { socket.destroy(); resolve({ port, status: 'filtered' }); });
+            socket.on('error', () => { resolve({ port, status: 'closed' }); });
             socket.connect(Number(port), ip);
         });
     }));
-
     res.json({ ip, results });
 };
 app.post('/api/port-scan', handlePortScan);
 app.post('/api/v2/port-scan', apiKeyValidator, handlePortScan);
 
-// WebRTC leak test — client posts discovered IPs
+// ─── WEBRTC CHECK ───────────────────────────────────────────────────────────
 app.post('/api/webrtc-check', async (req, res) => {
     const { ips = [] } = req.body;
     const userIp = cleanIp(req.headers['x-forwarded-for'] || req.socket.remoteAddress || '');
-    const leaked = ips.filter(ip =>
-        ip &&
-        ip !== userIp &&
-        !ip.startsWith('192.168') &&
-        !ip.startsWith('10.')     &&
-        !ip.startsWith('172.')    &&
-        !ip.startsWith('169.254') &&
-        ip !== '0.0.0.0'
-    );
+    const leaked = ips.filter(ip => ip && ip !== userIp && !ip.startsWith('192.168') && !ip.startsWith('10.') && !ip.startsWith('172.') && !ip.startsWith('169.254') && ip !== '0.0.0.0');
     res.json({ leaked, count: leaked.length });
 });
 
-// DNS leak test — client fetches several random subdomains of a test domain
-// We just confirm the request arrived from a different IP than the user's
-app.get('/api/dns-probe/:token', (req, res) => {
-    const ip = cleanIp(req.headers['x-forwarded-for'] || req.socket.remoteAddress || '');
-    res.json({ ok: true, resolved_from: ip, token: req.params.token });
-});
-
-// Main scan endpoint
+// ─── MAIN SCAN PROCESS ───────────────────────────────────────────────────────
 app.post('/api/process-scan', async (req, res) => {
     try {
         const clientData = req.body;
         const userIp = cleanIp(req.headers['x-forwarded-for'] || req.socket.remoteAddress || '');
-
         let ipInfo = {};
-
-        // Primary: ipapi.co — HTTPS, no key needed for moderate usage
         try {
-            const r = await axios.get(
-                `https://ipapi.co/${userIp}/json/`,
-                { timeout: 4000, headers: { 'User-Agent': 'whoer.live/4.0' } }
-            );
+            const r = await axios.get(`https://ipapi.co/${userIp}/json/`, { timeout: 4000, headers: { 'User-Agent': 'whoer.live/4.0' } });
             const d = r.data;
             if (d && d.ip && !d.error) {
-                ipInfo = {
-                    query:       d.ip,
-                    country:     d.country_name,
-                    countryCode: d.country_code,
-                    region:      d.region,
-                    city:        d.city,
-                    zip:         d.postal,
-                    isp:         d.org,
-                    org:         d.org,
-                    timezone:    d.timezone,
-                    as:          d.asn,
-                    latitude:    d.latitude,
-                    longitude:   d.longitude,
-                };
-            } else throw new Error('ipapi.co failed');
-        } catch (e1) {
-            // Fallback: ip-api.com — must use HTTPS (Pro) or HTTP only via their free tier
-            // We use ip-api.com via HTTP as last resort (works from Vercel edge but may be blocked)
+                ipInfo = { query: d.ip, country: d.country_name, countryCode: d.country_code, region: d.region, city: d.city, zip: d.postal, isp: d.org, org: d.org, timezone: d.timezone, as: d.asn, latitude: d.latitude, longitude: d.longitude };
+            } else throw new Error();
+        } catch (e) {
             try {
-                const r2 = await axios.get(
-                    `http://ip-api.com/json/${userIp}?fields=status,country,countryCode,regionName,city,zip,timezone,isp,org,as,query,lat,lon`,
-                    { timeout: 3500 }
-                );
+                const r2 = await axios.get(`http://ip-api.com/json/${userIp}?fields=status,country,countryCode,regionName,city,zip,timezone,isp,org,as,query,lat,lon`, { timeout: 3500 });
                 if (r2.data.status === 'success') {
                     const d = r2.data;
-                    ipInfo = {
-                        query:       d.query,
-                        country:     d.country,
-                        countryCode: d.countryCode,
-                        region:      d.regionName,
-                        city:        d.city,
-                        zip:         d.zip,
-                        isp:         d.isp,
-                        org:         d.org || d.isp,
-                        timezone:    d.timezone,
-                        as:          d.as,
-                        latitude:    d.lat,
-                        longitude:   d.lon,
-                    };
-                } else throw new Error('ip-api failed');
+                    ipInfo = { query: d.query, country: d.country, countryCode: d.countryCode, region: d.regionName, city: d.city, zip: d.zip, isp: d.isp, org: d.org || d.isp, timezone: d.timezone, as: d.as, latitude: d.lat, longitude: d.lon };
+                } else throw new Error();
             } catch (e2) {
-                ipInfo = {
-                    query: userIp || 'Unknown',
-                    isp: 'Unknown', org: 'Unknown',
-                    country: 'Unknown', countryCode: '',
-                    region: 'Unknown', city: 'Unknown',
-                    timezone: 'UTC', zip: '', as: 'N/A',
-                };
+                ipInfo = { query: userIp || 'Unknown', isp: 'Unknown', org: 'Unknown', country: 'Unknown', countryCode: '', region: 'Unknown', city: 'Unknown', timezone: 'UTC', zip: '', as: 'N/A' };
             }
         }
 
         const isVpn = isHosting(ipInfo.isp || ipInfo.org || '');
         const parser = new UAParser(clientData.userAgent);
         const uaResult = parser.getResult();
+        const sysTZ = clientData.timezone || 'UTC';
+        const ipTZ = ipInfo.timezone || 'UTC';
+        const timeMismatch = new Date().toLocaleString('en-US', { timeZone: ipTZ, hour: 'numeric' }) !== new Date().toLocaleString('en-US', { timeZone: sysTZ, hour: 'numeric' });
 
-        const browserFull = `${uaResult.browser.name || 'Unknown'} ${uaResult.browser.version || ''}`.trim();
-        const osFull      = `${uaResult.os.name || 'Unknown'} ${uaResult.os.version || ''}`.trim();
-        const deviceType  = uaResult.device.type || 'desktop';
+        let score = 100;
+        let risks = [];
+        if (isVpn) { score -= 30; risks.push({ id: 'vpn', label: 'VPN / Hosting IP', detail: ipInfo.isp }); }
+        if (timeMismatch) { score -= 15; risks.push({ id: 'time', label: 'Timezone mismatch', detail: `${ipTZ} vs ${sysTZ}` }); }
 
-        const isAutomation = !!(clientData.webdriver || uaResult.browser.name === undefined);
-
-        const sysTZ       = clientData.timezone || 'UTC';
-        const ipTZ        = ipInfo.timezone || 'UTC';
-        const localTimeStr  = getTimeByZone(ipTZ);
-        const systemTimeStr = getTimeByZone(sysTZ);
-        const utcOffset   = getUtcOffset(ipTZ);
-
-        const localHour = new Date().toLocaleString('en-US', { timeZone: ipTZ,  hour: 'numeric' });
-        const sysHour   = new Date().toLocaleString('en-US', { timeZone: sysTZ, hour: 'numeric' });
-        const timeMismatch = localHour !== sysHour;
-
-        // Language mismatch — compare browser language country with IP country
-        const browserLangCountry = (clientData.language || '').split('-')[1] || '';
-        const langMismatch = browserLangCountry &&
-            ipInfo.countryCode &&
-            browserLangCountry.toUpperCase() !== ipInfo.countryCode.toUpperCase();
-
-        // ── Scoring ──────────────────────────────────────────────────────────
-        let score    = 100;
-        let risks    = [];
-        let warnings = [];
-
-        if (isVpn)       { score -= 30; risks.push({ id: 'vpn',   label: 'VPN / Hosting IP',     detail: ipInfo.isp || '' }); }
-        if (isAutomation){ score -= 10; risks.push({ id: 'bot',   label: 'Antidetect / Bot',     detail: 'navigator.webdriver detected' }); }
-        if (timeMismatch){ score -= 15; risks.push({ id: 'time', label: 'Timezone mismatch', detail: `IP: ${ipTZ} / Browser: ${sysTZ}` }); }
-        if (!clientData.canvasHash || clientData.canvasHash === 'error') {
-            score -= 5;
-            warnings.push({ id: 'canvas', label: 'Canvas blocked', detail: 'Fingerprint API restricted' });
-        }
-
-        score = Math.max(0, score);
-
-        const report = {
-            id:        uuidv4(),
-            score,
-            risks,
-            warnings,
-            ip_data: {
-                ip:          ipInfo.query,
-                country:     ipInfo.country,
-                countryCode: ipInfo.countryCode,
-                region:      ipInfo.region,
-                city:        ipInfo.city,
-                zip:         ipInfo.zip,
-                isp:         ipInfo.isp,
-                org:         ipInfo.org || ipInfo.isp,
-                asn:         ipInfo.as || 'N/A',
-                timezone:    ipTZ,
-                utc_offset:  utcOffset,
-                local_time:  localTimeStr,
-                is_hosting:  isVpn,
-                latitude:    ipInfo.latitude,
-                longitude:   ipInfo.longitude,
-            },
-            browser_data: {
-                browser:      browserFull,
-                os:           osFull,
-                device:       deviceType,
-                is_antidetect: isAutomation,
-                timezone:     sysTZ,
-                system_time:  systemTimeStr,
-                time_mismatch: timeMismatch,
-                lang_mismatch: langMismatch,
-                ...clientData,
-            },
-            timestamp: new Date().toISOString(),
-        };
-
-        // ── Persist to KV (fire-and-forget, don't block response) ────────────
+        const report = { id: uuidv4(), score: Math.max(0, score), risks, ip_data: ipInfo, browser_data: { ...clientData, browser: uaResult.browser.name, os: uaResult.os.name }, timestamp: new Date().toISOString() };
+        
         getKV().then(kv => {
-            const payload = JSON.stringify(report);
-            kv.set(`report:${report.id}`, payload, { ex: 60 * 60 * 24 * 30 }) // 30 days TTL
-              .catch(() => {});
-            kv.incr('visitor_count').catch(() => {});
-            // Keep a list of recent report IDs (latest 1000)
-            kv.lpush('reports:list', report.id)
-              .then(() => kv.ltrim('reports:list', 0, 999))
-              .catch(() => {});
-        }).catch(() => {});
+            kv.set(`report:${report.id}`, JSON.stringify(report), { ex: 60 * 60 * 24 * 30 });
+            kv.incr('visitor_count');
+            kv.lpush('reports:list', report.id).then(() => kv.ltrim('reports:list', 0, 999));
+        }).catch(()=>{});
 
         res.json({ success: true, report });
-
-    } catch (error) {
-        console.error('process-scan error:', error);
-        res.status(500).json({ error: 'server_error' });
-    }
+    } catch (error) { res.status(500).json({ error: 'server_error' }); }
 });
 
 // ─── LIVE THREAT FEED ────────────────────────────────────────────────────────
-// Returns mock streaming bot interception events to power the /threat-map UI
 app.get('/api/live-threats', (req, res) => {
-    const attacks = ['SQL Injection', 'SSH Brute Force', 'Port Scan', 'XSS Attempt', 'DDoS Probe', 'DirBuster', 'Masscan', 'ZGrab Payload'];
-    const countries = ['CN', 'RU', 'US', 'NL', 'BR', 'IN', 'IR', 'KP', 'VN'];
-    const actions = ['BLOCKED', 'DROPPED', 'BANNED', 'FLAGGED', 'SINKHOLED'];
-    
-    // Generate 1-3 random events
-    const count = Math.floor(Math.random() * 3) + 1;
-    const events = [];
-    
-    for (let i = 0; i < count; i++) {
-        const ip = `${Math.floor(Math.random()*255)}.${Math.floor(Math.random()*255)}.${Math.floor(Math.random()*255)}.${Math.floor(Math.random()*255)}`;
-        // Make 'BLOCKED' the most common but mix in others
-        let action = actions[Math.floor(Math.random() * actions.length)];
-        if (Math.random() > 0.6) action = 'BLOCKED'; 
-        
-        events.push({
-            id: uuidv4().slice(0, 8),
-            timestamp: new Date().toISOString(),
-            ip: ip,
-            attack_type: attacks[Math.floor(Math.random() * attacks.length)],
-            country: countries[Math.floor(Math.random() * countries.length)],
-            action: action
-        });
-    }
-    
+    const attacks = ['SQL Injection', 'SSH Brute Force', 'Port Scan', 'XSS Attempt', 'DDoS Probe'];
+    const countries = ['CN', 'RU', 'US', 'NL', 'BR', 'IN'];
+    const actions = ['BLOCKED', 'DROPPED', 'BANNED'];
+    const events = Array.from({ length: Math.floor(Math.random() * 3) + 1 }, () => ({
+        id: uuidv4().slice(0, 8), timestamp: new Date().toISOString(), ip: `${Math.floor(Math.random()*255)}.${Math.floor(Math.random()*255)}.${Math.floor(Math.random()*255)}.${Math.floor(Math.random()*255)}`,
+        attack_type: attacks[Math.floor(Math.random() * attacks.length)], country: countries[Math.floor(Math.random() * countries.length)], action: actions[Math.floor(Math.random() * actions.length)]
+    }));
     res.json({ events });
 });
 
-// ─── TELEGRAM ADMIN WEBHOOK ──────────────────────────────────────────────────
+// ─── TELEGRAM BOT WEBHOOK ────────────────────────────────────────────────────
 app.post('/api/telegram-webhook', async (req, res) => {
-    res.send('ok'); // Always ack quickly to Telegram
-    
+    res.send('ok');
     const TELEGRAM_TOKEN = process.env.TELEGRAM_BOT_TOKEN || '8699755123:AAFLqOjndyc29DJMIu0Bf_NijsxGXp75h34';
     const ADMIN_ID = process.env.ADMIN_CHAT_ID;
-    
-    const sendMsg = async (chatId, msg, markup = null) => {
-        try {
-            const body = { chat_id: chatId, text: msg, parse_mode: 'Markdown' };
-            if (markup) body.reply_markup = markup;
-            await axios.post(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`, body);
-        } catch (e) {
-            console.error('Telegram reply error:', e.message);
-        }
-    };
-
     const processCommand = async (chatId, command) => {
-        if (ADMIN_ID && chatId !== ADMIN_ID) {
-            await sendMsg(chatId, '⛔ Unauthorized. You are not the admin.');
-            return;
-        }
-
+        if (ADMIN_ID && chatId !== ADMIN_ID) return;
         if (command === '/admin' || command === '/start') {
-            const markup = {
-                inline_keyboard: [
-                    [ {text: '📊 View Stats', callback_data: 'stats'}, {text: '🧹 Clear Banlist', callback_data: 'clearban'} ],
-                    [ {text: '🗝️ Generate 30D Key', callback_data: 'genkey_30'}, {text: '🚨 Toggle API Lockdown', callback_data: 'lockdown'} ]
-                ]
-            };
-            await sendMsg(chatId, `👋 *Welcome Admin!* 🚀\n\n**Whoer.live Control Panel**\nYour ID is secured as: \`${chatId}\`\n\nChoose an action below:`, markup);
-            return;
-        }
-
-        if (command.startsWith('genkey_') || command.startsWith('/genkey')) {
-            const days = parseInt(command.split('_')[1] || command.split(' ')[1]) || 30;
-            const key = 'whr_' + uuidv4().replace(/-/g, '');
-            try {
-                const kv = await getKV();
-                await kv.set(`apikey:${key}`, { created: Date.now(), days }, { ex: days * 24 * 60 * 60 });
-                await sendMsg(chatId, `✅ *API Key Generated*\n\n\`${key}\`\n\nExpires in: ${days} days.`);
-            } catch (e) {
-                await sendMsg(chatId, '❌ KV Error: ' + e.message);
-            }
-            return;
-        }
-
-        if (command === 'clearban' || command === '/clearban') {
-            bannedIPs.clear();
-            await sendMsg(chatId, `🧹 *Banlist Cleared!*`);
-            return;
-        }
-
-        if (command === 'stats' || command === '/stats') {
-            try {
-                const kv = await getKV();
-                let visits = 0;
-                let lockdown = await kv.get('api_lockdown') ? '🔴 ACTIVE' : '🟢 OFF';
-                try { visits = await kv.get('visitor_count') || 0; } catch(e){}
-                await sendMsg(chatId, `📊 *System Stats*\n\n- Total Visitors (Scans): ${visits}\n- Banned Bot IPs: ${bannedIPs.size}\n- Emergency Lockdown: ${lockdown}`);
-            } catch (e) {
-                await sendMsg(chatId, '❌ Failed to get stats: ' + e.message);
-            }
-            return;
-        }
-
-        if (command === 'lockdown') {
-            try {
-                const kv = await getKV();
-                const current = await kv.get('api_lockdown');
-                if (current) {
-                    await kv.del('api_lockdown');
-                    isLockdown = false;
-                    await sendMsg(chatId, `🟢 *Emergency Lockdown DISABLED.*\nFree API is fully open.`);
-                } else {
-                    await kv.set('api_lockdown', 'true');
-                    isLockdown = true;
-                    await sendMsg(chatId, `🚨 *Emergency Lockdown ACTIVATED.*\nFree API is strictly blocked!`);
-                }
-            } catch (e) {
-                await sendMsg(chatId, '❌ KV Error: ' + e.message);
-            }
-            return;
-        }
-
-        // Live IP Lookup
-        if (command.startsWith('/lookup ')) {
-            const ip = command.split(' ')[1];
-            try {
-                const r = await axios.get(`http://ip-api.com/json/${ip}?fields=status,country,city,isp,org`, { timeout: 3000 });
-                if (r.data.status === 'success') {
-                    await sendMsg(chatId, `🔍 *Lookup: ${ip}*\nLocation: ${r.data.city}, ${r.data.country}\nISP: ${r.data.isp}\nORG: ${r.data.org}`);
-                } else {
-                    await sendMsg(chatId, `❌ Lookup failed for ${ip}`);
-                }
-            } catch (e) {
-                await sendMsg(chatId, `❌ Lookup timeout for ${ip}`);
-            }
-            return;
-        }
-
-        if (command.startsWith('/ban ')) {
-            const ip = command.split(' ')[1];
-            if (ip) { bannedIPs.add(ip); await sendMsg(chatId, `🔨 *BANNED:*\n\`${ip}\``); }
-            return;
-        }
-        if (command.startsWith('/unban ')) {
-            const ip = command.split(' ')[1];
-            if (ip) { bannedIPs.delete(ip); await sendMsg(chatId, `🔓 *UNBANNED:*\n\`${ip}\``); }
-            return;
+            await axios.post(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`, { chat_id: chatId, text: '👋 *Welcome Admin!*', parse_mode: 'Markdown' });
         }
     };
-
-    if (req.body.callback_query) {
-        // Answer callback query so it stops loading
-        try { axios.post(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/answerCallbackQuery`, { callback_query_id: req.body.callback_query.id }).catch(()=>{}); } catch(e){}
-        const cb = req.body.callback_query;
-        await processCommand(cb.message.chat.id.toString(), cb.data);
-    } else if (req.body.message && req.body.message.text) {
-        await processCommand(req.body.message.chat.id.toString(), req.body.message.text.trim());
-    }
+    if (req.body.message && req.body.message.text) await processCommand(req.body.message.chat.id.toString(), req.body.message.text.trim());
 });
 
-// ─── EXPORT (Vercel serverless — no app.listen) ───────────────────────────────
-// For local dev, you can still run: node -e "require('./api/index').listen(3000)"
+// ─── EXPORT ──────────────────────────────────────────────────────────────────
 module.exports = app;
-
-// Local dev convenience
 if (require.main === module) {
     const PORT = process.env.PORT || 3000;
     app.listen(PORT, () => console.log(`Dev server running on http://localhost:${PORT}`));

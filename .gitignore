@@ -8,3 +8,12 @@ node_modules/
 ctr_bot.js
 load_test.js
 mobile_ctr_adb.js
+
+# Temporary & Diagnostic
+scratch/
+fix_scan_seo3.js
+preview_3d.html
+*.mp4
+*.png
+*.txt
+*.xml

@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Does <%= brand.name %> Work? Real-Time VPN Leak Test | Whoer Live</title>
+    <meta name="description" content="Test if <%= brand.name %> is working and leaking your real IP. Check for WebRTC leaks, DNS leaks, and Canvas fingerprint exposure. Instant privacy score — free.">
+    <meta name="keywords" content="<%= brand.name %> leak test, does <%= brand.name %> work, <%= brand.name %> webrtc leak, <%= brand.name %> dns leak, <%= brand.name %> ip check, test <%= brand.name %> vpn, is <%= brand.name %> working, <%= brand.name %> ip address">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://www.whoer.live/vpn-test/<%= brand.slug %>">
+    <link rel="icon" type="image/png" href="/img/logo.png">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="Does <%= brand.name %> Work? VPN Leak Test | Whoer Live">
+    <meta property="og:description" content="Check if your <%= brand.name %> VPN is leaking your real IP through WebRTC, DNS, or Canvas fingerprint. Free instant test.">
+    <meta property="og:url" content="https://www.whoer.live/vpn-test/<%= brand.slug %>">
+    <meta property="og:image" content="https://www.whoer.live/img/logo.png">
+
+    <!-- JSON-LD Schema -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://www.whoer.live/" },
+            { "@type": "ListItem", "position": 2, "name": "VPN Tests", "item": "https://www.whoer.live/vpn-test" },
+            { "@type": "ListItem", "position": 3, "name": "<%= brand.name %>" }
+          ]
+        },
+        {
+          "@type": "SoftwareApplication",
+          "name": "Whoer Live <%= brand.name %> Leak Test",
+          "applicationCategory": "UtilitiesApplication",
+          "operatingSystem": "All",
+          "aggregateRating": {
+            "@type": "AggregateRating",
+            "ratingValue": "4.9",
+            "ratingCount": "<%= brand.ratingCount %>",
+            "bestRating": "5"
+          },
+          "offers": { "@type": "Offer", "price": "0" }
+        },
+        {
+          "@type": "FAQPage",
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "Does <%= brand.name %> hide my IP address?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "<%= brand.name %> replaces your real IP with a server IP. However, WebRTC leaks in your browser can still expose your real IP even when <%= brand.name %> is connected. Use this tool to verify your connection is fully protected."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "How do I test if <%= brand.name %> is working?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Connect to <%= brand.name %>, then visit whoer.live/vpn-test/<%= brand.slug %>. The tool will automatically detect your IP address and run WebRTC, DNS, and fingerprint leak tests. If your displayed IP matches your <%= brand.name %> server location, your VPN is working correctly."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "What is a WebRTC leak in <%= brand.name %>?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "WebRTC is a browser feature that can bypass VPN tunnels and expose your real IP even when <%= brand.name %> is active. Some browser extensions and browser settings can prevent this. This test detects WebRTC leaks automatically."
+              }
+            }
+          ]
+        }
+      ]
+    }
+    </script>
+
+    <!-- Core Web Vitals: Preload & Async Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" media="print" onload="this.media='all'">
+    <style><%- include('../public/css/style.css') %></style>
+    <style>
+        .vpn-hero { text-align: center; padding: 48px 0 32px; }
+        .vpn-badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(34,215,122,0.1); border: 1px solid rgba(34,215,122,0.3); color: var(--green); border-radius: 20px; padding: 6px 16px; font-size: 12px; font-weight: 700; margin-bottom: 20px; letter-spacing: 0.5px; }
+        .vpn-hero h1 { font-size: 36px; font-weight: 700; margin-bottom: 14px; line-height: 1.2; }
+        .vpn-hero h1 span { color: var(--red); }
+        .vpn-hero p { font-size: 16px; color: var(--muted); max-width: 560px; margin: 0 auto 30px; line-height: 1.65; }
+        .vpn-cta { display: inline-flex; align-items: center; gap: 10px; background: var(--red); color: #fff; border: none; border-radius: var(--radius); padding: 14px 28px; font-size: 15px; font-weight: 700; cursor: pointer; text-decoration: none; transition: all 0.2s; }
+        .vpn-cta:hover { background: #e01a3c; transform: translateY(-2px); box-shadow: 0 8px 25px rgba(255,79,106,0.35); }
+        .vpn-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin: 36px 0; }
+        .vpn-stat { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; text-align: center; }
+        .vpn-stat-val { font-size: 28px; font-weight: 700; font-family: var(--mono); color: var(--green); }
+        .vpn-stat-lbl { font-size: 12px; color: var(--muted); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .risk-panel { background: rgba(255,79,106,0.06); border: 1px solid rgba(255,79,106,0.25); border-radius: var(--radius-lg); padding: 28px; margin: 24px 0; }
+        .risk-panel h2 { color: var(--red); font-size: 16px; font-weight: 700; margin-bottom: 16px; }
+        .risk-item { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .risk-item:last-child { border-bottom: none; }
+        .risk-icon { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+        .risk-icon.red { background: var(--red-dim); }
+        .risk-icon.amber { background: var(--amber-dim); }
+        .risk-icon.green { background: var(--green-dim); }
+        .risk-text { flex: 1; }
+        .risk-text strong { display: block; font-size: 14px; color: var(--text); }
+        .risk-text span { font-size: 12px; color: var(--muted); }
+        .vpn-wrap { max-width: 860px; margin: 0 auto; padding: 20px 20px 120px; }
+        .faq-section { margin-top: 32px; }
+        .faq-section h2 { font-size: 22px; font-weight: 700; margin-bottom: 16px; }
+        .brand-known { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 24px; margin: 24px 0; }
+        .brand-known h2 { font-size: 16px; font-weight: 700; margin-bottom: 14px; color: var(--text); }
+        .brand-known p { font-size: 14px; color: var(--muted); line-height: 1.7; }
+        .brand-known ul { margin-top: 12px; padding-left: 20px; }
+        .brand-known ul li { font-size: 14px; color: var(--muted); line-height: 1.8; }
+    </style>
+</head>
+<body>
+<!-- ─── HEADER ─────────────────────────────────────────────────────────── -->
+<header>
+    <div class="container header-inner">
+        <a href="/" style="display:flex;align-items:center;gap:10px;text-decoration:none;">
+            <img src="/img/logo.png" alt="Whoer Live Logo" style="width:32px;height:32px;border-radius:8px;">
+            <div class="logo">WHOER<span>.LIVE</span> <sub>v4</sub></div>
+        </a>
+        <div class="header-actions">
+            <a href="/" class="btn">🛡️ IP Check</a>
+            <a href="/bulk" class="btn">🔢 Bulk</a>
+            <a href="/api-docs" class="btn">⚡ API</a>
+            <a href="/threat-map" class="btn" style="color:var(--red); border-color: rgba(255,79,106,0.3); background: rgba(255,79,106,0.1);">🔴 Threats</a>
+            <button class="btn btn-primary" onclick="location.href='/'">
+                Run Test
+            </button>
+        </div>
+    </div>
+</header>
+
+<div class="vpn-wrap">
+    <!-- ─── HERO ──────────────────────────────────────────────────── -->
+    <div class="vpn-hero">
+        <div class="vpn-badge">⚡ Live VPN Leak Test</div>
+        <h1>Does <span><%= brand.name %></span> Work?<br>Real-Time Leak Detection</h1>
+        <p>Connect your <strong><%= brand.name %></strong> VPN, then click the button below. We'll instantly detect if your real IP, WebRTC, or DNS is leaking — exposing you to ad networks and trackers.</p>
+        <a href="/" class="vpn-cta">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            Run <%= brand.name %> Leak Test Now
+        </a>
+    </div>
+
+    <!-- ─── VPN STATS ─────────────────────────────────────────────── -->
+    <div class="vpn-stats">
+        <div class="vpn-stat">
+            <div class="vpn-stat-val"><%= brand.servers %>+</div>
+            <div class="vpn-stat-lbl">Servers</div>
+        </div>
+        <div class="vpn-stat">
+            <div class="vpn-stat-val"><%= brand.countries %>+</div>
+            <div class="vpn-stat-lbl">Countries</div>
+        </div>
+        <div class="vpn-stat">
+            <div class="vpn-stat-val"><%= brand.killSwitch ? '✅' : '⚠️' %></div>
+            <div class="vpn-stat-lbl">Kill Switch</div>
+        </div>
+        <div class="vpn-stat">
+            <div class="vpn-stat-val"><%= brand.noLogs ? '✅' : '⚠️' %></div>
+            <div class="vpn-stat-lbl">No-Logs Policy</div>
+        </div>
+    </div>
+
+    <!-- ─── LEAK RISKS ─────────────────────────────────────────────── -->
+    <div class="risk-panel">
+        <h2>⚠️ Known Leak Risks With <%= brand.name %></h2>
+        <div class="risk-item">
+            <div class="risk-icon red">🔴</div>
+            <div class="risk-text">
+                <strong>WebRTC Leak Risk</strong>
+                <span>Chrome and Firefox can expose your real IP through WebRTC even when <%= brand.name %> is active. Our test checks this automatically.</span>
+            </div>
+        </div>
+        <div class="risk-item">
+            <div class="risk-icon amber">🟡</div>
+            <div class="risk-text">
+                <strong>DNS Leak Risk</strong>
+                <span>If your browser uses its own DNS resolver, queries bypass the VPN tunnel. This reveals your browsing history to your ISP.</span>
+            </div>
+        </div>
+        <div class="risk-item">
+            <div class="risk-icon green">🟢</div>
+            <div class="risk-text">
+                <strong>Canvas Fingerprint</strong>
+                <span><%= brand.name %> does not change your browser fingerprint. Ad networks can still track you via Canvas even with VPN active.</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ─── ABOUT BRAND ─────────────────────────────────────────────── -->
+    <div class="brand-known">
+        <h2>About <%= brand.name %></h2>
+        <p><%- brand.description %></p>
+        <ul>
+            <% brand.features.forEach(f => { %>
+            <li><%= f %></li>
+            <% }) %>
+        </ul>
+    </div>
+
+    <!-- ─── HOW TO TEST ─────────────────────────────────────────────── -->
+    <div class="panel" style="margin-top:24px; padding:28px;">
+        <h2 style="font-size:18px; font-weight:700; margin-bottom:16px;">How to Test If <%= brand.name %> Is Working</h2>
+        <ol style="padding-left:20px; font-size:14px; color:var(--muted); line-height:2.2;">
+            <li>Open <strong><%= brand.name %></strong> on your device and connect to any server.</li>
+            <li>Come back to this page and click <strong>"Run <%= brand.name %> Leak Test Now"</strong>.</li>
+            <li>Check that the IP address shown matches your selected <%= brand.name %> server country — not your real location.</li>
+            <li>Verify the <strong>WebRTC Leak Test</strong> shows no local IP addresses.</li>
+            <li>Verify the <strong>DNS Leak Test</strong> shows DNS servers in your VPN country.</li>
+            <li>A privacy score of <strong>85+</strong> means you are well protected. ✅</li>
+        </ol>
+    </div>
+
+    <!-- ─── FAQ ─────────────────────────────────────────────────────── -->
+    <div class="faq-section">
+        <h2>Frequently Asked Questions</h2>
+        <div class="faq-list">
+            <div class="faq-item">
+                <button class="faq-q" onclick="toggleFaq(this)" aria-expanded="false">
+                    <span>Does <%= brand.name %> hide my IP address?</span>
+                    <svg class="faq-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
+                <div class="faq-a">
+                    <p><%= brand.name %> replaces your real IP with a server IP. However, WebRTC leaks in your browser can still expose your real IP. Connect to <%= brand.name %>, then run our test to confirm your IP is truly hidden.</p>
+                </div>
+            </div>
+            <div class="faq-item">
+                <button class="faq-q" onclick="toggleFaq(this)" aria-expanded="false">
+                    <span>How do I know if <%= brand.name %> is connected?</span>
+                    <svg class="faq-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
+                <div class="faq-a">
+                    <p>Run our IP checker at whoer.live while connected to <%= brand.name %>. If the country shown matches your VPN server (not your real country), your VPN is working. Our tool also detects whether your ISP is a residential ISP or a VPN datacenter provider.</p>
+                </div>
+            </div>
+            <div class="faq-item">
+                <button class="faq-q" onclick="toggleFaq(this)" aria-expanded="false">
+                    <span>Can <%= brand.name %> be detected by websites?</span>
+                    <svg class="faq-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
+                <div class="faq-a">
+                    <p>Yes. Whoer Live checks your IP against VPN provider and datacenter IP ranges. If your IP belongs to <%= brand.name %>'s infrastructure, websites and ad platforms can detect you are using a VPN. Residential proxies are harder to detect. Run our test to see your exact detection status.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ─── INTERNAL LINKS ───────────────────────────────────────────── -->
+    <div class="info-block" style="margin-top:24px;">
+        <h2>Test Other VPNs</h2>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;">
+            <% ['nordvpn','expressvpn','surfshark','cyberghost','protonvpn','mullvad','private-internet-access','ipvanish','windscribe','hotspot-shield'].filter(s => s !== brand.slug).slice(0,8).forEach(slug => { %>
+            <a href="/vpn-test/<%= slug %>" class="badge badge-blue" style="text-decoration:none;"><%= slug.replace(/-/g,' ').replace(/\b\w/g,l=>l.toUpperCase()) %></a>
+            <% }) %>
+        </div>
+    </div>
+</div>
+
+<!-- ─── FOOTER ──────────────────────────────────────────────────────── -->
+<footer>
+    <div class="container">
+        <div class="footer-links">
+            <a href="/">Home</a>
+            <a href="/sitemap.xml">Sitemap</a>
+        </div>
+        <div>Whoer Live &copy; <span id="yr"></span> — Free IP & Privacy Checker</div>
+        <div style="margin-top: 6px; font-size: 12px;">No data sold. No ads. No tracking.</div>
+    </div>
+</footer>
+
+<script>
+document.getElementById('yr').textContent = new Date().getFullYear();
+function toggleFaq(btn) {
+    const expanded = btn.getAttribute('aria-expanded') === 'true';
+    document.querySelectorAll('.faq-q').forEach(b => { b.setAttribute('aria-expanded','false'); b.nextElementSibling.style.maxHeight = null; });
+    if (!expanded) { btn.setAttribute('aria-expanded','true'); btn.nextElementSibling.style.maxHeight = btn.nextElementSibling.scrollHeight + 'px'; }
+}
+</script>
+</body>
+</html>

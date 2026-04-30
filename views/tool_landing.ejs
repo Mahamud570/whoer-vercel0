@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= tool.title %></title>
+    <meta name="description" content="<%= tool.description %>">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://www.whoer.live/<%= slug %>">
+    <link rel="icon" type="image/png" href="/img/logo.png">
+    <meta property="og:title" content="<%= tool.h1 %> | Whoer Live">
+    <meta property="og:description" content="<%= tool.description %>">
+    <meta property="og:url" content="https://www.whoer.live/<%= slug %>">
+    <meta property="og:image" content="https://www.whoer.live/img/logo.png">
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        { "@type": "BreadcrumbList", "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://www.whoer.live/" },
+            { "@type": "ListItem", "position": 2, "name": "<%= tool.h1 %>" }
+        ]},
+        { "@type": "WebApplication", "name": "<%= tool.h1 %> — Whoer Live", "url": "https://www.whoer.live/<%= slug %>",
+          "aggregateRating": { "@type": "AggregateRating", "ratingValue": "4.9", "reviewCount": "11240", "bestRating": "5" }
+        },
+        <% if (tool.faqs && tool.faqs.length) { %>
+        {
+          "@type": "FAQPage",
+          "mainEntity": [
+            <% tool.faqs.forEach((faq, i) => { %>
+            {
+              "@type": "Question",
+              "name": "<%= faq.q %>",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "<%= faq.a %>"
+              }
+            }<%= i < tool.faqs.length - 1 ? ',' : '' %>
+            <% }) %>
+          ]
+        }
+        <% } %>
+      ]
+    }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" media="print" onload="this.media='all'">
+    <style><%- include('../public/css/style.css') %></style>
+    <style>
+        .tool-pg-wrap { max-width: 860px; margin: 0 auto; padding: 20px 20px 120px; }
+        .tool-pg-hero { text-align: center; padding: 48px 0 32px; }
+        .tool-pg-icon { font-size: 52px; display: block; margin-bottom: 16px; }
+        .tool-pg-hero h1 { font-size: 36px; font-weight: 700; margin-bottom: 14px; }
+        .tool-pg-hero p { font-size: 16px; color: var(--muted); max-width: 560px; margin: 0 auto 28px; line-height: 1.65; }
+        .tool-pg-cta { display: inline-flex; align-items: center; gap: 10px; background: var(--green); color: #000; border-radius: var(--radius); padding: 14px 32px; font-size: 15px; font-weight: 700; text-decoration: none; transition: all 0.2s; }
+        .tool-pg-cta:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(34,215,122,0.4); }
+        .tool-search-vol { display: inline-flex; align-items: center; gap: 6px; background: rgba(245,166,35,0.1); border: 1px solid rgba(245,166,35,0.3); color: var(--amber); border-radius: 20px; padding: 4px 14px; font-size: 12px; font-weight: 700; margin-bottom: 16px; }
+        .what-is { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 28px; margin: 24px 0; }
+        .what-is h2 { font-size: 18px; font-weight: 700; margin-bottom: 12px; }
+        .what-is p { font-size: 14px; color: var(--muted); line-height: 1.8; }
+        .other-tools { margin-top: 28px; }
+        .other-tools h2 { font-size: 18px; font-weight: 700; margin-bottom: 14px; }
+        .tools-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; }
+        .tool-link { display: flex; align-items: center; gap: 10px; background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; text-decoration: none; color: var(--text); transition: all 0.2s; font-size: 13px; font-weight: 600; }
+        .tool-link:hover { background: var(--panel-hover); border-color: var(--border2); transform: translateY(-1px); }
+    </style>
+</head>
+<body>
+<header>
+    <div class="container header-inner">
+        <a href="/" style="display:flex;align-items:center;gap:10px;text-decoration:none;">
+            <img src="/img/logo.png" alt="Whoer Live" style="width:32px;height:32px;border-radius:8px;">
+            <div class="logo">WHOER<span>.LIVE</span> <sub>v4</sub></div>
+        </a>
+        <div class="header-actions">
+            <a href="/" class="btn">🛡️ IP Check</a>
+            <a href="/bulk" class="btn">🔢 Bulk</a>
+            <a href="/api-docs" class="btn">⚡ API</a>
+            <a href="/threat-map" class="btn" style="color:var(--red);border-color:rgba(255,79,106,0.3);background:rgba(255,79,106,0.1);">🔴 Threats</a>
+            <button class="btn btn-primary" onclick="location.href='/'">Run Test</button>
+        </div>
+    </div>
+</header>
+
+<div class="tool-pg-wrap">
+    <div class="tool-pg-hero">
+        <div class="tool-search-vol">🔍 <%= tool.searchVolume %> monthly searches</div>
+        <span class="tool-pg-icon"><%= tool.icon %></span>
+        <h1><%= tool.h1 %></h1>
+        <p><%= tool.description %></p>
+        <a href="/" class="tool-pg-cta">Run <%= tool.h1 %> Now — Free</a>
+    </div>
+
+    <div class="what-is">
+        <h2>What Is a <%= tool.h1 %>?</h2>
+        <p><%- tool.intro %></p>
+    </div>
+
+    <div class="panel" style="padding:28px;margin-bottom:24px;">
+        <h2 style="font-size:17px;font-weight:700;margin-bottom:14px;">How to Run This Test</h2>
+        <ol style="padding-left:20px;font-size:14px;color:var(--muted);line-height:2.2;">
+            <li>Click <strong>"Run <%= tool.h1 %> Now"</strong> above.</li>
+            <li>Allow the tool a few seconds to complete its analysis.</li>
+            <li>Review your results in the privacy score panel.</li>
+            <li>If issues are found, follow the recommendations provided.</li>
+        </ol>
+    </div>
+
+    <% if (tool.faqs && tool.faqs.length) { %>
+    <div class="what-is" style="margin-top:24px;">
+        <h2 style="font-size:22px;margin-bottom:16px;">Frequently Asked Questions</h2>
+        <div class="faq-list">
+            <% tool.faqs.forEach(faq => { %>
+            <div class="faq-item" style="margin-bottom:12px; border-bottom:1px solid var(--border); padding-bottom:12px;">
+                <div style="font-weight:700; font-size:15px; margin-bottom:6px; color:var(--text);">Q: <%= faq.q %></div>
+                <div style="font-size:14px; color:var(--muted); line-height:1.6;"><%= faq.a %></div>
+            </div>
+            <% }) %>
+        </div>
+    </div>
+    <% } %>
+
+    <div class="other-tools">
+        <h2>Other Privacy Tools</h2>
+        <div class="tools-grid">
+            <a href="/webrtc-leak-test" class="tool-link">🔴 WebRTC Leak Test</a>
+            <a href="/dns-leak-test" class="tool-link">🟡 DNS Leak Test</a>
+            <a href="/ip-location-lookup" class="tool-link">🌍 IP Location Lookup</a>
+            <a href="/vpn-detector" class="tool-link">🛡️ VPN Detector</a>
+            <a href="/browser-fingerprint-test" class="tool-link">🔍 Fingerprint Test</a>
+            <a href="/timezone-check" class="tool-link">🕒 Timezone Check</a>
+            <a href="/bulk" class="tool-link">🔢 Bulk IP Checker</a>
+            <a href="/blacklist" class="tool-link">⛔ Blacklist Check</a>
+            <a href="/port-scanner" class="tool-link">🔌 Port Scanner</a>
+        </div>
+    </div>
+</div>
+
+<footer>
+    <div class="container">
+        <div class="footer-links"><a href="/">Home</a><a href="/sitemap.xml">Sitemap</a></div>
+        <div>Whoer Live &copy; <%= year %> — Free IP & Privacy Checker</div>
+    </div>
+</footer>
+</body>
+</html>

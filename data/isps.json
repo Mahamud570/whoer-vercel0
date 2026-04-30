@@ -1,0 +1,620 @@
+{
+  "comcast": {
+    "name": "Comcast Xfinity",
+    "country": "USA",
+    "type": "Cable",
+    "description": "Xfinity is the consumer brand of Comcast, the largest cable internet service provider in the United States."
+  },
+  "verizon": {
+    "name": "Verizon Fios",
+    "country": "USA",
+    "type": "Fiber",
+    "description": "Verizon Fios is a 100% fiber-optic network that delivers some of the fastest internet speeds in the US."
+  },
+  "att": {
+    "name": "AT&T Internet",
+    "country": "USA",
+    "type": "DSL/Fiber",
+    "description": "AT&T is one of the world's largest telecommunications companies and a major ISP in the US."
+  },
+  "spectrum": {
+    "name": "Spectrum",
+    "country": "USA",
+    "type": "Cable",
+    "description": "Spectrum is a leading cable provider offering high-speed internet across most of the US."
+  },
+  "cox": {
+    "name": "Cox Communications",
+    "country": "USA",
+    "type": "Cable",
+    "description": "Cox is a major US cable provider known for high-speed internet and bundled services."
+  },
+  "centurylink": {
+    "name": "CenturyLink",
+    "country": "USA",
+    "type": "DSL/Fiber",
+    "description": "CenturyLink provides internet services primarily in the midwest and western United States."
+  },
+  "bt": {
+    "name": "BT (British Telecom)",
+    "country": "UK",
+    "type": "Fiber",
+    "description": "BT is the largest ISP in the UK, providing fiber broadband to millions of homes."
+  },
+  "sky": {
+    "name": "Sky Broadband",
+    "country": "UK",
+    "type": "Fiber",
+    "description": "Sky is a major UK ISP known for its entertainment bundles and high-speed fiber."
+  },
+  "virgin-media": {
+    "name": "Virgin Media",
+    "country": "UK",
+    "type": "Cable",
+    "description": "Virgin Media offers the fastest widely available cable internet speeds in the UK."
+  },
+  "grameenphone": {
+    "name": "Grameenphone",
+    "country": "Bangladesh",
+    "type": "4G/5G",
+    "description": "Grameenphone is the leading telecommunications service provider in Bangladesh."
+  },
+  "banglalink": {
+    "name": "Banglalink",
+    "country": "Bangladesh",
+    "type": "4G/5G",
+    "description": "Banglalink is a major mobile operator in Bangladesh providing high-speed data."
+  },
+  "robi": {
+    "name": "Robi Axiata",
+    "country": "Bangladesh",
+    "type": "4G/5G",
+    "description": "Robi is a leading mobile operator in Bangladesh, known for its extensive 4G coverage."
+  },
+  "jio": {
+    "name": "Reliance Jio",
+    "country": "India",
+    "type": "4G/5G",
+    "description": "Jio transformed the Indian market with ultra-low-cost data and nationwide 4G."
+  },
+  "airtel-india": {
+    "name": "Airtel India",
+    "country": "India",
+    "type": "Fiber/4G",
+    "description": "Airtel is a top-tier provider in India offering both fiber and high-speed mobile data."
+  },
+  "vodafone-germany": {
+    "name": "Vodafone Germany",
+    "country": "Germany",
+    "type": "Cable/DSL",
+    "description": "Vodafone is a major player in the German broadband market, especially in cable."
+  },
+  "telekom": {
+    "name": "Deutsche Telekom",
+    "country": "Germany",
+    "type": "DSL/Fiber",
+    "description": "Telekom is the incumbent provider in Germany with the most extensive network."
+  },
+  "orange-france": {
+    "name": "Orange France",
+    "country": "France",
+    "type": "Fiber",
+    "description": "Orange is the leading ISP in France, known for its high-quality fiber-to-the-home (FTTH)."
+  },
+  "telstra": {
+    "name": "Telstra",
+    "country": "Australia",
+    "type": "Fiber/4G",
+    "description": "Telstra is Australia's largest telecommunications company and leading internet provider."
+  },
+  "rogers": {
+    "name": "Rogers Communications",
+    "country": "Canada",
+    "type": "Cable",
+    "description": "Rogers is one of the big three ISPs in Canada, providing high-speed cable internet."
+  },
+  "bell-canada": {
+    "name": "Bell Canada",
+    "country": "Canada",
+    "type": "Fiber",
+    "description": "Bell provides extensive fiber-optic internet services across Ontario and Quebec."
+  },
+  "optimum": {
+    "name": "Optimum",
+    "country": "USA",
+    "type": "Cable",
+    "description": "Optimum provides cable and fiber internet services primarily in the New York tristate area."
+  },
+  "mediacom": {
+    "name": "Mediacom",
+    "country": "USA",
+    "type": "Cable",
+    "description": "Mediacom is a major cable provider serving smaller markets and rural areas in the US."
+  },
+  "windstream": {
+    "name": "Windstream Kinetic",
+    "country": "USA",
+    "type": "DSL/Fiber",
+    "description": "Windstream offers high-speed Kinetic internet services across 18 US states."
+  },
+  "frontier": {
+    "name": "Frontier Communications",
+    "country": "USA",
+    "type": "Fiber",
+    "description": "Frontier provides high-speed fiber internet and phone services to millions of US customers."
+  },
+  "earthlink": {
+    "name": "EarthLink",
+    "country": "USA",
+    "type": "Fiber/DSL",
+    "description": "EarthLink is a pioneer ISP in the US, offering a wide range of high-speed internet options."
+  },
+  "google-fiber": {
+    "name": "Google Fiber",
+    "country": "USA",
+    "type": "Fiber",
+    "description": "Google Fiber provides ultra-high-speed broadband internet using fiber-optic technology."
+  },
+  "starlink": {
+    "name": "Starlink",
+    "country": "Global",
+    "type": "Satellite",
+    "description": "Starlink is a satellite internet constellation operated by SpaceX, providing global coverage."
+  },
+  "talktalk": {
+    "name": "TalkTalk",
+    "country": "UK",
+    "type": "Fiber",
+    "description": "TalkTalk is a leading value-for-money ISP in the UK, offering fiber and broadband."
+  },
+  "plusnet": {
+    "name": "Plusnet",
+    "country": "UK",
+    "type": "Fiber",
+    "description": "Plusnet is a UK ISP known for its customer service and competitive fiber pricing."
+  },
+  "ee-broadband": {
+    "name": "EE Broadband",
+    "country": "UK",
+    "type": "Fiber/5G",
+    "description": "EE provides high-speed fiber broadband and is part of the BT Group."
+  },
+  "telus": {
+    "name": "Telus",
+    "country": "Canada",
+    "type": "Fiber",
+    "description": "Telus is a major Canadian telecommunications company providing PureFibre internet."
+  },
+  "shaw": {
+    "name": "Shaw Communications",
+    "country": "Canada",
+    "type": "Cable",
+    "description": "Shaw is a leading Western Canadian ISP, recently merged with Rogers."
+  },
+  "videotron": {
+    "name": "Videotron",
+    "country": "Canada",
+    "type": "Cable",
+    "description": "Videotron is a major ISP in Quebec, known for its high-speed cable and fiber services."
+  },
+  "optus": {
+    "name": "Optus",
+    "country": "Australia",
+    "type": "Fiber/5G",
+    "description": "Optus is Australia's second-largest telecommunications company and ISP."
+  },
+  "tpg": {
+    "name": "TPG",
+    "country": "Australia",
+    "type": "Fiber",
+    "description": "TPG is a major Australian ISP offering competitive NBN fiber plans."
+  },
+  "bsnl": {
+    "name": "BSNL Bharat Fiber",
+    "country": "India",
+    "type": "Fiber",
+    "description": "BSNL is India's government-owned ISP with the largest fiber-to-the-home network."
+  },
+  "tata-play-fiber": {
+    "name": "Tata Play Fiber",
+    "country": "India",
+    "type": "Fiber",
+    "description": "Tata Play offers high-speed fiber internet services across major Indian cities."
+  },
+  "act-fibernet": {
+    "name": "ACT Fibernet",
+    "country": "India",
+    "type": "Fiber",
+    "description": "ACT is a leading independent fiber ISP in India, known for high-speed plans."
+  },
+  "amberit": {
+    "name": "AmberIT",
+    "country": "Bangladesh",
+    "type": "Fiber",
+    "description": "AmberIT is a top-tier ISP in Bangladesh providing high-speed internet and IP TV."
+  },
+  "carnival-internet": {
+    "name": "Carnival Internet",
+    "country": "Bangladesh",
+    "type": "Fiber",
+    "description": "Carnival is a popular retail ISP in Bangladesh known for stable connections."
+  },
+  "link3": {
+    "name": "Link3 Technologies",
+    "country": "Bangladesh",
+    "type": "Fiber",
+    "description": "Link3 is a major corporate and retail ISP in Bangladesh with nationwide coverage."
+  },
+  "dot-internet": {
+    "name": "Dot Internet",
+    "country": "Bangladesh",
+    "type": "Fiber",
+    "description": "Dot Internet is a fast-growing fiber ISP in Bangladesh offering high-speed data."
+  },
+  "o2-germany": {
+    "name": "O2 Germany",
+    "country": "Germany",
+    "type": "DSL/Fiber",
+    "description": "O2, owned by Telefónica, is a major mobile and fixed-line ISP in Germany."
+  },
+  "free-france": {
+    "name": "Free",
+    "country": "France",
+    "type": "Fiber",
+    "description": "Free is a disruptive ISP in France known for high-speed fiber and low pricing."
+  },
+  "sfr": {
+    "name": "SFR",
+    "country": "France",
+    "type": "Fiber/Cable",
+    "description": "SFR is a major French telecommunications company and a leading ISP."
+  },
+  "movistar-spain": {
+    "name": "Movistar",
+    "country": "Spain",
+    "type": "Fiber",
+    "description": "Movistar, owned by Telefónica, is the dominant ISP in Spain."
+  },
+  "vodafone-spain": {
+    "name": "Vodafone Spain",
+    "country": "Spain",
+    "type": "Fiber/Cable",
+    "description": "Vodafone is a major player in the Spanish fiber and mobile market."
+  },
+  "tim-italy": {
+    "name": "TIM",
+    "country": "Italy",
+    "type": "Fiber/DSL",
+    "description": "TIM is the largest telecommunications provider and ISP in Italy."
+  },
+  "fastweb": {
+    "name": "Fastweb",
+    "country": "Italy",
+    "type": "Fiber",
+    "description": "Fastweb is a leading Italian ISP known for its early adoption of fiber technology."
+  },
+  "claro-brazil": {
+    "name": "Claro Brasil",
+    "country": "Brazil",
+    "type": "Cable/5G",
+    "description": "Claro is a leading ISP and mobile operator in Brazil, part of América Móvil."
+  },
+  "vivo-brazil": {
+    "name": "Vivo",
+    "country": "Brazil",
+    "type": "Fiber",
+    "description": "Vivo, owned by Telefónica, is a major fiber provider in the Brazilian market."
+  },
+  "rostelecom": {
+    "name": "Rostelecom",
+    "country": "Russia",
+    "type": "Fiber/DSL",
+    "description": "Rostelecom is the state-owned telecommunications giant and largest ISP in Russia."
+  },
+  "mts-russia": {
+    "name": "MTS",
+    "country": "Russia",
+    "type": "Fiber/5G",
+    "description": "MTS is a leading mobile and fixed-line operator in Russia."
+  },
+  "ntt-japan": {
+    "name": "NTT",
+    "country": "Japan",
+    "type": "Fiber",
+    "description": "NTT is the dominant telecommunications provider and ISP in Japan."
+  },
+  "softbank-japan": {
+    "name": "SoftBank",
+    "country": "Japan",
+    "type": "Fiber/5G",
+    "description": "SoftBank is a major Japanese ISP and mobile operator."
+  },
+  "china-telecom": {
+    "name": "China Telecom",
+    "country": "China",
+    "type": "Fiber",
+    "description": "China Telecom is one of the 'Big Three' state-owned ISPs in China."
+  },
+  "turkcell": {
+    "name": "Turkcell Superonline",
+    "country": "Turkey",
+    "type": "Fiber",
+    "description": "Turkcell is the leading mobile and fiber provider in Turkey."
+  },
+  "etisalat-uae": {
+    "name": "Etisalat (e&)",
+    "country": "UAE",
+    "type": "Fiber",
+    "description": "Etisalat is the flagship telecommunications provider in the United Arab Emirates."
+  },
+  "stc-saudi": {
+    "name": "STC (Saudi Telecom Company)",
+    "country": "Saudi Arabia",
+    "type": "Fiber",
+    "description": "STC is the leading ISP in Saudi Arabia and the Middle East."
+  },
+  "mtn-south-africa": {
+    "name": "MTN",
+    "country": "South Africa",
+    "type": "Fiber/5G",
+    "description": "MTN is a major mobile operator and ISP across Africa, headquartered in South Africa."
+  },
+  "vodacom-sa": {
+    "name": "Vodacom",
+    "country": "South Africa",
+    "type": "Fiber/5G",
+    "description": "Vodacom is a leading telecommunications company in South Africa, part of Vodafone."
+  },
+  "pldt-philippines": {
+    "name": "PLDT",
+    "country": "Philippines",
+    "type": "Fiber",
+    "description": "PLDT is the largest telecommunications and internet service provider in the Philippines."
+  },
+  "globe-philippines": {
+    "name": "Globe Telecom",
+    "country": "Philippines",
+    "type": "Fiber/5G",
+    "description": "Globe is a major provider in the Philippines offering extensive fiber and mobile data."
+  },
+  "viettel-vietnam": {
+    "name": "Viettel",
+    "country": "Vietnam",
+    "type": "Fiber",
+    "description": "Viettel is the largest telecommunications provider in Vietnam, owned by the Ministry of Defence."
+  },
+  "vumatel": {
+    "name": "Vumatel",
+    "country": "South Africa",
+    "type": "Fiber",
+    "description": "Vumatel is a leading fiber-to-the-home (FTTH) provider in South Africa."
+  },
+  "excitel": {
+    "name": "Excitel",
+    "country": "India",
+    "type": "Fiber",
+    "description": "Excitel is a popular fiber ISP in India known for high-speed unlimited plans."
+  },
+  "hyperoptic": {
+    "name": "Hyperoptic",
+    "country": "UK",
+    "type": "Fiber",
+    "description": "Hyperoptic is a UK fiber specialist offering gigabit speeds in major cities."
+  },
+  "gigaclear": {
+    "name": "Gigaclear",
+    "country": "UK",
+    "type": "Fiber",
+    "description": "Gigaclear specializes in bringing full-fiber broadband to rural UK communities."
+  },
+  "frontier-canada": {
+    "name": "Frontier Canada",
+    "country": "Canada",
+    "type": "DSL",
+    "description": "Frontier provides internet services to various regions across Canada."
+  },
+  "cogeco": {
+    "name": "Cogeco",
+    "country": "Canada",
+    "type": "Cable",
+    "description": "Cogeco is a major cable ISP serving Ontario and Quebec in Canada."
+  },
+  "sasktel": {
+    "name": "SaskTel",
+    "country": "Canada",
+    "type": "Fiber/DSL",
+    "description": "SaskTel is the crown corporation ISP in Saskatchewan, Canada."
+  },
+  "aussie-broadband": {
+    "name": "Aussie Broadband",
+    "country": "Australia",
+    "type": "Fiber",
+    "description": "Aussie Broadband is a highly rated Australian ISP known for local support."
+  },
+  "iinet": {
+    "name": "iiNet",
+    "country": "Australia",
+    "type": "Fiber/DSL",
+    "description": "iiNet is one of Australia's most established ISPs, now part of TPG."
+  },
+  "tpg-telecom": {
+    "name": "TPG Telecom",
+    "country": "Australia",
+    "type": "Fiber",
+    "description": "TPG is a major telecommunications provider in Australia."
+  },
+  "vocus": {
+    "name": "Vocus",
+    "country": "Australia",
+    "type": "Fiber",
+    "description": "Vocus is a major wholesale and retail fiber provider in Australia."
+  },
+  "alliance-broadband": {
+    "name": "Alliance Broadband",
+    "country": "India",
+    "type": "Fiber",
+    "description": "Alliance is a popular ISP in East India, especially in Kolkata."
+  },
+  "hathway": {
+    "name": "Hathway",
+    "country": "India",
+    "type": "Cable/Fiber",
+    "description": "Hathway is a leading cable broadband provider in major Indian cities."
+  },
+  "mazeda-internet": {
+    "name": "Mazeda Internet",
+    "country": "Bangladesh",
+    "type": "Fiber",
+    "description": "Mazeda is a well-known local ISP in Bangladesh providing fiber services."
+  },
+  "triangle-networking": {
+    "name": "Triangle",
+    "country": "Bangladesh",
+    "type": "Fiber",
+    "description": "Triangle is a popular fiber ISP in Dhaka, Bangladesh."
+  },
+  "1and1": {
+    "name": "1&1",
+    "country": "Germany",
+    "type": "DSL/Fiber",
+    "description": "1&1 is a major telecommunications provider and ISP in Germany."
+  },
+  "bouygues-telecom": {
+    "name": "Bouygues Telecom",
+    "country": "France",
+    "type": "Fiber",
+    "description": "Bouygues is a major French operator offering high-speed fiber."
+  },
+  "masmovil": {
+    "name": "MásMóvil",
+    "country": "Spain",
+    "type": "Fiber",
+    "description": "MásMóvil is the fourth largest telecommunications operator in Spain."
+  },
+  "windtre": {
+    "name": "WindTre",
+    "country": "Italy",
+    "type": "Fiber/5G",
+    "description": "WindTre is a major Italian operator formed by the merger of Wind and 3."
+  },
+  "oi-brazil": {
+    "name": "Oi",
+    "country": "Brazil",
+    "type": "Fiber/DSL",
+    "description": "Oi is one of the largest telecommunications companies in Brazil."
+  },
+  "tim-brasil": {
+    "name": "TIM Brasil",
+    "country": "Brazil",
+    "type": "Fiber/5G",
+    "description": "TIM is a major mobile and fiber operator in the Brazilian market."
+  },
+  "beeline-russia": {
+    "name": "Beeline",
+    "country": "Russia",
+    "type": "Fiber/5G",
+    "description": "Beeline is a major telecommunications brand in Russia."
+  },
+  "megafon-russia": {
+    "name": "Megafon",
+    "country": "Russia",
+    "type": "Fiber/5G",
+    "description": "Megafon is one of the 'Big Three' mobile operators in Russia."
+  },
+  "kddi-japan": {
+    "name": "KDDI (au)",
+    "country": "Japan",
+    "type": "Fiber/5G",
+    "description": "KDDI is a major Japanese telecommunications operator."
+  },
+  "china-unicom": {
+    "name": "China Unicom",
+    "country": "China",
+    "type": "Fiber",
+    "description": "China Unicom is a major state-owned telecommunications provider in China."
+  },
+  "china-mobile": {
+    "name": "China Mobile",
+    "country": "China",
+    "type": "Fiber/5G",
+    "description": "China Mobile is the world's largest mobile operator and a major ISP in China."
+  },
+  "turk-telekom": {
+    "name": "Türk Telekom",
+    "country": "Turkey",
+    "type": "Fiber/DSL",
+    "description": "Türk Telekom is the incumbent telecommunications provider in Turkey."
+  },
+  "du-uae": {
+    "name": "du",
+    "country": "UAE",
+    "type": "Fiber",
+    "description": "du is the second major telecommunications provider in the UAE."
+  },
+  "mobily-saudi": {
+    "name": "Mobily",
+    "country": "Saudi Arabia",
+    "type": "Fiber/5G",
+    "description": "Mobily is a major telecommunications operator in Saudi Arabia."
+  },
+  "zain-saudi": {
+    "name": "Zain",
+    "country": "Saudi Arabia",
+    "type": "Fiber/5G",
+    "description": "Zain is a leading mobile operator in the Middle East."
+  },
+  "telkom-sa": {
+    "name": "Telkom SA",
+    "country": "South Africa",
+    "type": "Fiber/DSL",
+    "description": "Telkom is the national telecommunications provider in South Africa."
+  },
+  "mtn-nigeria": {
+    "name": "MTN Nigeria",
+    "country": "Nigeria",
+    "type": "4G/5G",
+    "description": "MTN is the largest mobile operator in Nigeria."
+  },
+  "glo-nigeria": {
+    "name": "Glo (Globacom)",
+    "country": "Nigeria",
+    "type": "4G/Fiber",
+    "description": "Glo is a major Nigerian telecommunications company with its own subsea cable."
+  },
+  "airtel-nigeria": {
+    "name": "Airtel Nigeria",
+    "country": "Nigeria",
+    "type": "4G/5G",
+    "description": "Airtel is a top mobile operator in Nigeria providing high-speed data."
+  },
+  "converge-ict": {
+    "name": "Converge ICT",
+    "country": "Philippines",
+    "type": "Fiber",
+    "description": "Converge is a fast-growing pure-fiber ISP in the Philippines."
+  },
+  "telkomsel": {
+    "name": "Telkomsel",
+    "country": "Indonesia",
+    "type": "4G/5G",
+    "description": "Telkomsel is the largest mobile operator in Indonesia."
+  },
+  "indihome": {
+    "name": "IndiHome",
+    "country": "Indonesia",
+    "type": "Fiber",
+    "description": "IndiHome, owned by Telkom Indonesia, is the largest fiber ISP in the country."
+  },
+  "vnpt-vietnam": {
+    "name": "VNPT",
+    "country": "Vietnam",
+    "type": "Fiber",
+    "description": "VNPT is a major state-owned telecommunications provider in Vietnam."
+  },
+  "fpt-telecom": {
+    "name": "FPT Telecom",
+    "country": "Vietnam",
+    "type": "Fiber",
+    "description": "FPT is a leading private ISP in Vietnam known for high-speed fiber."
+  }
+}

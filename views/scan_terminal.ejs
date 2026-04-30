@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔴 Advanced IP & Anti-Detect Leak Checker | Whoer Live</title>
+    <meta name="description" content="⚠️ WARNING: Are your proxies leaking? Detect hidden WebRTC, DNS, and Canvas Fingerprint leaks before ad-networks ban your account.">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://www.whoer.live/">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🛡️</text></svg>">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap">
+    <style><%- include('../public/css/terminal.css') %></style>
+</head>
+<body>
+<div class="scanline"></div>
+
+<!-- LOADING -->
+<div class="t-loading" id="loadingOverlay">
+    <div class="t-loading-ring"></div>
+    <div class="t-loading-text">Scanning...</div>
+    <div class="t-loading-steps">
+        <div class="t-loading-step active" id="step1"><span class="dot"></span>Probing IP geolocation...</div>
+        <div class="t-loading-step" id="step2"><span class="dot"></span>Triggering WebRTC STUN</div>
+        <div class="t-loading-step" id="step3"><span class="dot"></span>Hashing canvas + WebGL fingerprints</div>
+        <div class="t-loading-step" id="step4"><span class="dot"></span>Computing privacy score...</div>
+    </div>
+</div>
+
+<!-- HEADER -->
+<header class="t-header">
+    <div class="t-logo">WHOER.3D <span>// PRIVACY RECON TERMINAL V4.0</span></div>
+    <div class="t-header-right">
+        <div class="t-status"><span class="t-dot"></span> SESSION ENCRYPTED</div>
+        <div class="t-clock" id="liveClock">UTC 00:00:00</div>
+        <div id="scanLabel" style="color:var(--green);letter-spacing:2px">SCANNING</div>
+    </div>
+</header>
+
+<!-- MAIN GRID -->
+<div class="t-grid">
+
+    <!-- ══ LEFT COLUMN ══ -->
+    <div style="display:flex;flex-direction:column;gap:12px">
+
+        <!-- CONTROL DECK -->
+        <div class="t-panel">
+            <div class="t-panel-head"><span class="t-panel-title">Control_Deck</span><span class="t-indicator"></span></div>
+            <div class="t-radar">
+                <div class="t-radar-label"><span class="val" id="radarScore">—</span>PRIVACY<br>SCORE</div>
+            </div>
+            <button class="t-scan-btn" onclick="location.reload()"><span class="dot"></span> SCANNING</button>
+            <div class="t-log" id="termLog">
+<span class="ok">[OK]</span> Booting recon terminal...
+<span class="ok">[OK]</span> Probing IP geolocation...
+<span class="info">[...]</span> Triggering WebRTC STUN
+<span class="info">[...]</span> Handshake...
+            </div>
+        </div>
+
+        <!-- IP GEOLOCATION -->
+        <div class="t-panel">
+            <div class="t-panel-head"><span class="t-panel-title">IP_Geolocation</span><span class="t-indicator"></span></div>
+            <div class="t-row"><span class="t-row-key">IP</span><span class="t-row-val" id="dIP">—</span></div>
+            <div class="t-row"><span class="t-row-key">Country</span><span class="t-row-val" id="dCountry">—</span></div>
+            <div class="t-row"><span class="t-row-key">Region</span><span class="t-row-val" id="dRegion">—</span></div>
+            <div class="t-row"><span class="t-row-key">City</span><span class="t-row-val" id="dCity">—</span></div>
+            <div class="t-row"><span class="t-row-key">ZIP</span><span class="t-row-val" id="dZip">—</span></div>
+            <div class="t-row"><span class="t-row-key">Lat / Lon</span><span class="t-row-val" id="dLatLon">—</span></div>
+        </div>
+
+        <!-- PROVIDER INTEL -->
+        <div class="t-panel">
+            <div class="t-panel-head"><span class="t-panel-title">Provider_Intel</span><span class="t-indicator"></span></div>
+            <div class="t-row"><span class="t-row-key">ISP</span><span class="t-row-val" id="dISP">—</span></div>
+            <div class="t-row"><span class="t-row-key">ORG</span><span class="t-row-val" id="dOrg">—</span></div>
+            <div class="t-row"><span class="t-row-key">ASN</span><span class="t-row-val" id="dAsn">—</span></div>
+            <div class="t-row"><span class="t-row-key">Timezone</span><span class="t-row-val" id="dTz">—</span></div>
+            <div class="t-row"><span class="t-row-key">UTC Offset</span><span class="t-row-val" id="dUtc">—</span></div>
+        </div>
+    </div>
+
+    <!-- ══ CENTER COLUMN ══ -->
+    <div style="display:flex;flex-direction:column;gap:12px">
+
+        <!-- 3D EARTH GLOBE -->
+        <div class="t-panel" style="padding:0;overflow:hidden;background:transparent;border-color:rgba(0,255,65,0.15)">
+            <div id="globeContainer" style="width:100%;height:350px;position:relative">
+                <div style="position:absolute;bottom:10px;left:50%;transform:translateX(-50%);z-index:2" class="t-coords" id="coordsBox">0.0000° N, 0.0000° E</div>
+            </div>
+        </div>
+
+        <!-- WEBRTC DETAIL -->
+        <div class="t-panel">
+            <div class="t-panel-head"><span class="t-panel-title">WebRTC_Probe</span><span class="t-indicator" id="rtcInd"></span></div>
+            <div id="rtcResult" style="font-size:11px;color:var(--muted)">Scanning...</div>
+            <div id="rtcIPs" style="margin-top:6px"></div>
+        </div>
+
+        <!-- DNS LEAK -->
+        <div class="t-panel">
+            <div class="t-panel-head"><span class="t-panel-title">DNS_Leak_Test</span><span class="t-indicator" id="dnsInd"></span></div>
+            <div class="t-row"><span class="t-row-key">Probes Sent</span><span class="t-row-val" id="dnsProbes">—</span></div>
+            <div class="t-row"><span class="t-row-key">Exit IPs</span><span class="t-row-val" id="dnsExitIPs">—</span></div>
+            <div id="dnsVerdict" style="margin-top:8px;font-size:11px;color:var(--muted)">Testing...</div>
+        </div>
+
+        <!-- THREAT LOG -->
+        <div class="t-panel">
+            <div class="t-panel-head"><span class="t-panel-title">Threat_Log</span><span class="t-indicator" id="threatInd"></span></div>
+            <div id="threatLog" style="font-size:11px;color:var(--green)">▸ Analyzing...</div>
+        </div>
+
+        <!-- SEO INFO -->
+        <div class="t-panel" style="margin-top:4px">
+            <div class="t-panel-head"><span class="t-panel-title">About_Whoer</span></div>
+            <p style="font-size:11px;color:var(--muted);line-height:1.8">Whoer Live instantly detects your <span style="color:var(--text)">real IP address</span>, runs <span style="color:var(--text)">WebRTC & DNS leak tests</span>, fingerprints your browser, and computes a privacy score. See exactly what ad-networks see.</p>
+        </div>
+    </div>
+
+    <!-- ══ RIGHT COLUMN ══ -->
+    <div style="display:flex;flex-direction:column;gap:12px">
+
+        <!-- LEAK SURFACE -->
+        <div class="t-panel">
+            <div class="t-panel-head"><span class="t-panel-title">Leak_Surface</span><span class="t-indicator" id="leakInd"></span></div>
+            <div class="t-leak-row"><span class="t-row-key">WebRTC</span><span class="t-badge pass" id="lkRtc">SCAN</span></div>
+            <div class="t-leak-row"><span class="t-row-key">DNS Probe</span><span class="t-badge pass" id="lkDns">SCAN</span></div>
+            <div class="t-leak-row"><span class="t-row-key">Canvas Hash</span><span class="t-badge pass" id="lkCanvas">SCAN</span></div>
+            <div class="t-leak-row"><span class="t-row-key">WebGL Hash</span><span class="t-badge pass" id="lkWebgl">SCAN</span></div>
+            <div class="t-leak-row"><span class="t-row-key">Audio Hash</span><span class="t-badge pass" id="lkAudio">SCAN</span></div>
+            <div class="t-leak-row"><span class="t-row-key">Timezone</span><span class="t-badge pass" id="lkTz">SCAN</span></div>
+            <div class="t-leak-row"><span class="t-row-key">Language</span><span class="t-badge pass" id="lkLang">PASS</span></div>
+            <div class="t-leak-row"><span class="t-row-key">Hosting/VPN</span><span class="t-badge pass" id="lkVpn">SCAN</span></div>
+        </div>
+
+        <!-- FINGERPRINT -->
+        <div class="t-panel">
+            <div class="t-panel-head"><span class="t-panel-title">Fingerprint</span><span class="t-indicator"></span></div>
+            <div class="t-row"><span class="t-row-key">Browser</span><span class="t-row-val" id="fpBrowser">—</span></div>
+            <div class="t-row"><span class="t-row-key">OS</span><span class="t-row-val" id="fpOS">—</span></div>
+            <div class="t-row"><span class="t-row-key">Device</span><span class="t-row-val" id="fpDevice">—</span></div>
+            <div class="t-row"><span class="t-row-key">Screen</span><span class="t-row-val" id="fpScreen">—</span></div>
+            <div class="t-row"><span class="t-row-key">CPU Cores</span><span class="t-row-val" id="fpCpu">—</span></div>
+            <div class="t-row"><span class="t-row-key">RAM (GB)</span><span class="t-row-val" id="fpRam">—</span></div>
+            <div class="t-row"><span class="t-row-key">Touch Pts</span><span class="t-row-val" id="fpTouch">—</span></div>
+            <div class="t-row"><span class="t-row-key">Canvas</span><span class="t-row-val" id="fpCanvas">—</span></div>
+            <div class="t-row"><span class="t-row-key">WebGL</span><span class="t-row-val" id="fpWebgl">—</span></div>
+            <div class="t-row"><span class="t-row-key">Audio</span><span class="t-row-val" id="fpAudio">—</span></div>
+            <div class="t-row"><span class="t-row-key">Fonts</span><span class="t-row-val" id="fpFonts">—</span></div>
+        </div>
+    </div>
+</div>
+
+<!-- FLOATING SCORE BAR -->
+<div class="t-scorebar" id="scoreBar">
+    <div class="t-scorebar-pct" id="scPct">0%</div>
+    <div class="t-scorebar-track"><div class="t-scorebar-fill" id="scFill"></div></div>
+    <div class="t-scorebar-msg" id="scMsg">Scanning...</div>
+</div>
+
+<!-- FOOTER -->
+<footer class="t-footer">
+    <a href="/">Home</a> · <a href="/sitemap.xml">Sitemap</a><br>
+    Whoer Live &copy; <span id="yr"></span> — No data sold. No ads. No tracking.
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="/js/globe.js"></script>
+<script src="/js/privacy-engine.js"></script>
+<script>
+document.getElementById('yr').textContent = new Date().getFullYear();
+
+// Live clock
+setInterval(() => {
+    const d = new Date();
+    document.getElementById('liveClock').textContent = 'UTC ' + d.toISOString().slice(11,19);
+}, 1000);
+
+// Step animation
+function stepDone(n) {
+    const el = document.getElementById('step' + n);
+    const next = document.getElementById('step' + (n + 1));
+    if (el) { el.classList.remove('active'); el.classList.add('done'); }
+    if (next) next.classList.add('active');
+}
+
+// Terminal log
+function tlog(msg, cls) {
+    const log = document.getElementById('termLog');
+    const prefix = cls === 'ok' ? '[OK]' : cls === 'err' ? '[ERR]' : cls === 'warn' ? '[!]' : '[...]';
+    log.innerHTML += '\n<span class="' + (cls||'info') + '">' + prefix + '</span> ' + msg;
+    log.scrollTop = log.scrollHeight;
+}
+
+// Score helpers
+function scoreClass(s) { return s >= 85 ? '' : s >= 55 ? 'warn' : 'risk'; }
+function scoreMsg(s) {
+    if (s === 100) return 'FULLY PROTECTED';
+    if (s >= 85) return 'MOSTLY CLEAN';
+    if (s >= 55) return 'EXPOSED — AD ACCOUNTS AT RISK';
+    return 'CRITICAL — HIGH BAN PROBABILITY';
+}
+
+// Set badge
+function setBadge(id, pass, label) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.textContent = label || (pass ? 'PASS' : 'LEAK');
+    el.className = 't-badge ' + (pass ? 'pass' : 'leak');
+}
+
+// DNS Leak Test
+async function runDNSLeakTest() {
+    const token = Math.random().toString(36).slice(2) + Date.now().toString(36);
+    const PROBES = 6;
+    await Promise.all(Array.from({ length: PROBES }, (_, i) => fetch('/api/dns-probe/' + token + '-' + i).catch(() => {})));
+    await new Promise(r => setTimeout(r, 500));
+    try {
+        const res = await fetch('/api/dns-results/' + token.split('-')[0]);
+        const data = await res.json();
+        const ips = data.ips || [];
+        document.getElementById('dnsProbes').textContent = PROBES;
+        document.getElementById('dnsExitIPs').textContent = ips.length ? ips.join(', ') : '—';
+        const noLeak = ips.length <= 1;
+        document.getElementById('dnsInd').className = 't-indicator ' + (noLeak ? '' : 'red');
+        document.getElementById('dnsVerdict').innerHTML = noLeak
+            ? '<span style="color:var(--green)">▸ NO DNS LEAK — single exit IP</span>'
+            : '<span style="color:var(--red)">▸ DNS LEAK — ' + ips.length + ' exit IPs detected</span>';
+        setBadge('lkDns', noLeak);
+        tlog('DNS probe complete: ' + (noLeak ? 'clean' : ips.length + ' exit IPs'), noLeak ? 'ok' : 'warn');
+    } catch (e) {
+        document.getElementById('dnsVerdict').textContent = '▸ DNS test failed';
+        tlog('DNS probe failed', 'err');
+    }
+}
+
+// Render report
+function renderReport(r) {
+    const ip = r.ip_data, br = r.browser_data, sc = r.score;
+
+    // IP
+    document.getElementById('dIP').textContent = ip.ip;
+    document.getElementById('dCountry').textContent = ip.country || '—';
+    document.getElementById('dRegion').textContent = ip.region || '—';
+    document.getElementById('dCity').textContent = ip.city || '—';
+    document.getElementById('dZip').textContent = ip.zip || '—';
+    document.getElementById('dLatLon').textContent = (ip.latitude && ip.longitude) ? ip.latitude + '°, ' + ip.longitude + '°' : '—';
+    document.getElementById('coordsBox').textContent = (ip.latitude || '0.0000') + '° N, ' + (ip.longitude || '0.0000') + '° E';
+
+    // Rotate 3D globe to user's location
+    if (window.setGlobeLocation && ip.latitude && ip.longitude) {
+        window.setGlobeLocation(parseFloat(ip.latitude), parseFloat(ip.longitude));
+    }
+
+    // Provider
+    document.getElementById('dISP').textContent = ip.isp || '—';
+    document.getElementById('dOrg').textContent = ip.org || '—';
+    document.getElementById('dAsn').textContent = ip.asn || '—';
+    document.getElementById('dTz').textContent = ip.timezone || '—';
+    document.getElementById('dUtc').textContent = ip.utc_offset || '—';
+
+    // Fingerprint
+    document.getElementById('fpBrowser').textContent = br.browser || '—';
+    document.getElementById('fpOS').textContent = br.os || '—';
+    document.getElementById('fpDevice').textContent = br.platform || '—';
+    document.getElementById('fpScreen').textContent = br.screen ? br.screen.width + '×' + br.screen.height : '—';
+    document.getElementById('fpCpu').textContent = br.hardwareConcurrency || '—';
+    document.getElementById('fpRam').textContent = br.deviceMemory !== 'unknown' ? br.deviceMemory : '—';
+    document.getElementById('fpTouch').textContent = br.touchPoints || '0';
+    document.getElementById('fpCanvas').textContent = br.canvasHash || '—';
+    document.getElementById('fpWebgl').textContent = br.webglHash || '—';
+    document.getElementById('fpAudio').textContent = br.audioHash || '—';
+    document.getElementById('fpFonts').textContent = br.pluginCount ? br.pluginCount + ' detected' : '0 detected';
+
+    // Leak surface badges
+    const rtcLeak = br.webrtcLeaked || false;
+    setBadge('lkRtc', !rtcLeak);
+    setBadge('lkCanvas', !!br.canvasHash, br.canvasHash ? 'LEAK' : 'PASS');
+    setBadge('lkWebgl', !br.webglHash, br.webglHash ? 'LEAK' : 'PASS');
+    setBadge('lkAudio', !br.audioHash, br.audioHash ? 'LEAK' : 'PASS');
+    setBadge('lkTz', !br.time_mismatch);
+    setBadge('lkVpn', !ip.is_hosting);
+
+    // WebRTC detail
+    const rtcInd = document.getElementById('rtcInd');
+    if (rtcLeak && br.webrtcPublicIps && br.webrtcPublicIps.length) {
+        rtcInd.className = 't-indicator red';
+        document.getElementById('rtcResult').innerHTML = '<span style="color:var(--red)">⚠ REAL IP EXPOSED VIA WEBRTC</span>';
+        document.getElementById('rtcIPs').innerHTML = br.webrtcPublicIps.map(i => '<div style="color:var(--red);font-size:11px">▸ ' + i + '</div>').join('');
+    } else {
+        rtcInd.className = 't-indicator';
+        document.getElementById('rtcResult').innerHTML = '<span style="color:var(--green)">✓ NO WEBRTC LEAK</span>';
+    }
+
+    // Leak indicator
+    const leakInd = document.getElementById('leakInd');
+    const hasLeaks = rtcLeak || ip.is_hosting || br.time_mismatch;
+    leakInd.className = 't-indicator ' + (hasLeaks ? 'red' : '');
+
+    // Threat log
+    const threats = r.risks || [];
+    const warns = r.warnings || [];
+    const threatDiv = document.getElementById('threatLog');
+    const threatInd = document.getElementById('threatInd');
+    if (threats.length === 0 && warns.length === 0) {
+        threatDiv.innerHTML = '<span style="color:var(--green)">▸ NO ANOMALIES DETECTED</span>';
+        threatInd.className = 't-indicator';
+    } else {
+        threatInd.className = 't-indicator ' + (threats.length ? 'red' : 'amber');
+        threatDiv.innerHTML = threats.map(t => '<div style="color:var(--red)">▸ ' + t.label + '</div>').join('')
+            + warns.map(w => '<div style="color:var(--amber)">▸ ' + w.label + '</div>').join('');
+    }
+
+    // Score
+    const cls = scoreClass(sc);
+    document.getElementById('radarScore').textContent = sc + '%';
+    document.getElementById('radarScore').style.color = sc >= 85 ? 'var(--green)' : sc >= 55 ? 'var(--amber)' : 'var(--red)';
+
+    // Score bar
+    const bar = document.getElementById('scoreBar');
+    bar.classList.add('visible');
+    document.getElementById('scPct').textContent = sc + '%';
+    document.getElementById('scPct').className = 't-scorebar-pct ' + cls;
+    document.getElementById('scMsg').textContent = scoreMsg(sc);
+    setTimeout(() => {
+        const fill = document.getElementById('scFill');
+        fill.style.width = sc + '%';
+        fill.className = 't-scorebar-fill ' + cls;
+    }, 200);
+
+    // Terminal log
+    tlog('IP: ' + ip.ip + ' (' + ip.country + ')', 'ok');
+    tlog('ISP: ' + (ip.isp || 'Unknown'), 'ok');
+    tlog('WebRTC: ' + (rtcLeak ? 'LEAKED' : 'clean'), rtcLeak ? 'err' : 'ok');
+    tlog('Timezone: ' + (br.time_mismatch ? 'MISMATCH' : 'synced'), br.time_mismatch ? 'warn' : 'ok');
+    tlog('Canvas hash: ' + (br.canvasHash || 'blocked'), 'info');
+    tlog('Privacy score: ' + sc + '%', sc >= 85 ? 'ok' : 'err');
+    tlog('Scan complete.', 'ok');
+
+    // Update header
+    document.getElementById('scanLabel').textContent = sc >= 85 ? 'SECURE' : 'EXPOSED';
+    document.getElementById('scanLabel').style.color = sc >= 85 ? 'var(--green)' : 'var(--red)';
+
+    // Scan button
+    const btn = document.querySelector('.t-scan-btn');
+    btn.innerHTML = '<span class="dot" style="animation:none;background:' + (sc >= 85 ? 'var(--green)' : 'var(--red)') + '"></span> RESCAN';
+
+    // Hide loader
+    setTimeout(() => document.getElementById('loadingOverlay').classList.add('hidden'), 400);
+}
+
+// Main scan
+window.addEventListener('load', async () => {
+    try {
+        stepDone(1);
+        const fpData = await collectDeviceMetrics();
+        stepDone(2); stepDone(3);
+        tlog('Hashing canvas + WebGL fingerprints...', 'info');
+        const res = await fetch('/api/process-scan', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(fpData),
+        });
+        const data = await res.json();
+        stepDone(4);
+        if (data.success) {
+            renderReport(data.report);
+            runDNSLeakTest();
+        } else { throw new Error('scan failed'); }
+    } catch (e) {
+        console.error(e);
+        document.getElementById('loadingOverlay').classList.add('hidden');
+        tlog('SCAN FAILED: ' + e.message, 'err');
+    }
+});
+</script>
+</body>
+</html>
