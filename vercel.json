@@ -13,7 +13,7 @@
       "permanent": true
     },
     {
-      "source": "/home/?",
+      "source": "/home",
       "destination": "/",
       "permanent": true
     },
@@ -23,7 +23,7 @@
       "permanent": true
     },
     {
-      "source": "/privacy-policy/?",
+      "source": "/privacy-policy",
       "destination": "/",
       "permanent": true
     }
