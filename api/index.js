@@ -42,7 +42,7 @@ const originProtector = async (req, res, next) => {
     if (isLockdown) return res.status(503).json({ error: 'API is undergoing emergency maintenance.' });
 
     const origin = req.headers.origin || req.headers.referer || req.headers.host || '';
-    if (!origin.includes('whoer.live') && !origin.includes('localhost') && !origin.includes('vercel.app')) {
+    if (!origin.includes('whoer.live') && !origin.includes('proxyj.net') && !origin.includes('localhost') && !origin.includes('vercel.app')) {
         return res.status(403).json({ error: 'Direct API access forbidden. Subscribe for a V2 API Key.' });
     }
     next();
@@ -115,7 +115,7 @@ app.get('/api/ping-check', (req, res) => {
 // ─── SEO: ROBOTS & SITEMAP (must be before express.static) ─────────────────
 app.get('/robots.txt', (req, res) => {
     res.type('text/plain');
-    res.send('User-agent: *\nAllow: /\nSitemap: https://www.whoer.live/sitemap.xml');
+    res.send('User-agent: *\nAllow: /\nDisallow: /api/\nSitemap: https://www.whoer.live/sitemap.xml');
 });
 
 app.get('/sitemap.xml', (req, res) => {
@@ -223,25 +223,7 @@ function cleanIp(raw) {
     return ip;
 }
 
-// ─── SEO ROUTES ──────────────────────────────────────────────────────────────
-app.get('/robots.txt', (req, res) => {
-    res.type('text/plain');
-    res.send('User-agent: *\nAllow: /\nSitemap: https://www.whoer.live/sitemap.xml');
-});
 
-app.get('/sitemap.xml', (req, res) => {
-    res.type('application/xml');
-    const date = new Date().toISOString().split('T')[0];
-    res.send(`<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://www.whoer.live/</loc>
-    <lastmod>${date}</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>1.0</priority>
-  </url>
-</urlset>`);
-});
 
 // ─── MAIN ROUTES ─────────────────────────────────────────────────────────────
 app.get('/',            (req, res) => res.render('scan'));

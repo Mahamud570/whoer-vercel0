@@ -1,5 +1,33 @@
 {
   "version": 2,
+  "redirects": [
+    {
+      "source": "/(.*)",
+      "has": [
+        {
+          "type": "host",
+          "value": "(?:www\\.)?proxyj\\.net"
+        }
+      ],
+      "destination": "https://www.whoer.live/$1",
+      "permanent": true
+    },
+    {
+      "source": "/home/?",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/score-details",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/privacy-policy/?",
+      "destination": "/",
+      "permanent": true
+    }
+  ],
   "rewrites": [
     { "source": "/css/(.*)",  "destination": "/css/$1" },
     { "source": "/js/(.*)",   "destination": "/js/$1" },
