@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Tools Directory — VPN, ISP & Proxy Leak Tests | Whoer Live</title>
+    <meta name="description" content="Explore our complete directory of privacy testing tools. Check for VPN leaks, ISP tracking, and residential proxy vulnerabilities across 500+ cities.">
+    <link rel="icon" type="image/png" href="/img/logo.png">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+    <style><%- include('../public/css/style.css') %></style>
+    
+    <style>
+        .dir-wrap { max-width: 1100px; margin: 0 auto; padding: 40px 20px 120px; }
+        .dir-hero { text-align: center; padding-bottom: 60px; }
+        .dir-hero h1 { font-size: 42px; font-weight: 700; margin-bottom: 16px; letter-spacing: -0.5px; }
+        .dir-hero p { font-size: 18px; color: var(--muted); max-width: 600px; margin: 0 auto; line-height: 1.6; }
+
+        .dir-section { margin-bottom: 64px; }
+        .dir-section-head { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; border-bottom: 1px solid var(--border); padding-bottom: 12px; }
+        .dir-section-icon { font-size: 24px; }
+        .dir-section-title { font-size: 20px; font-weight: 700; color: var(--text); }
+        .dir-count { background: var(--panel); border: 1px solid var(--border); color: var(--muted); font-size: 11px; padding: 2px 10px; border-radius: 12px; font-family: var(--mono); }
+
+        .dir-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; }
+        .dir-card { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 20px; text-decoration: none; transition: all 0.2s; position: relative; overflow: hidden; }
+        .dir-card:hover { background: var(--panel-hover); border-color: var(--border2); transform: translateY(-3px); box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+        .dir-card::after { content: ''; position: absolute; top: 0; right: 0; width: 40px; height: 40px; background: linear-gradient(135deg, transparent 50%, rgba(34,215,122,0.05) 50%); }
+        
+        .card-title { font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 4px; display: block; }
+        .card-meta { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; font-family: var(--mono); }
+        
+        .geo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; }
+        .geo-btn { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px; text-decoration: none; color: var(--text); font-size: 13px; text-align: center; transition: all 0.2s; }
+        .geo-btn:hover { background: var(--panel-hover); border-color: var(--border2); color: var(--green); }
+
+        .tag { font-size: 10px; padding: 2px 6px; border-radius: 4px; font-weight: 700; margin-left: 6px; vertical-align: middle; }
+        .tag-vpn { background: rgba(34,215,122,0.1); color: var(--green); border: 1px solid rgba(34,215,122,0.2); }
+        .tag-isp { background: rgba(77,159,255,0.1); color: var(--blue); border: 1px solid rgba(77,159,255,0.2); }
+        .tag-proxy { background: rgba(245,166,35,0.1); color: var(--amber); border: 1px solid rgba(245,166,35,0.2); }
+
+        @media (max-width: 768px) {
+            .dir-hero h1 { font-size: 32px; }
+            .dir-grid { grid-template-columns: 1fr 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="container header-inner">
+        <a href="/" style="display:flex;align-items:center;gap:10px;text-decoration:none;">
+            <img src="/img/logo.png" alt="Whoer Live" style="width:32px;height:32px;border-radius:8px;">
+            <div class="logo">WHOER<span>.LIVE</span></div>
+        </a>
+        <div class="header-actions">
+            <a href="/" class="btn">🛡️ Home</a>
+            <a href="/bulk" class="btn">🔢 Bulk</a>
+            <a href="/threat-map" class="btn" style="color:var(--red); border-color: rgba(255,79,106,0.3); background: rgba(255,79,106,0.1);">🔴 Threats</a>
+        </div>
+    </div>
+</header>
+
+<div class="dir-wrap">
+    <div class="dir-hero">
+        <h1>Privacy Tool Directory</h1>
+        <p>Comprehensive leak testing for the world's most popular VPNs, ISPs, and residential proxy regions.</p>
+    </div>
+
+    <!-- VPN SECTION -->
+    <section class="dir-section">
+        <div class="dir-section-head">
+            <span class="dir-section-icon">🛡️</span>
+            <h2 class="dir-section-title">VPN Leak Test Database</h2>
+            <span class="dir-count"><%= Object.keys(vpns).length %> BRANDS</span>
+        </div>
+        <div class="dir-grid">
+            <% Object.keys(vpns).forEach(slug => { const v = vpns[slug]; %>
+            <a href="/vpn-test/<%= slug %>" class="dir-card">
+                <span class="card-title"><%= v.name %> <span class="tag tag-vpn">VPN</span></span>
+                <span class="card-meta"><%= v.servers %>+ Servers · <%= v.countries %>+ Countries</span>
+            </a>
+            <% }) %>
+        </div>
+    </section>
+
+    <!-- ISP SECTION -->
+    <section class="dir-section">
+        <div class="dir-section-head">
+            <span class="dir-section-icon">📡</span>
+            <h2 class="dir-section-title">Global ISP Checkers</h2>
+            <span class="dir-count"><%= Object.keys(isps).length %> PROVIDERS</span>
+        </div>
+        <div class="dir-grid">
+            <% Object.keys(isps).forEach(slug => { const i = isps[slug]; %>
+            <a href="/isp/<%= slug %>" class="dir-card">
+                <span class="card-title"><%= i.name %> <span class="tag tag-isp">ISP</span></span>
+                <span class="card-meta"><%= i.type %> · <%= i.region %></span>
+            </a>
+            <% }) %>
+        </div>
+    </section>
+
+    <!-- PROXY REGIONS -->
+    <section class="dir-section">
+        <div class="dir-section-head">
+            <span class="dir-section-icon">🌍</span>
+            <h2 class="dir-section-title">Residential Proxy Regions</h2>
+            <span class="dir-count">21 COUNTRIES</span>
+        </div>
+        <div class="geo-grid">
+            <% Object.keys(geos).forEach(country => { %>
+            <a href="/proxy/<%= country %>" class="geo-btn">
+                <%= country.toUpperCase() %> <span class="tag tag-proxy" style="margin-left:4px;"><%= geos[country].length %></span>
+            </a>
+            <% }) %>
+        </div>
+    </section>
+
+</div>
+
+<footer>
+    <div class="container">
+        <div class="footer-links">
+            <a href="/">Home</a>
+            <a href="/directory">Directory</a>
+            <a href="/sitemap.xml">Sitemap</a>
+        </div>
+        <div>Whoer Live &copy; <%= year %> — Free IP & Privacy Checker</div>
+    </div>
+</footer>
+
+</body>
+</html>

@@ -272,6 +272,14 @@ app.get('/port-scanner',(req, res) => res.render('port_scanner'));
 app.get('/ping',        (req, res) => res.render('ping_test'));
 app.get('/guides',      (req, res) => res.render('guides'));
 app.get('/threat-map',  (req, res) => res.render('threat_map'));
+app.get('/directory',   (req, res) => {
+    res.render('directory', { 
+        vpns: VPN_BRANDS, 
+        isps: ISP_DATA, 
+        geos: GEO_DATA,
+        year: new Date().getFullYear() 
+    });
+});
 
 // ─── TOOL LANDING PAGES ──────────────────────────────────────────────────────
 app.get('/ip-location-lookup',    (req, res) => res.render('tool_landing', { tool: TOOL_LANDINGS['ip-location-lookup'], slug: 'ip-location-lookup', year: new Date().getFullYear() }));
