@@ -104,7 +104,7 @@
         </div>
 
         <!-- CREDENTIALS SAVE BANNER -->
-        <div class="cred-row">
+        <div class="cred-row" id="credBanner">
             <span class="cred-label">Account Password:</span>
             <span id="passVal" class="cred-val">••••••••</span>
             <button onclick="togglePassVisibility()" class="btn-sm" id="togglePassBtn" style="padding:4px 10px;font-size:11px;">👁️ Show Password</button>
@@ -258,7 +258,6 @@
 
     async function loadDomains() {
         try {
-            // Direct client CORS fetch for live Vercel reliability
             let domains = ['web-library.net', 'mail.tm'];
             try {
                 const res = await fetch('https://api.mail.tm/domains').then(r => r.json());
@@ -280,7 +279,7 @@
             const randomUser = 'whr_' + Math.random().toString(36).substring(2, 10);
             const password = 'pass_' + Math.random().toString(36).substring(2, 10);
 
-            // 1. Direct CORS fetch to Mail.tm API from client (bypasses serverless IP block)
+            // 1. Direct CORS fetch to Mail.tm API
             try {
                 const dRes = await fetch('https://api.mail.tm/domains').then(r => r.json());
                 const domain = (dRes['hydra:member'] && dRes['hydra:member'].length) ? dRes['hydra:member'][0].domain : 'web-library.net';
@@ -352,7 +351,7 @@
                 activeEngine = 'guerrilla';
                 currentAddress = res.email_addr;
                 guerrillaSid = res.sid_token;
-                currentPass = '(Auto Session)';
+                currentPass = '';
                 localStorage.setItem('g_sid', guerrillaSid);
                 updateUI();
                 fetchMessages();
@@ -368,14 +367,13 @@
         activeEngine = 'secmail';
         const rand = 'whr_' + Math.random().toString(36).substring(2, 9);
         currentAddress = rand + '@1secmail.com';
-        currentPass = '(Instant Session)';
+        currentPass = '';
         updateUI();
         fetchMessages();
     }
 
     async function loadMailtmAccountInfo() {
         try {
-            // Direct CORS fetch to Mail.tm
             let res = null;
             try {
                 res = await fetch('https://api.mail.tm/me', {
@@ -403,7 +401,14 @@
     function updateUI() {
         document.getElementById('tempEmailVal').textContent = currentAddress || 'Generating email...';
         document.getElementById('accStatus').textContent = currentAddress ? `Status: Active (${currentAddress})` : 'Status: Initializing';
-        renderPassVal();
+        
+        const credBanner = document.getElementById('credBanner');
+        if (activeEngine === 'mailtm' && currentPass) {
+            credBanner.style.display = 'flex';
+            renderPassVal();
+        } else {
+            credBanner.style.display = 'none';
+        }
     }
 
     function renderPassVal() {
@@ -422,6 +427,29 @@
         const btn = document.getElementById('togglePassBtn');
         btn.textContent = isPassVisible ? '🙈 Hide Password' : '👁️ Show Password';
         renderPassVal();
+    }
+
+    function copyPassword() {
+        if (!currentPass || currentPass.includes('Session')) {
+            alert('Password not available for this session. Please create a custom account or generate a Mail.tm email.');
+            return;
+        }
+        
+        navigator.clipboard.writeText(currentPass).then(() => {
+            const btn = document.getElementById('copyPassBtn');
+            btn.textContent = '✓ Copied!';
+            setTimeout(() => { btn.textContent = '📋 Copy Password'; }, 2000);
+        }).catch(() => {
+            const ta = document.createElement('textarea');
+            ta.value = currentPass;
+            document.body.appendChild(ta);
+            ta.select();
+            document.execCommand('copy');
+            document.body.removeChild(ta);
+            const btn = document.getElementById('copyPassBtn');
+            btn.textContent = '✓ Copied!';
+            setTimeout(() => { btn.textContent = '📋 Copy Password'; }, 2000);
+        });
     }
 
     async function handleSignup(e) {
@@ -446,7 +474,7 @@
             return;
         }
 
-        // Direct CORS signup to Mail.tm from client (bypasses serverless block)
+        // Direct CORS signup to Mail.tm from client
         try {
             await fetch('https://api.mail.tm/accounts', {
                 method: 'POST',
@@ -511,7 +539,7 @@
         const errDiv = document.getElementById('loginErr');
         errDiv.style.display = 'none';
 
-        // Direct CORS Login to Mail.tm from client (bypasses serverless block)
+        // Direct CORS Login to Mail.tm from client
         try {
             const tokRes = await fetch('https://api.mail.tm/token', {
                 method: 'POST',
@@ -715,18 +743,6 @@
             const btn = document.getElementById('copyBtn');
             btn.textContent = '✓ Copied!';
             setTimeout(() => btn.textContent = '📋 Copy Email', 2000);
-        });
-    }
-
-    function copyPassword() {
-        if (!currentPass) {
-            alert('No password available for this session. Please create a custom account or generate a new email.');
-            return;
-        }
-        navigator.clipboard.writeText(currentPass).then(() => {
-            const btn = document.getElementById('copyPassBtn');
-            btn.textContent = '✓ Copied!';
-            setTimeout(() => btn.textContent = '📋 Copy Password', 2000);
         });
     }
 
