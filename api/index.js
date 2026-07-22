@@ -305,11 +305,19 @@ app.get('/isp/:slug', (req, res) => {
 });
 
 // ─── PROXY DOORWAY PAGES ─────────────────────────────────────────────────────
+const PRIORITY_COUNTRIES = [
+    'united-states', 'united-kingdom', 'germany', 'canada', 'france',
+    'australia', 'japan', 'india', 'brazil', 'netherlands',
+    'singapore', 'south-korea', 'switzerland', 'spain', 'italy',
+    'sweden', 'norway', 'mexico', 'turkey', 'poland'
+];
+
 app.get('/proxy/:country/:city?', (req, res) => {
-    const country = req.params.country || 'Global';
+    const countryRaw = (req.params.country || 'Global').toLowerCase();
     const city = req.params.city || '';
+    const isPriority = PRIORITY_COUNTRIES.includes(countryRaw) && !city;
     const format = (s) => s.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
-    res.render('doorway', { country: format(country), city: city ? format(city) : '', year: new Date().getFullYear() });
+    res.render('doorway', { country: format(req.params.country || 'Global'), city: city ? format(city) : '', is_priority: isPriority, year: new Date().getFullYear() });
 });
 
 // ─── BULK IP SCAN ─────────────────────────────────────────────────────────────
