@@ -1059,7 +1059,7 @@ window.addEventListener('load', async () => {
         const cy = height / 2 + 10;
 
         // Draw connecting latitude rings
-        ctx.strokeStyle = 'rgba(196, 163, 90, 0.08)';
+        ctx.strokeStyle = 'rgba(44, 51, 255, 0.12)';
         ctx.lineWidth = 0.8;
 
         const projectedDots = [];
@@ -1088,10 +1088,10 @@ window.addEventListener('load', async () => {
             const p = projectedDots[i];
             if (p.z < 0) continue; // front-facing depth cull
 
-            const alpha = Math.max(0.1, p.alpha * 0.6);
+            const alpha = Math.max(0.12, p.alpha * 0.7);
             ctx.beginPath();
             ctx.arc(p.px, p.py, 1.2 + p.alpha * 0.8, 0, Math.PI * 2);
-            ctx.fillStyle = `rgba(196, 163, 90, ${alpha})`;
+            ctx.fillStyle = `rgba(44, 51, 255, ${alpha})`;
             ctx.fill();
 
             // Connect neighboring longitude dot
@@ -1101,8 +1101,8 @@ window.addEventListener('load', async () => {
                     ctx.beginPath();
                     ctx.moveTo(p.px, p.py);
                     ctx.lineTo(nextP.px, nextP.py);
-                    ctx.strokeStyle = `rgba(196, 163, 90, ${alpha * 0.25})`;
-                    ctx.lineWidth = 0.6;
+                    ctx.strokeStyle = `rgba(44, 51, 255, ${alpha * 0.35})`;
+                    ctx.lineWidth = 0.75;
                     ctx.stroke();
                 }
             }

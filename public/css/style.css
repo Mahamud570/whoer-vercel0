@@ -15,20 +15,26 @@
     --muted:       #78787F;
     --hint:        #3C3C44;
 
-    /* Single accent: warm brass */
-    --accent:      #C4A35A;
-    --accent-dim:  rgba(196,163,90,0.14);
+    /* Official Argus VPN Palette (Fancy Design) */
+    --accent:      #2C33FF;               /* Electric Cobalt Blue */
+    --accent-hover: #454BFF;
+    --accent-dim:  rgba(44,51,255,0.16);
+    --accent-glow: rgba(44,51,255,0.35);
 
-    /* Status colors: subdued */
-    --green:       #3CC078;
-    --green-dim:   rgba(60,192,120,0.13);
-    --green-glow:  rgba(60,192,120,0.20);
-    --red:         #D95252;
-    --red-dim:     rgba(217,82,82,0.13);
-    --amber:       #CC9040;
-    --amber-dim:   rgba(204,144,64,0.13);
-    --blue:        #5585C0;
-    --blue-dim:    rgba(85,133,192,0.13);
+    --slate:       #B9B9C7;
+    --text:        #FFFFFF;
+    --muted:       #8E8E9E;
+    --hint:        #484856;
+
+    /* Status colors */
+    --green:       #10B981;
+    --green-dim:   rgba(16,185,129,0.14);
+    --red:         #EF4444;
+    --red-dim:     rgba(239,68,68,0.14);
+    --amber:       #F59E0B;
+    --amber-dim:   rgba(245,158,11,0.14);
+    --blue:        #2C33FF;
+    --blue-dim:    rgba(44,51,255,0.14);
 
     --serif:       'Playfair Display', Georgia, serif;
     --sans:        'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -211,17 +217,19 @@ header {
     border-color: rgba(255,255,255,0.18);
 }
 
-/* Primary: solid brass accent */
+/* Primary: electric cobalt Argus accent */
 .btn-primary {
     background: var(--accent);
     border-color: var(--accent);
-    color: #0E0C04;
+    color: #FFFFFF;
     font-weight: 600;
+    box-shadow: 0 4px 16px var(--accent-glow);
 }
 .btn-primary:hover {
-    background: #D4B46A;
-    border-color: #D4B46A;
-    color: #0E0C04;
+    background: var(--accent-hover);
+    border-color: var(--accent-hover);
+    color: #FFFFFF;
+    transform: translateY(-1px);
 }
 
 /* ─── HERO & ARGUS VPN STYLES ───────────────────────────────────────── */
