@@ -98,17 +98,17 @@
     <!-- Core Web Vitals: Preload & Async Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" media="print" onload="this.media='all'">
-    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"></noscript>
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"></noscript>
     <style><%- include('../public/css/style.css') %></style>
 </head>
 <body>
 
 <!-- ─── LOADING OVERLAY ─────────────────────────────────────────────────── -->
 <div id="loadingOverlay">
-    <div class="scan-ring"></div>
-    <div class="scan-label">Scanning...</div>
+    <div class="load-wordmark">WHOER<span>.LIVE</span></div>
+    <div class="load-progress"><div class="load-bar"></div></div>
     <div class="scan-steps">
         <div class="scan-step active" id="step1"><span class="scan-dot"></span>Detecting IP address</div>
         <div class="scan-step"        id="step2"><span class="scan-dot"></span>Checking WebRTC leaks</div>
@@ -120,26 +120,25 @@
 <!-- ─── HEADER ─────────────────────────────────────────────────────────── -->
 <header>
     <div class="container header-inner">
-        <a href="/" style="display:flex;align-items:center;gap:10px;text-decoration:none;">
-            <img src="/img/logo.png" alt="Whoer Live Logo" style="width:32px;height:32px;border-radius:8px;">
+        <a href="/" style="display:flex;align-items:center;gap:12px;text-decoration:none;">
             <div class="logo">WHOER<span>.LIVE</span> <sub>v4</sub></div>
         </a>
         <div class="header-actions">
             <!-- Dropdown for Tools -->
             <div style="position:relative; display:inline-block;" tabindex="0" onblur="setTimeout(()=>this.querySelector('div').style.display='none', 200)">
-                <button class="btn" onclick="const d=this.nextElementSibling; d.style.display=d.style.display==='block'?'none':'block';">🛠 Tools</button>
-                <div style="display:none; position:absolute; top:100%; left:0; background:var(--panel); border:1px solid var(--border); border-radius:var(--radius); padding:8px; margin-top:8px; z-index:100; min-width:140px; box-shadow:0 10px 30px rgba(0,0,0,0.5);">
-                    <a href="/blacklist" style="display:block; padding:8px 12px; color:var(--text); text-decoration:none; font-size:14px; border-radius:4px; margin-bottom:4px;" onmouseover="this.style.background='var(--panel-hover)'" onmouseout="this.style.background='transparent'">🛡️ Blacklist</a>
-                    <a href="/port-scanner" style="display:block; padding:8px 12px; color:var(--text); text-decoration:none; font-size:14px; border-radius:4px; margin-bottom:4px;" onmouseover="this.style.background='var(--panel-hover)'" onmouseout="this.style.background='transparent'">🔌 Ports</a>
-                    <a href="/ping" style="display:block; padding:8px 12px; color:var(--text); text-decoration:none; font-size:14px; border-radius:4px; margin-bottom:4px;" onmouseover="this.style.background='var(--panel-hover)'" onmouseout="this.style.background='transparent'">📡 Ping Test</a>
-                    <a href="/directory" style="display:block; padding:8px 12px; color:var(--green); text-decoration:none; font-size:14px; border-radius:4px; font-weight:700;" onmouseover="this.style.background='var(--panel-hover)'" onmouseout="this.style.background='transparent'">📂 All Tools</a>
+                <button class="btn" onclick="const d=this.nextElementSibling; d.style.display=d.style.display==='block'?'none':'block';">Tools</button>
+                <div style="display:none; position:absolute; top:calc(100% + 6px); left:0; background:var(--bg2); border:1px solid var(--border2); border-radius:var(--radius); padding:6px; z-index:100; min-width:148px; box-shadow:0 12px 40px rgba(0,0,0,0.6);">
+                    <a href="/blacklist"    style="display:block; padding:8px 12px; color:var(--text); text-decoration:none; font-size:13px; border-radius:4px; margin-bottom:2px;" onmouseover="this.style.background='var(--panel-hover)'" onmouseout="this.style.background='transparent'">Blacklist</a>
+                    <a href="/port-scanner" style="display:block; padding:8px 12px; color:var(--text); text-decoration:none; font-size:13px; border-radius:4px; margin-bottom:2px;" onmouseover="this.style.background='var(--panel-hover)'" onmouseout="this.style.background='transparent'">Port Scanner</a>
+                    <a href="/ping"         style="display:block; padding:8px 12px; color:var(--text); text-decoration:none; font-size:13px; border-radius:4px; margin-bottom:2px;" onmouseover="this.style.background='var(--panel-hover)'" onmouseout="this.style.background='transparent'">Ping Test</a>
+                    <a href="/directory"    style="display:block; padding:8px 12px; color:var(--accent); text-decoration:none; font-size:13px; border-radius:4px; font-weight:600;" onmouseover="this.style.background='var(--panel-hover)'" onmouseout="this.style.background='transparent'">All Tools</a>
                 </div>
             </div>
-            <a href="/bulk"     class="btn">🔢 Bulk</a>
-            <a href="/temp-mail" class="btn" style="color:var(--green); border-color: rgba(34,215,122,0.4); background: rgba(34,215,122,0.1);">✉️ Temp Mail</a>
-            <a href="/api-docs" class="btn">⚡ API</a>
-            <a href="/threat-map" class="btn" style="color:var(--red); border-color: rgba(255,79,106,0.3); background: rgba(255,79,106,0.1);">🔴 Threats</a>
-            
+            <a href="/bulk"       class="btn">Bulk</a>
+            <a href="/temp-mail"  class="btn">Temp Mail</a>
+            <a href="/api-docs"   class="btn">API</a>
+            <a href="/threat-map" class="btn">Threats</a>
+
             <button class="btn" id="shareBtn" onclick="shareScore()" style="display:none;">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
                 Share
