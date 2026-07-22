@@ -154,8 +154,19 @@
 
 <div class="container" style="padding-top: 36px; padding-bottom: 20px;">
     
-    <!-- ─── HERO ──────────────────────────────────────────────────────── -->
+    <!-- ─── HERO & 3D CANVAS ────────────────────────────────────────── -->
+    <div class="hero-canvas-wrap">
+        <canvas id="heroCanvas"></canvas>
+    </div>
+
     <div class="hero">
+        <div class="hero-badge">
+            <span class="pulse-dot"></span>
+            Whoer Live Privacy Intelligence
+        </div>
+        <h1 class="hero-h1">Real-Time Geolocation & <span>Privacy Intelligence</span></h1>
+        <p class="hero-sub">Examine your public IP address, detect WebRTC leaks, verify timezone sync, and audit anti-detect browser signatures.</p>
+
         <div class="flag-wrap" id="flagBox"></div>
         <div class="ip-row">
             <div class="ip-display" id="ipDisplay">···</div>
@@ -208,6 +219,25 @@
                 Timezone
             </div>
             <div class="mini-value" id="tzVal">—</div>
+        </div>
+    </div>
+
+    <!-- ─── ARGUS FEATURE SHOWCASE GRID ───────────────────────────────── -->
+    <div class="argus-grid">
+        <div class="argus-card">
+            <div class="argus-feature-icon">🛡️</div>
+            <div class="argus-feature-title">Datacenter & VPN Detection</div>
+            <div class="argus-feature-desc">Cross-reference connection data against 500,000+ known proxy, VPN, and hosting provider IP ranges.</div>
+        </div>
+        <div class="argus-card">
+            <div class="argus-feature-icon">⚡</div>
+            <div class="argus-feature-title">WebRTC & DNS Leak Probes</div>
+            <div class="argus-feature-desc">Execute multi-threaded DNS queries and WebRTC STUN requests to detect real exit IP exposure.</div>
+        </div>
+        <div class="argus-card">
+            <div class="argus-feature-icon">👤</div>
+            <div class="argus-feature-title">Anti-Detect Fingerprint Analysis</div>
+            <div class="argus-feature-desc">Audit Canvas 2D, WebGL 3D, AudioContext, and hardware concurrency hashes used by tracking networks.</div>
         </div>
     </div>
 
@@ -951,6 +981,92 @@ window.addEventListener('load', async () => {
         document.getElementById('locationLine').textContent = 'Scan failed — please refresh.';
     }
 });
+
+// ─── 3D CANVAS NETWORK ANIMATION (ARGUS STYLE) ─────────────────────────
+(function initHero3D() {
+    const canvas = document.getElementById('heroCanvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    let width = canvas.width = canvas.offsetWidth;
+    let height = canvas.height = canvas.offsetHeight;
+
+    window.addEventListener('resize', () => {
+        if (!canvas) return;
+        width = canvas.width = canvas.offsetWidth;
+        height = canvas.height = canvas.offsetHeight;
+    });
+
+    const particles = [];
+    const count = 38;
+    for (let i = 0; i < count; i++) {
+        particles.push({
+            x: Math.random() * width,
+            y: Math.random() * height,
+            vx: (Math.random() - 0.5) * 0.4,
+            vy: (Math.random() - 0.5) * 0.4,
+            radius: Math.random() * 1.5 + 1
+        });
+    }
+
+    let mouseX = width / 2;
+    let mouseY = height / 2;
+    window.addEventListener('mousemove', (e) => {
+        const rect = canvas.getBoundingClientRect();
+        mouseX = e.clientX - rect.left;
+        mouseY = e.clientY - rect.top;
+    });
+
+    function animate() {
+        ctx.clearRect(0, 0, width, height);
+
+        for (let i = 0; i < count; i++) {
+            let p = particles[i];
+            p.x += p.vx;
+            p.y += p.vy;
+
+            if (p.x < 0 || p.x > width) p.vx *= -1;
+            if (p.y < 0 || p.y > height) p.vy *= -1;
+
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(196, 163, 90, 0.45)';
+            ctx.fill();
+
+            for (let j = i + 1; j < count; j++) {
+                let p2 = particles[j];
+                let dx = p.x - p2.x;
+                let dy = p.y - p2.y;
+                let dist = Math.sqrt(dx * dx + dy * dy);
+
+                if (dist < 110) {
+                    ctx.beginPath();
+                    ctx.moveTo(p.x, p.y);
+                    ctx.lineTo(p2.x, p2.y);
+                    ctx.strokeStyle = `rgba(196, 163, 90, ${0.18 * (1 - dist / 110)})`;
+                    ctx.lineWidth = 0.75;
+                    ctx.stroke();
+                }
+            }
+
+            // Mouse proximity interactive reaction
+            let mdx = p.x - mouseX;
+            let mdy = p.y - mouseY;
+            let mdist = Math.sqrt(mdx * mdx + mdy * mdy);
+            if (mdist < 140) {
+                ctx.beginPath();
+                ctx.moveTo(p.x, p.y);
+                ctx.lineTo(mouseX, mouseY);
+                ctx.strokeStyle = `rgba(196, 163, 90, ${0.25 * (1 - mdist / 140)})`;
+                ctx.lineWidth = 1;
+                ctx.stroke();
+            }
+        }
+        requestAnimationFrame(animate);
+    }
+    animate();
+})();
 </script>
 </body>
 </html>
