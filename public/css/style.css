@@ -50,6 +50,30 @@ body {
     color: var(--text);
     min-height: 100vh;
     line-height: 1.5;
+    position: relative;
+    overflow-x: hidden;
+}
+
+/* ─── 3D BACKGROUND GRID ───────────────────────────────────────────────────── */
+.grid-matrix {
+    position: fixed;
+    inset: -50% -50%;
+    z-index: -1;
+    background-image: 
+        linear-gradient(var(--border2) 1px, transparent 1px),
+        linear-gradient(90deg, var(--border2) 1px, transparent 1px);
+    background-size: 60px 60px;
+    background-position: center center;
+    transform: perspective(800px) rotateX(60deg) translateY(-100px) translateZ(-200px);
+    animation: gridMove 15s linear infinite;
+    pointer-events: none;
+    mask-image: radial-gradient(ellipse at center, rgba(0,0,0,1) 10%, rgba(0,0,0,0) 70%);
+    -webkit-mask-image: radial-gradient(ellipse at center, rgba(0,0,0,1) 10%, rgba(0,0,0,0) 70%);
+}
+
+@keyframes gridMove {
+    from { transform: perspective(800px) rotateX(60deg) translateY(0) translateZ(-200px); }
+    to   { transform: perspective(800px) rotateX(60deg) translateY(60px) translateZ(-200px); }
 }
 
 .container { max-width: 1060px; margin: 0 auto; padding: 0 28px; }
