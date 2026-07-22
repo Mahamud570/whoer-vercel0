@@ -160,6 +160,19 @@
         <canvas id="heroCanvas"></canvas>
     </div>
 
+    <!-- ─── FLOATING PARALLAX BADGES (ARGUS STYLE) ────────────────── -->
+    <div class="hero-floating-badges">
+        <div class="float-badge float-badge-left">
+            <span style="color:var(--green)">●</span> IP Privacy Guard: Active
+        </div>
+        <div class="float-badge float-badge-right">
+            <span style="color:var(--accent)">⚡</span> WebRTC / STUN: Secure
+        </div>
+        <div class="float-badge float-badge-center">
+            <span style="color:var(--blue)">🔍</span> Fingerprint Hash: Verified
+        </div>
+    </div>
+
     <div class="hero">
         <div class="hero-badge">
             <span class="pulse-dot"></span>
@@ -983,7 +996,7 @@ window.addEventListener('load', async () => {
     }
 });
 
-// ─── 3D CANVAS NETWORK ANIMATION (ARGUS STYLE) ─────────────────────────
+// ─── 3D ROTATING GLOBE SPHERE MESH (ARGUS STYLE) ────────────────────────
 (function initHero3D() {
     const canvas = document.getElementById('heroCanvas');
     if (!canvas) return;
@@ -999,71 +1012,102 @@ window.addEventListener('load', async () => {
         height = canvas.height = canvas.offsetHeight;
     });
 
-    const particles = [];
-    const count = 38;
-    for (let i = 0; i < count; i++) {
-        particles.push({
-            x: Math.random() * width,
-            y: Math.random() * height,
-            vx: (Math.random() - 0.5) * 0.4,
-            vy: (Math.random() - 0.5) * 0.4,
-            radius: Math.random() * 1.5 + 1
-        });
+    const GLOBE_RADIUS = Math.min(width, height) * 0.38;
+    const dots = [];
+    const NUM_LAT = 14;
+    const NUM_LON = 24;
+
+    for (let i = 0; i <= NUM_LAT; i++) {
+        const lat = (Math.PI / NUM_LAT) * i - Math.PI / 2;
+        for (let j = 0; j < NUM_LON; j++) {
+            const lon = ((2 * Math.PI) / NUM_LON) * j;
+            dots.push({
+                x: GLOBE_RADIUS * Math.cos(lat) * Math.cos(lon),
+                y: GLOBE_RADIUS * Math.sin(lat),
+                z: GLOBE_RADIUS * Math.cos(lat) * Math.sin(lon),
+                baseLat: lat,
+                baseLon: lon
+            });
+        }
     }
 
-    let mouseX = width / 2;
-    let mouseY = height / 2;
+    let rotX = 0.3;
+    let rotY = 0;
+    let targetRotX = 0.3;
+    let targetRotY = 0;
+
     window.addEventListener('mousemove', (e) => {
         const rect = canvas.getBoundingClientRect();
-        mouseX = e.clientX - rect.left;
-        mouseY = e.clientY - rect.top;
+        const mouseX = (e.clientX - rect.left) / width - 0.5;
+        const mouseY = (e.clientY - rect.top) / height - 0.5;
+        targetRotY = mouseX * 0.6;
+        targetRotX = 0.3 + mouseY * 0.4;
     });
 
     function animate() {
         ctx.clearRect(0, 0, width, height);
 
-        for (let i = 0; i < count; i++) {
-            let p = particles[i];
-            p.x += p.vx;
-            p.y += p.vy;
+        rotY += 0.005; // auto-spin
+        rotX += (targetRotX - rotX) * 0.05;
 
-            if (p.x < 0 || p.x > width) p.vx *= -1;
-            if (p.y < 0 || p.y > height) p.vy *= -1;
+        const cosX = Math.cos(rotX);
+        const sinX = Math.sin(rotX);
+        const cosY = Math.cos(rotY + targetRotY * 0.1);
+        const sinY = Math.sin(rotY + targetRotY * 0.1);
 
+        const cx = width / 2;
+        const cy = height / 2 + 10;
+
+        // Draw connecting latitude rings
+        ctx.strokeStyle = 'rgba(196, 163, 90, 0.08)';
+        ctx.lineWidth = 0.8;
+
+        const projectedDots = [];
+
+        for (let i = 0; i < dots.length; i++) {
+            const d = dots[i];
+
+            // Rotate around Y axis
+            let x1 = d.x * cosY - d.z * sinY;
+            let z1 = d.z * cosY + d.x * sinY;
+
+            // Rotate around X axis
+            let y2 = d.y * cosX - z1 * sinX;
+            let z2 = z1 * cosX + d.y * sinX;
+
+            // Perspective projection
+            const perspective = 500 / (500 + z2);
+            const px = cx + x1 * perspective;
+            const py = cy + y2 * perspective;
+
+            projectedDots.push({ px, py, z: z2, alpha: (z2 + GLOBE_RADIUS) / (2 * GLOBE_RADIUS) });
+        }
+
+        // Draw Dots and wireframe grid
+        for (let i = 0; i < projectedDots.length; i++) {
+            const p = projectedDots[i];
+            if (p.z < 0) continue; // front-facing depth cull
+
+            const alpha = Math.max(0.1, p.alpha * 0.6);
             ctx.beginPath();
-            ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-            ctx.fillStyle = 'rgba(196, 163, 90, 0.45)';
+            ctx.arc(p.px, p.py, 1.2 + p.alpha * 0.8, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(196, 163, 90, ${alpha})`;
             ctx.fill();
 
-            for (let j = i + 1; j < count; j++) {
-                let p2 = particles[j];
-                let dx = p.x - p2.x;
-                let dy = p.y - p2.y;
-                let dist = Math.sqrt(dx * dx + dy * dy);
-
-                if (dist < 110) {
+            // Connect neighboring longitude dot
+            if ((i + 1) % NUM_LON !== 0) {
+                const nextP = projectedDots[i + 1];
+                if (nextP.z >= 0) {
                     ctx.beginPath();
-                    ctx.moveTo(p.x, p.y);
-                    ctx.lineTo(p2.x, p2.y);
-                    ctx.strokeStyle = `rgba(196, 163, 90, ${0.18 * (1 - dist / 110)})`;
-                    ctx.lineWidth = 0.75;
+                    ctx.moveTo(p.px, p.py);
+                    ctx.lineTo(nextP.px, nextP.py);
+                    ctx.strokeStyle = `rgba(196, 163, 90, ${alpha * 0.25})`;
+                    ctx.lineWidth = 0.6;
                     ctx.stroke();
                 }
             }
-
-            // Mouse proximity interactive reaction
-            let mdx = p.x - mouseX;
-            let mdy = p.y - mouseY;
-            let mdist = Math.sqrt(mdx * mdx + mdy * mdy);
-            if (mdist < 140) {
-                ctx.beginPath();
-                ctx.moveTo(p.x, p.y);
-                ctx.lineTo(mouseX, mouseY);
-                ctx.strokeStyle = `rgba(196, 163, 90, ${0.25 * (1 - mdist / 140)})`;
-                ctx.lineWidth = 1;
-                ctx.stroke();
-            }
         }
+
         requestAnimationFrame(animate);
     }
     animate();
