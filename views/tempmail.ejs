@@ -33,9 +33,9 @@
         .tm-box { display: flex; align-items: center; justify-content: space-between; background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 18px; margin-top: 14px; gap: 12px; flex-wrap: wrap; }
         .tm-address { font-family: var(--mono); font-size: 18px; font-weight: 700; color: var(--green); word-break: break-all; }
         
-        .cred-row { display: flex; align-items: center; gap: 12px; background: rgba(255,255,255,0.02); border: 1px dashed var(--border2); padding: 10px 14px; border-radius: var(--radius); margin-top: 12px; font-size: 13px; flex-wrap: wrap; }
+        .cred-row { display: flex; align-items: center; gap: 12px; background: rgba(255,255,255,0.02); border: 1px dashed var(--border2); padding: 12px 16px; border-radius: var(--radius); margin-top: 14px; font-size: 13px; flex-wrap: wrap; }
         .cred-label { color: var(--muted); font-size: 12px; font-weight: 600; text-transform: uppercase; }
-        .cred-val { font-family: var(--mono); color: var(--text); font-weight: 600; }
+        .cred-val { font-family: var(--mono); color: var(--green); font-size: 14px; font-weight: 700; letter-spacing: 0.5px; }
 
         .tm-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 18px; align-items: center; }
         .btn-sm { padding: 8px 16px; font-size: 13px; border-radius: var(--radius); font-weight: 600; cursor: pointer; text-decoration: none; border: 1px solid var(--border); background: var(--panel); color: var(--text); transition: all 0.2s; }
@@ -107,8 +107,8 @@
         <div class="cred-row">
             <span class="cred-label">Account Password:</span>
             <span id="passVal" class="cred-val">••••••••</span>
-            <button onclick="copyPassword()" class="btn-sm" style="padding:4px 10px;font-size:11px;margin-left:auto;">📋 Copy Password</button>
-            <span style="font-size:11px;color:var(--muted);">Save your password to log back in anytime!</span>
+            <button onclick="togglePassVisibility()" class="btn-sm" id="togglePassBtn" style="padding:4px 10px;font-size:11px;">👁️ Show Password</button>
+            <button onclick="copyPassword()" class="btn-sm" id="copyPassBtn" style="padding:4px 10px;font-size:11px;margin-left:auto;">📋 Copy Password</button>
         </div>
 
         <div class="tm-actions">
@@ -157,15 +157,15 @@
         <form onsubmit="handleSignup(event)">
             <div class="form-group">
                 <label>Username / Address Prefix</label>
-                <input type="text" id="signupUser" class="form-input" placeholder="myname" required>
+                <input type="text" id="signupUser" class="form-input" placeholder="myusername" required>
             </div>
             <div class="form-group">
                 <label>Select Domain</label>
                 <select id="signupDomain" class="form-select"></select>
             </div>
             <div class="form-group">
-                <label>Password</label>
-                <input type="password" id="signupPass" class="form-input" placeholder="••••••••" required>
+                <label>Password (min 6 characters)</label>
+                <input type="password" id="signupPass" class="form-input" placeholder="••••••••" minlength="6" required>
             </div>
             <div id="signupErr" style="color:var(--red);font-size:12px;margin-bottom:12px;display:none;"></div>
             
@@ -239,6 +239,7 @@
     let mailtmToken = localStorage.getItem('tm_token') || null;
     let currentAddress = localStorage.getItem('tm_addr') || '';
     let currentPass = localStorage.getItem('tm_pass') || '';
+    let isPassVisible = false;
     let activeMsgId = null;
 
     function openModal(id) { document.getElementById(id).style.display = 'flex'; }
@@ -256,7 +257,7 @@
     async function loadDomains() {
         try {
             const res = await fetch('/api/temp-mail/domains').then(r => r.json());
-            const domains = res.domains || ['mail.tm'];
+            const domains = res.domains || ['web-library.net', 'mail.tm'];
             const select = document.getElementById('signupDomain');
             select.innerHTML = domains.map(d => `<option value="${d}">${d}</option>`).join('');
         } catch(e) {}
@@ -311,18 +312,49 @@
 
     function updateUI() {
         document.getElementById('tempEmailVal').textContent = currentAddress || 'No account active';
-        document.getElementById('passVal').textContent = currentPass || '••••••••';
         document.getElementById('accStatus').textContent = currentAddress ? `Status: Logged In (${currentAddress})` : 'Status: Signed Out';
+        renderPassVal();
+    }
+
+    function renderPassVal() {
+        const passSpan = document.getElementById('passVal');
+        if (!currentPass) {
+            passSpan.textContent = '••••••••';
+        } else if (isPassVisible) {
+            passSpan.textContent = currentPass;
+        } else {
+            passSpan.textContent = '••••••••';
+        }
+    }
+
+    function togglePassVisibility() {
+        isPassVisible = !isPassVisible;
+        const btn = document.getElementById('togglePassBtn');
+        btn.textContent = isPassVisible ? '🙈 Hide Password' : '👁️ Show Password';
+        renderPassVal();
     }
 
     async function handleSignup(e) {
         e.preventDefault();
-        const user = document.getElementById('signupUser').value.trim();
-        const domain = document.getElementById('signupDomain').value;
+        const rawUser = document.getElementById('signupUser').value.trim().toLowerCase();
+        const cleanUser = rawUser.replace(/[^a-z0-9._-]/g, '');
+        const domainSelect = document.getElementById('signupDomain');
+        const domain = (domainSelect && domainSelect.value) ? domainSelect.value : 'web-library.net';
         const pass = document.getElementById('signupPass').value.trim();
-        const fullAddr = `${user}@${domain}`;
+        const fullAddr = cleanUser.includes('@') ? cleanUser : `${cleanUser}@${domain}`;
         const errDiv = document.getElementById('signupErr');
         errDiv.style.display = 'none';
+
+        if (!cleanUser) {
+            errDiv.textContent = 'Please enter a valid username (letters, numbers, dots, or dashes).';
+            errDiv.style.display = 'block';
+            return;
+        }
+        if (pass.length < 6) {
+            errDiv.textContent = 'Password must be at least 6 characters long.';
+            errDiv.style.display = 'block';
+            return;
+        }
 
         try {
             const res = await fetch('/api/temp-mail/accounts', {
@@ -342,11 +374,11 @@
                 updateUI();
                 fetchMessages();
             } else {
-                errDiv.textContent = res.error || 'Failed to register account.';
+                errDiv.textContent = res.error || 'Account creation failed. Try a different username.';
                 errDiv.style.display = 'block';
             }
         } catch(err) {
-            errDiv.textContent = 'Registration failed.';
+            errDiv.textContent = 'Registration failed. Try a different username.';
             errDiv.style.display = 'block';
         }
     }
@@ -467,8 +499,14 @@
     }
 
     function copyPassword() {
+        if (!currentPass) {
+            alert('No password available for this session. Please create a custom account or generate a new email.');
+            return;
+        }
         navigator.clipboard.writeText(currentPass).then(() => {
-            alert('Password copied to clipboard! Save it to log back in anytime.');
+            const btn = document.getElementById('copyPassBtn');
+            btn.textContent = '✓ Copied!';
+            setTimeout(() => btn.textContent = '📋 Copy Password', 2000);
         });
     }
 

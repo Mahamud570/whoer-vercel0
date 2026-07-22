@@ -307,18 +307,29 @@ async function getMailTmDomain() {
 
 app.post('/api/temp-mail/accounts', async (req, res) => {
     try {
-        const { username, password } = req.body;
-        const domain = await getMailTmDomain();
-        const address = username.includes('@') ? username : `${username}@${domain}`;
+        let { username = '', password = '' } = req.body;
+        username = username.toLowerCase().trim();
+        if (!username) return res.status(400).json({ success: false, error: 'Username is required.' });
+        if (!password) return res.status(400).json({ success: false, error: 'Password is required (min 6 characters).' });
+
+        const activeDomain = await getMailTmDomain();
+        let address = username;
+        if (!address.includes('@')) {
+            address = `${username}@${activeDomain}`;
+        }
         
         // Register account on Mail.tm
-        await axios.post('https://api.mail.tm/accounts', { address, password }, { timeout: 5000 });
+        await axios.post('https://api.mail.tm/accounts', { address, password }, { timeout: 6000 });
         
         // Obtain token
-        const tRes = await axios.post('https://api.mail.tm/token', { address, password }, { timeout: 5000 });
+        const tRes = await axios.post('https://api.mail.tm/token', { address, password }, { timeout: 6000 });
         return res.json({ success: true, address, token: tRes.data.token });
     } catch (err) {
-        return res.status(400).json({ success: false, error: err.response?.data?.['hydra:description'] || 'Account creation failed.' });
+        const errorDesc = err.response?.data?.['hydra:description'] 
+            || err.response?.data?.detail 
+            || err.response?.data?.message 
+            || (err.response?.status === 422 ? 'This username is already taken or domain is inactive. Try another username.' : 'Account creation failed.');
+        return res.status(400).json({ success: false, error: errorDesc });
     }
 });
 
