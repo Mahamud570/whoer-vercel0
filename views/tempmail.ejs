@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Temporary Email Generator — Free Disposable Inbox | Whoer Live</title>
-    <meta name="description" content="Persistent disposable temporary email system powered by Mail.tm protocol. Create custom accounts, save credentials, and log in anytime to read your inbox.">
+    <meta name="description" content="Persistent disposable temporary email system powered by Mail.tm & GuerrillaMail. Create custom accounts, save credentials, and receive real verification emails.">
     <meta name="robots" content="index, follow">
     <link rel="canonical" href="https://www.whoer.live/temp-mail">
     <link rel="icon" type="image/png" href="/img/logo.png">
@@ -90,7 +90,7 @@
         <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
             <div>
                 <span style="font-size:12px;color:var(--muted);font-weight:600;text-transform:uppercase;">Active Account Address</span>
-                <div id="accStatus" style="font-size:12px;color:var(--green);margin-top:2px;">Status: Authenticated Session</div>
+                <div id="accStatus" style="font-size:12px;color:var(--green);margin-top:2px;">Status: Active Session</div>
             </div>
             <div style="display:flex;gap:8px;">
                 <button onclick="openModal('signupModal')" class="btn-sm">➕ Create Custom Account</button>
@@ -99,7 +99,7 @@
         </div>
 
         <div class="tm-box">
-            <div id="tempEmailVal" class="tm-address">Creating Mail.tm account...</div>
+            <div id="tempEmailVal" class="tm-address">Generating active temp address...</div>
             <button onclick="copyAddress()" class="btn-sm btn-green" id="copyBtn">📋 Copy Email</button>
         </div>
 
@@ -236,9 +236,11 @@
 <script>
     document.getElementById('yr').textContent = new Date().getFullYear();
 
+    let activeEngine = 'mailtm'; // mailtm | guerrilla | secmail
     let mailtmToken = localStorage.getItem('tm_token') || null;
     let currentAddress = localStorage.getItem('tm_addr') || '';
     let currentPass = localStorage.getItem('tm_pass') || '';
+    let guerrillaSid = localStorage.getItem('g_sid') || null;
     let isPassVisible = false;
     let activeMsgId = null;
 
@@ -256,8 +258,17 @@
 
     async function loadDomains() {
         try {
-            const res = await fetch('/api/temp-mail/domains').then(r => r.json());
-            const domains = res.domains || ['web-library.net', 'mail.tm'];
+            // Direct client CORS fetch for live Vercel reliability
+            let domains = ['web-library.net', 'mail.tm'];
+            try {
+                const res = await fetch('https://api.mail.tm/domains').then(r => r.json());
+                if (res['hydra:member'] && res['hydra:member'].length) {
+                    domains = res['hydra:member'].map(d => d.domain);
+                }
+            } catch(e) {
+                const res = await fetch('/api/temp-mail/domains').then(r => r.json());
+                if (res.domains) domains = res.domains;
+            }
             const select = document.getElementById('signupDomain');
             select.innerHTML = domains.map(d => `<option value="${d}">${d}</option>`).join('');
         } catch(e) {}
@@ -265,10 +276,43 @@
 
     async function generateMailtmQuick() {
         try {
-            document.getElementById('tempEmailVal').textContent = 'Creating Mail.tm account...';
+            document.getElementById('tempEmailVal').textContent = 'Creating active account...';
             const randomUser = 'whr_' + Math.random().toString(36).substring(2, 10);
             const password = 'pass_' + Math.random().toString(36).substring(2, 10);
 
+            // 1. Direct CORS fetch to Mail.tm API from client (bypasses serverless IP block)
+            try {
+                const dRes = await fetch('https://api.mail.tm/domains').then(r => r.json());
+                const domain = (dRes['hydra:member'] && dRes['hydra:member'].length) ? dRes['hydra:member'][0].domain : 'web-library.net';
+                const address = `${randomUser}@${domain}`;
+
+                await fetch('https://api.mail.tm/accounts', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ address, password })
+                });
+
+                const tokRes = await fetch('https://api.mail.tm/token', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ address, password })
+                }).then(r => r.json());
+
+                if (tokRes.token) {
+                    activeEngine = 'mailtm';
+                    mailtmToken = tokRes.token;
+                    currentAddress = address;
+                    currentPass = password;
+                    localStorage.setItem('tm_token', mailtmToken);
+                    localStorage.setItem('tm_addr', currentAddress);
+                    localStorage.setItem('tm_pass', currentPass);
+                    updateUI();
+                    fetchMessages();
+                    return;
+                }
+            } catch(directErr) {}
+
+            // 2. Server proxy fallback
             const res = await fetch('/api/temp-mail/accounts', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -276,6 +320,7 @@
             }).then(r => r.json());
 
             if (res.success && res.token) {
+                activeEngine = 'mailtm';
                 mailtmToken = res.token;
                 currentAddress = res.address;
                 currentPass = password;
@@ -285,34 +330,79 @@
                 updateUI();
                 fetchMessages();
             } else {
-                document.getElementById('tempEmailVal').textContent = 'Failed to generate account.';
+                await fallbackGuerrillaMail();
             }
         } catch(e) {
-            document.getElementById('tempEmailVal').textContent = 'Server error.';
+            await fallbackGuerrillaMail();
         }
+    }
+
+    async function fallbackGuerrillaMail() {
+        try {
+            document.getElementById('tempEmailVal').textContent = 'Connecting to Guerrilla Mail...';
+            const url = guerrillaSid ? `/api/temp-mail/guerrilla/get_email_address?sid_token=${encodeURIComponent(guerrillaSid)}` : '/api/temp-mail/guerrilla/get_email_address';
+            let res = null;
+            try {
+                res = await fetch('https://api.guerrillamail.com/ajax.php?f=get_email_address').then(r => r.json());
+            } catch(e) {
+                res = await fetch(url).then(r => r.json());
+            }
+
+            if (res && res.email_addr) {
+                activeEngine = 'guerrilla';
+                currentAddress = res.email_addr;
+                guerrillaSid = res.sid_token;
+                currentPass = '(Auto Session)';
+                localStorage.setItem('g_sid', guerrillaSid);
+                updateUI();
+                fetchMessages();
+            } else {
+                fallback1SecMail();
+            }
+        } catch(e) {
+            fallback1SecMail();
+        }
+    }
+
+    function fallback1SecMail() {
+        activeEngine = 'secmail';
+        const rand = 'whr_' + Math.random().toString(36).substring(2, 9);
+        currentAddress = rand + '@1secmail.com';
+        currentPass = '(Instant Session)';
+        updateUI();
+        fetchMessages();
     }
 
     async function loadMailtmAccountInfo() {
         try {
-            const res = await fetch('/api/temp-mail/me', {
-                headers: { 'Authorization': `Bearer ${mailtmToken}` }
-            }).then(r => r.json());
+            // Direct CORS fetch to Mail.tm
+            let res = null;
+            try {
+                res = await fetch('https://api.mail.tm/me', {
+                    headers: { 'Authorization': `Bearer ${mailtmToken}` }
+                }).then(r => r.json());
+            } catch(e) {
+                res = await fetch('/api/temp-mail/me', {
+                    headers: { 'Authorization': `Bearer ${mailtmToken}` }
+                }).then(r => r.json());
+            }
 
-            if (res.success && res.account) {
-                currentAddress = res.account.address;
+            if (res && (res.address || (res.success && res.account))) {
+                activeEngine = 'mailtm';
+                currentAddress = res.address || res.account.address;
                 updateUI();
                 fetchMessages();
             } else {
-                logout();
+                await fallbackGuerrillaMail();
             }
         } catch (e) {
-            logout();
+            await fallbackGuerrillaMail();
         }
     }
 
     function updateUI() {
-        document.getElementById('tempEmailVal').textContent = currentAddress || 'No account active';
-        document.getElementById('accStatus').textContent = currentAddress ? `Status: Logged In (${currentAddress})` : 'Status: Signed Out';
+        document.getElementById('tempEmailVal').textContent = currentAddress || 'Generating email...';
+        document.getElementById('accStatus').textContent = currentAddress ? `Status: Active (${currentAddress})` : 'Status: Initializing';
         renderPassVal();
     }
 
@@ -346,16 +436,46 @@
         errDiv.style.display = 'none';
 
         if (!cleanUser) {
-            errDiv.textContent = 'Please enter a valid username (letters, numbers, dots, or dashes).';
+            errDiv.textContent = 'Please enter a valid username.';
             errDiv.style.display = 'block';
             return;
         }
         if (pass.length < 6) {
-            errDiv.textContent = 'Password must be at least 6 characters long.';
+            errDiv.textContent = 'Password must be at least 6 characters.';
             errDiv.style.display = 'block';
             return;
         }
 
+        // Direct CORS signup to Mail.tm from client (bypasses serverless block)
+        try {
+            await fetch('https://api.mail.tm/accounts', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ address: fullAddr, password: pass })
+            });
+
+            const tokRes = await fetch('https://api.mail.tm/token', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ address: fullAddr, password: pass })
+            }).then(r => r.json());
+
+            if (tokRes.token) {
+                activeEngine = 'mailtm';
+                mailtmToken = tokRes.token;
+                currentAddress = fullAddr;
+                currentPass = pass;
+                localStorage.setItem('tm_token', mailtmToken);
+                localStorage.setItem('tm_addr', currentAddress);
+                localStorage.setItem('tm_pass', currentPass);
+                closeModal('signupModal');
+                updateUI();
+                fetchMessages();
+                return;
+            }
+        } catch(cErr) {}
+
+        // Proxy Fallback
         try {
             const res = await fetch('/api/temp-mail/accounts', {
                 method: 'POST',
@@ -364,6 +484,7 @@
             }).then(r => r.json());
 
             if (res.success && res.token) {
+                activeEngine = 'mailtm';
                 mailtmToken = res.token;
                 currentAddress = res.address;
                 currentPass = pass;
@@ -374,22 +495,46 @@
                 updateUI();
                 fetchMessages();
             } else {
-                errDiv.textContent = res.error || 'Account creation failed. Try a different username.';
+                errDiv.textContent = res.error || 'Account creation failed. Try another username.';
                 errDiv.style.display = 'block';
             }
         } catch(err) {
-            errDiv.textContent = 'Registration failed. Try a different username.';
+            errDiv.textContent = 'Registration failed. Try another username.';
             errDiv.style.display = 'block';
         }
     }
 
     async function handleLogin(e) {
         e.preventDefault();
-        const address = document.getElementById('loginAddress').value.trim();
+        const address = document.getElementById('loginAddress').value.trim().toLowerCase();
         const pass = document.getElementById('loginPass').value.trim();
         const errDiv = document.getElementById('loginErr');
         errDiv.style.display = 'none';
 
+        // Direct CORS Login to Mail.tm from client (bypasses serverless block)
+        try {
+            const tokRes = await fetch('https://api.mail.tm/token', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ address, password: pass })
+            }).then(r => r.json());
+
+            if (tokRes.token) {
+                activeEngine = 'mailtm';
+                mailtmToken = tokRes.token;
+                currentAddress = address;
+                currentPass = pass;
+                localStorage.setItem('tm_token', mailtmToken);
+                localStorage.setItem('tm_addr', currentAddress);
+                localStorage.setItem('tm_pass', currentPass);
+                closeModal('loginModal');
+                updateUI();
+                fetchMessages();
+                return;
+            }
+        } catch(cErr) {}
+
+        // Proxy Fallback
         try {
             const res = await fetch('/api/temp-mail/token', {
                 method: 'POST',
@@ -398,6 +543,7 @@
             }).then(r => r.json());
 
             if (res.success && res.token) {
+                activeEngine = 'mailtm';
                 mailtmToken = res.token;
                 currentAddress = address;
                 currentPass = pass;
@@ -418,19 +564,56 @@
     }
 
     async function fetchMessages() {
-        if (!mailtmToken) return;
+        if (!currentAddress && !mailtmToken && !guerrillaSid) return;
 
         try {
-            const res = await fetch('/api/temp-mail/messages', {
-                headers: { 'Authorization': `Bearer ${mailtmToken}` }
-            }).then(r => r.json());
-
-            const msgs = (res.messages || []).map(m => ({
-                id: m.id,
-                from: m.from ? (m.from.name || m.from.address) : 'Unknown',
-                subject: m.subject || '(No Subject)',
-                date: new Date(m.createdAt || Date.now()).toLocaleTimeString()
-            }));
+            let msgs = [];
+            if (activeEngine === 'mailtm' && mailtmToken) {
+                let res = null;
+                try {
+                    res = await fetch('https://api.mail.tm/messages', {
+                        headers: { 'Authorization': `Bearer ${mailtmToken}` }
+                    }).then(r => r.json());
+                    msgs = (res['hydra:member'] || []).map(m => ({
+                        id: m.id,
+                        from: m.from ? (m.from.name || m.from.address) : 'Unknown',
+                        subject: m.subject || '(No Subject)',
+                        date: new Date(m.createdAt || Date.now()).toLocaleTimeString()
+                    }));
+                } catch(e) {
+                    res = await fetch('/api/temp-mail/messages', {
+                        headers: { 'Authorization': `Bearer ${mailtmToken}` }
+                    }).then(r => r.json());
+                    msgs = (res.messages || []).map(m => ({
+                        id: m.id,
+                        from: m.from ? (m.from.name || m.from.address) : 'Unknown',
+                        subject: m.subject || '(No Subject)',
+                        date: new Date(m.createdAt || Date.now()).toLocaleTimeString()
+                    }));
+                }
+            } else if (activeEngine === 'guerrilla' && guerrillaSid) {
+                let res = null;
+                try {
+                    res = await fetch(`https://api.guerrillamail.com/ajax.php?f=get_email_list&sid_token=${encodeURIComponent(guerrillaSid)}&offset=0`).then(r => r.json());
+                } catch(e) {
+                    res = await fetch(`/api/temp-mail/guerrilla/get_email_list?sid_token=${encodeURIComponent(guerrillaSid)}`).then(r => r.json());
+                }
+                msgs = (res.list || []).map(m => ({
+                    id: m.mail_id,
+                    from: m.mail_from,
+                    subject: m.mail_subject,
+                    date: m.mail_date
+                }));
+            } else if (activeEngine === 'secmail') {
+                const [login, domain] = currentAddress.split('@');
+                const res = await fetch(`https://www.1secmail.com/api/v1/?action=getMessages&login=${login}&domain=${domain}`).then(r => r.json());
+                msgs = (res || []).map(m => ({
+                    id: m.id,
+                    from: m.from,
+                    subject: m.subject,
+                    date: m.date
+                }));
+            }
 
             document.getElementById('msgCountBadge').textContent = `${msgs.length} messages`;
             const tbody = document.getElementById('inboxBody');
@@ -462,16 +645,44 @@
         document.getElementById('readBody').textContent = 'Fetching message contents...';
 
         try {
-            const res = await fetch(`/api/temp-mail/messages/${id}`, {
-                headers: { 'Authorization': `Bearer ${mailtmToken}` }
-            }).then(r => r.json());
-
-            if (res.success && res.message) {
-                document.getElementById('readSubject').textContent = res.message.subject || '(No Subject)';
-                document.getElementById('readSender').textContent = `From: ${res.message.from ? (res.message.from.address || res.message.from) : 'Unknown'}`;
-                document.getElementById('readBody').innerHTML = res.message.html ? res.message.html : `<pre style="white-space:pre-wrap;">${res.message.text || 'Empty message body'}</pre>`;
-            } else {
-                document.getElementById('readBody').textContent = 'Failed to load email.';
+            if (activeEngine === 'mailtm' && mailtmToken) {
+                let res = null;
+                try {
+                    res = await fetch(`https://api.mail.tm/messages/${id}`, {
+                        headers: { 'Authorization': `Bearer ${mailtmToken}` }
+                    }).then(r => r.json());
+                    if (res && res.subject) {
+                        document.getElementById('readSubject').textContent = res.subject || '(No Subject)';
+                        document.getElementById('readSender').textContent = `From: ${res.from ? (res.from.address || res.from) : 'Unknown'}`;
+                        document.getElementById('readBody').innerHTML = res.html ? res.html.join('') : `<pre style="white-space:pre-wrap;">${res.text || 'Empty body'}</pre>`;
+                        return;
+                    }
+                } catch(e) {}
+                
+                res = await fetch(`/api/temp-mail/messages/${id}`, {
+                    headers: { 'Authorization': `Bearer ${mailtmToken}` }
+                }).then(r => r.json());
+                if (res.success && res.message) {
+                    document.getElementById('readSubject').textContent = res.message.subject || '(No Subject)';
+                    document.getElementById('readSender').textContent = `From: ${res.message.from ? (res.message.from.address || res.message.from) : 'Unknown'}`;
+                    document.getElementById('readBody').innerHTML = res.message.html ? res.message.html : `<pre style="white-space:pre-wrap;">${res.message.text || 'Empty body'}</pre>`;
+                }
+            } else if (activeEngine === 'guerrilla' && guerrillaSid) {
+                let res = null;
+                try {
+                    res = await fetch(`https://api.guerrillamail.com/ajax.php?f=fetch_email&sid_token=${encodeURIComponent(guerrillaSid)}&email_id=${encodeURIComponent(id)}`).then(r => r.json());
+                } catch(e) {
+                    res = await fetch(`/api/temp-mail/guerrilla/fetch_email?sid_token=${encodeURIComponent(guerrillaSid)}&email_id=${encodeURIComponent(id)}`).then(r => r.json());
+                }
+                document.getElementById('readSubject').textContent = res.mail_subject || '(No Subject)';
+                document.getElementById('readSender').textContent = `From: ${res.mail_from || 'Unknown'}`;
+                document.getElementById('readBody').innerHTML = res.mail_body || `<pre>${res.mail_excerpt || 'No text'}</pre>`;
+            } else if (activeEngine === 'secmail') {
+                const [login, domain] = currentAddress.split('@');
+                const res = await fetch(`https://www.1secmail.com/api/v1/?action=readMessage&login=${login}&domain=${domain}&id=${id}`).then(r => r.json());
+                document.getElementById('readSubject').textContent = res.subject || '(No Subject)';
+                document.getElementById('readSender').textContent = `From: ${res.from || 'Unknown'}`;
+                document.getElementById('readBody').innerHTML = res.htmlBody ? res.htmlBody : `<pre>${res.textBody || 'Empty body'}</pre>`;
             }
         } catch(e) {
             document.getElementById('readBody').textContent = 'Error reading email.';
@@ -481,10 +692,19 @@
     async function deleteCurrentMsg() {
         if (!activeMsgId) return;
         try {
-            await fetch(`/api/temp-mail/messages/${activeMsgId}`, {
-                method: 'DELETE',
-                headers: { 'Authorization': `Bearer ${mailtmToken}` }
-            });
+            if (activeEngine === 'mailtm' && mailtmToken) {
+                try {
+                    await fetch(`https://api.mail.tm/messages/${activeMsgId}`, {
+                        method: 'DELETE',
+                        headers: { 'Authorization': `Bearer ${mailtmToken}` }
+                    });
+                } catch(e) {
+                    await fetch(`/api/temp-mail/messages/${activeMsgId}`, {
+                        method: 'DELETE',
+                        headers: { 'Authorization': `Bearer ${mailtmToken}` }
+                    });
+                }
+            }
             closeModal('readModal');
             fetchMessages();
         } catch(e) {}
@@ -514,7 +734,9 @@
         localStorage.removeItem('tm_token');
         localStorage.removeItem('tm_addr');
         localStorage.removeItem('tm_pass');
+        localStorage.removeItem('g_sid');
         mailtmToken = null;
+        guerrillaSid = null;
         currentAddress = '';
         currentPass = '';
         updateUI();
