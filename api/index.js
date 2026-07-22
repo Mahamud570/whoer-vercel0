@@ -295,14 +295,20 @@ app.get('/api/temp-mail/domains', async (req, res) => {
 });
 
 let MAIL_TM_DOMAIN = 'mail.tm';
+let MAIL_TM_DOMAIN_CACHED_AT = 0;
 async function getMailTmDomain() {
+    const now = Date.now();
+    // Cache domain for 5 minutes to avoid hammering Mail.tm API
+    if (now - MAIL_TM_DOMAIN_CACHED_AT < 5 * 60 * 1000) return MAIL_TM_DOMAIN;
     try {
         const dRes = await axios.get('https://api.mail.tm/domains', { timeout: 4000 });
         if (dRes.data && dRes.data['hydra:member'] && dRes.data['hydra:member'].length) {
-            return dRes.data['hydra:member'][0].domain;
+            MAIL_TM_DOMAIN = dRes.data['hydra:member'][0].domain;
+            MAIL_TM_DOMAIN_CACHED_AT = now;
+            return MAIL_TM_DOMAIN;
         }
     } catch (_) {}
-    return 'mail.tm';
+    return MAIL_TM_DOMAIN;
 }
 
 app.post('/api/temp-mail/accounts', async (req, res) => {
@@ -441,14 +447,14 @@ app.get('/dns-leak-test',        (req, res) => res.render('tool_landing', { tool
 // ─── VPN BRAND TESTS ─────────────────────────────────────────────────────────
 app.get('/vpn-test/:brand', (req, res) => {
     const brand = VPN_BRANDS[req.params.brand];
-    if (!brand) return res.status(404).render('404');
+    if (!brand) return res.status(404).send('<html><head><title>404 Not Found</title></head><body style="font-family:sans-serif;background:#080b14;color:#f0f0f8;display:flex;align-items:center;justify-content:center;height:100vh;margin:0;"><div style="text-align:center"><h1 style="font-size:64px;margin:0;color:#22d77a">404</h1><p style="color:#6b7194">VPN brand not found</p><a href="/" style="color:#22d77a">← Back to Home</a></div></body></html>');
     res.render('vpn_test', { brand, year: new Date().getFullYear() });
 });
 
 // ─── ISP CHECKER ─────────────────────────────────────────────────────────────
 app.get('/isp/:slug', (req, res) => {
     const isp = ISP_DATA[req.params.slug];
-    if (!isp) return res.status(404).render('404');
+    if (!isp) return res.status(404).send('<html><head><title>404 Not Found</title></head><body style="font-family:sans-serif;background:#080b14;color:#f0f0f8;display:flex;align-items:center;justify-content:center;height:100vh;margin:0;"><div style="text-align:center"><h1 style="font-size:64px;margin:0;color:#22d77a">404</h1><p style="color:#6b7194">ISP not found</p><a href="/" style="color:#22d77a">← Back to Home</a></div></body></html>');
     res.render('isp', { isp, slug: req.params.slug, year: new Date().getFullYear() });
 });
 
@@ -634,15 +640,18 @@ app.get('/api/live-threats', (req, res) => {
 // ─── TELEGRAM BOT WEBHOOK ────────────────────────────────────────────────────
 app.post('/api/telegram-webhook', async (req, res) => {
     res.send('ok');
-    const TELEGRAM_TOKEN = process.env.TELEGRAM_BOT_TOKEN || '8699755123:AAFLqOjndyc29DJMIu0Bf_NijsxGXp75h34';
+    const TELEGRAM_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
     const ADMIN_ID = process.env.ADMIN_CHAT_ID;
+    if (!TELEGRAM_TOKEN) return; // Bot disabled if token not configured
     const processCommand = async (chatId, command) => {
         if (ADMIN_ID && chatId !== ADMIN_ID) return;
         if (command === '/admin' || command === '/start') {
             await axios.post(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`, { chat_id: chatId, text: '👋 *Welcome Admin!*', parse_mode: 'Markdown' });
         }
     };
-    if (req.body.message && req.body.message.text) await processCommand(req.body.message.chat.id.toString(), req.body.message.text.trim());
+    try {
+        if (req.body.message && req.body.message.text) await processCommand(req.body.message.chat.id.toString(), req.body.message.text.trim());
+    } catch (_) {}
 });
 
 // ─── EXPORT ──────────────────────────────────────────────────────────────────
