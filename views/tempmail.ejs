@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Temporary Email Generator — Free Disposable Inbox | Whoer Live</title>
-    <meta name="description" content="Generate instant, disposable temporary email addresses. Protect your real inbox from spam, register accounts securely, and receive verification codes instantly.">
+    <meta name="description" content="Generate instant, disposable temporary email addresses. Receive real OTP codes, verification emails, and protect your inbox from spam.">
     <meta name="robots" content="index, follow">
     <link rel="canonical" href="https://www.whoer.live/temp-mail">
     <link rel="icon" type="image/png" href="/img/logo.png">
@@ -33,11 +33,13 @@
         .tm-box { display: flex; align-items: center; justify-content: space-between; background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 18px; margin-top: 14px; gap: 12px; flex-wrap: wrap; }
         .tm-address { font-family: var(--mono); font-size: 18px; font-weight: 700; color: var(--green); word-break: break-all; }
         
-        .tm-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; }
+        .tm-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; align-items: center; }
         .btn-sm { padding: 8px 16px; font-size: 13px; border-radius: var(--radius); font-weight: 600; cursor: pointer; text-decoration: none; border: 1px solid var(--border); background: var(--panel); color: var(--text); transition: all 0.2s; }
         .btn-sm:hover { background: var(--panel-hover); border-color: var(--border2); }
         .btn-sm.btn-green { background: var(--green); color: #000; border-color: var(--green); }
         .btn-sm.btn-green:hover { box-shadow: 0 4px 15px rgba(34,215,122,0.3); }
+
+        .provider-select { padding: 8px 12px; background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius); color: var(--text); font-size: 13px; font-weight: 600; outline: none; }
 
         .inbox-table { width: 100%; border-collapse: collapse; margin-top: 14px; font-size: 14px; }
         .inbox-table th { text-align: left; padding: 12px; color: var(--muted); border-b: 1px solid var(--border); font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
@@ -77,7 +79,7 @@
     
     <div class="tm-hero">
         <h1>Temporary Email Generator</h1>
-        <p>Instant disposable email addresses for temporary registrations, 2FA verification, and spam prevention. Complete Mail.tm account support included.</p>
+        <p>Instant disposable email addresses for temporary registrations, 2FA verification, and real OTP reception across major web services.</p>
     </div>
 
     <!-- ACTIVE EMAIL CARD -->
@@ -85,24 +87,27 @@
         <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
             <div>
                 <span style="font-size:12px;color:var(--muted);font-weight:600;text-transform:uppercase;">Active Temporary Email</span>
-                <div id="accStatus" style="font-size:12px;color:var(--blue);margin-top:2px;">Status: Guest Session</div>
+                <div id="accStatus" style="font-size:12px;color:var(--green);margin-top:2px;">Status: Real OTP Receiver Active</div>
             </div>
-            <div id="authBtnGroup" style="display:flex;gap:8px;">
-                <button onclick="openModal('signupModal')" class="btn-sm">Create Account</button>
-                <button onclick="openModal('loginModal')" class="btn-sm">Log In</button>
+            <div style="display:flex;align-items:center;gap:8px;">
+                <label style="font-size:12px;color:var(--muted);font-weight:600;">Engine:</label>
+                <select id="engineSelect" onchange="switchEngine()" class="provider-select">
+                    <option value="guerrilla" selected>GuerrillaMail (High OTP Acceptance)</option>
+                    <option value="mailtm">Mail.tm (Custom Accounts & Tokens)</option>
+                </select>
             </div>
         </div>
 
         <div class="tm-box">
-            <div id="tempEmailVal" class="tm-address">Generating temporary address...</div>
+            <div id="tempEmailVal" class="tm-address">Generating active temp address...</div>
             <button onclick="copyAddress()" class="btn-sm btn-green" id="copyBtn">📋 Copy Address</button>
         </div>
 
         <div class="tm-actions">
-            <button onclick="generateQuickMail()" class="btn-sm">↻ Quick New Mail</button>
-            <button onclick="openModal('signupModal')" class="btn-sm">Create Custom Account</button>
-            <button onclick="openModal('loginModal')" class="btn-sm">Log In</button>
-            <button onclick="fetchMessages()" class="btn-sm">🔄 Refresh Inbox</button>
+            <button onclick="generateNewMail()" class="btn-sm">↻ Generate New Email</button>
+            <button onclick="fetchMessages()" class="btn-sm">🔄 Check Inbox</button>
+            <button id="signupBtn" onclick="openModal('signupModal')" class="btn-sm" style="display:none;">Create Custom Account</button>
+            <button id="loginBtn" onclick="openModal('loginModal')" class="btn-sm" style="display:none;">Log In</button>
             <button id="logoutBtn" onclick="logout()" class="btn-sm" style="display:none;color:var(--red);border-color:rgba(255,79,106,0.3);">Logout</button>
         </div>
     </div>
@@ -126,8 +131,8 @@
                 </thead>
                 <tbody id="inboxBody">
                     <tr>
-                        <td colspan="4" style="text-center:center;padding:32px;color:var(--muted);">
-                            No messages received yet. Your inbox checks for new mail automatically every 5 seconds.
+                        <td colspan="4" style="text-align:center;padding:32px;color:var(--muted);">
+                            No messages received yet. Your inbox auto-refreshes every 5 seconds.
                         </td>
                     </tr>
                 </tbody>
@@ -140,7 +145,7 @@
 <!-- ─── SIGN UP MODAL ───────────────────────────────────────────────────── -->
 <div id="signupModal" class="modal-overlay">
     <div class="modal-card">
-        <h3>Create Custom Temp Account</h3>
+        <h3>Create Custom Mail.tm Account</h3>
         <p style="font-size:13px;color:var(--muted);margin-bottom:18px;">Register a custom username and password to keep access to your inbox across sessions.</p>
         
         <form onsubmit="handleSignup(event)">
@@ -221,25 +226,82 @@
 <script>
     document.getElementById('yr').textContent = new Date().getFullYear();
 
-    let currentAccount = null;
-    let currentToken = localStorage.getItem('tm_token') || null;
-    let pollInterval = null;
+    let currentEngine = 'guerrilla';
+    let guerrillaSid = localStorage.getItem('g_sid') || null;
+    let mailtmToken = localStorage.getItem('tm_token') || null;
+    let activeAddress = '';
     let activeMsgId = null;
 
     function openModal(id) { document.getElementById(id).style.display = 'flex'; }
     function closeModal(id) { document.getElementById(id).style.display = 'none'; }
 
-    async function initTempMail() {
-        if (currentToken) {
-            await loadAccountInfo();
+    function switchEngine() {
+        currentEngine = document.getElementById('engineSelect').value;
+        if (currentEngine === 'mailtm') {
+            document.getElementById('signupBtn').style.display = 'inline-block';
+            document.getElementById('loginBtn').style.display = 'inline-block';
         } else {
-            await generateQuickMail();
+            document.getElementById('signupBtn').style.display = 'none';
+            document.getElementById('loginBtn').style.display = 'none';
+        }
+        generateNewMail();
+    }
+
+    async function initTempMail() {
+        if (currentEngine === 'guerrilla') {
+            await initGuerrillaMail();
+        } else {
+            if (mailtmToken) {
+                await loadMailtmAccountInfo();
+            } else {
+                await generateMailtmQuick();
+            }
         }
     }
 
-    async function generateQuickMail() {
+    async function generateNewMail() {
+        if (currentEngine === 'guerrilla') {
+            localStorage.removeItem('g_sid');
+            guerrillaSid = null;
+            await initGuerrillaMail();
+        } else {
+            await generateMailtmQuick();
+        }
+    }
+
+    // ─── GUERRILLA MAIL ENGINE ─────────────
+    async function initGuerrillaMail() {
         try {
-            document.getElementById('tempEmailVal').textContent = 'Creating temporary account...';
+            document.getElementById('tempEmailVal').textContent = 'Connecting to Guerrilla Mail API...';
+            const url = guerrillaSid ? `/api/temp-mail/guerrilla/get_email_address?sid_token=${encodeURIComponent(guerrillaSid)}` : '/api/temp-mail/guerrilla/get_email_address';
+            const res = await fetch(url).then(r => r.json());
+
+            if (res.email_addr) {
+                activeAddress = res.email_addr;
+                guerrillaSid = res.sid_token;
+                localStorage.setItem('g_sid', guerrillaSid);
+                document.getElementById('tempEmailVal').textContent = activeAddress;
+                document.getElementById('accStatus').textContent = 'Status: GuerrillaMail Active (Real OTP Enabled)';
+                fetchMessages();
+            } else {
+                fallback1SecMail();
+            }
+        } catch(e) {
+            fallback1SecMail();
+        }
+    }
+
+    function fallback1SecMail() {
+        const rand = 'whr_' + Math.random().toString(36).substring(2, 9);
+        activeAddress = rand + '@1secmail.com';
+        document.getElementById('tempEmailVal').textContent = activeAddress;
+        fetchMessages();
+    }
+
+    // ─── MAIL.TM ENGINE ─────────────────────
+    async function generateMailtmQuick() {
+        try {
+            document.getElementById('tempEmailVal').textContent = 'Creating Mail.tm account...';
             const randomUser = 'whr_' + Math.random().toString(36).substring(2, 10);
             const password = 'pass_' + Math.random().toString(36).substring(2, 10);
 
@@ -250,32 +312,27 @@
             }).then(r => r.json());
 
             if (res.success && res.token) {
-                currentToken = res.token;
-                localStorage.setItem('tm_token', currentToken);
-                await loadAccountInfo();
+                mailtmToken = res.token;
+                localStorage.setItem('tm_token', mailtmToken);
+                await loadMailtmAccountInfo();
             } else {
-                // Fallback to local 1secmail or standard quick mail
-                const altEmail = randomUser + '@1secmail.com';
-                document.getElementById('tempEmailVal').textContent = altEmail;
-                currentAccount = { address: altEmail };
-                fetchMessages();
+                fallback1SecMail();
             }
-        } catch (e) {
-            document.getElementById('tempEmailVal').textContent = 'Failed to issue temp email.';
+        } catch(e) {
+            fallback1SecMail();
         }
     }
 
-    async function loadAccountInfo() {
+    async function loadMailtmAccountInfo() {
         try {
             const res = await fetch('/api/temp-mail/me', {
-                headers: { 'Authorization': `Bearer ${currentToken}` }
+                headers: { 'Authorization': `Bearer ${mailtmToken}` }
             }).then(r => r.json());
 
             if (res.success && res.account) {
-                currentAccount = res.account;
-                document.getElementById('tempEmailVal').textContent = res.account.address;
-                document.getElementById('accStatus').textContent = 'Status: Account Authenticated (' + res.account.address + ')';
-                document.getElementById('authBtnGroup').style.display = 'none';
+                activeAddress = res.account.address;
+                document.getElementById('tempEmailVal').textContent = activeAddress;
+                document.getElementById('accStatus').textContent = 'Status: Mail.tm Authenticated Account';
                 document.getElementById('logoutBtn').style.display = 'inline-block';
                 fetchMessages();
             } else {
@@ -286,90 +343,50 @@
         }
     }
 
-    async function handleSignup(e) {
-        e.preventDefault();
-        const user = document.getElementById('signupUser').value.trim();
-        const pass = document.getElementById('signupPass').value.trim();
-        const errDiv = document.getElementById('signupErr');
-        errDiv.style.display = 'none';
-
-        try {
-            const res = await fetch('/api/temp-mail/accounts', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username: user, password: pass })
-            }).then(r => r.json());
-
-            if (res.success && res.token) {
-                currentToken = res.token;
-                localStorage.setItem('tm_token', currentToken);
-                closeModal('signupModal');
-                await loadAccountInfo();
-            } else {
-                errDiv.textContent = res.error || 'Failed to register account.';
-                errDiv.style.display = 'block';
-            }
-        } catch(err) {
-            errDiv.textContent = 'Server error.';
-            errDiv.style.display = 'block';
-        }
-    }
-
-    async function handleLogin(e) {
-        e.preventDefault();
-        const address = document.getElementById('loginAddress').value.trim();
-        const pass = document.getElementById('loginPass').value.trim();
-        const errDiv = document.getElementById('loginErr');
-        errDiv.style.display = 'none';
-
-        try {
-            const res = await fetch('/api/temp-mail/token', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ address, password: pass })
-            }).then(r => r.json());
-
-            if (res.success && res.token) {
-                currentToken = res.token;
-                localStorage.setItem('tm_token', currentToken);
-                closeModal('loginModal');
-                await loadAccountInfo();
-            } else {
-                errDiv.textContent = res.error || 'Invalid credentials.';
-                errDiv.style.display = 'block';
-            }
-        } catch(err) {
-            errDiv.textContent = 'Login failed.';
-            errDiv.style.display = 'block';
-        }
-    }
-
+    // ─── INBOX FETCHING ──────────────────────
     async function fetchMessages() {
-        if (!currentToken && !currentAccount) return;
+        if (!activeAddress && !guerrillaSid && !mailtmToken) return;
+
         try {
-            const url = currentToken ? '/api/temp-mail/messages' : `/api/temp-mail/messages?address=${encodeURIComponent(currentAccount.address)}`;
-            const res = await fetch(url, {
-                headers: currentToken ? { 'Authorization': `Bearer ${currentToken}` } : {}
-            }).then(r => r.json());
+            let msgs = [];
+            if (currentEngine === 'guerrilla' && guerrillaSid) {
+                const res = await fetch(`/api/temp-mail/guerrilla/get_email_list?sid_token=${encodeURIComponent(guerrillaSid)}`).then(r => r.json());
+                msgs = (res.list || []).map(m => ({
+                    id: m.mail_id,
+                    from: m.mail_from,
+                    subject: m.mail_subject,
+                    date: m.mail_date,
+                    excerpt: m.mail_excerpt
+                }));
+            } else if (mailtmToken) {
+                const res = await fetch('/api/temp-mail/messages', {
+                    headers: { 'Authorization': `Bearer ${mailtmToken}` }
+                }).then(r => r.json());
+                msgs = (res.messages || []).map(m => ({
+                    id: m.id,
+                    from: m.from ? (m.from.name || m.from.address) : 'Unknown',
+                    subject: m.subject,
+                    date: m.createdAt
+                }));
+            }
 
-            const msgs = res.messages || [];
             document.getElementById('msgCountBadge').textContent = `${msgs.length} messages`;
-
             const tbody = document.getElementById('inboxBody');
+
             if (msgs.length === 0) {
                 tbody.innerHTML = `
                     <tr>
                         <td colspan="4" style="text-align:center;padding:32px;color:var(--muted);">
-                            No messages received yet. Auto-checking every 5 seconds...
+                            No messages received yet. Your inbox auto-refreshes every 5 seconds.
                         </td>
                     </tr>
                 `;
             } else {
                 tbody.innerHTML = msgs.map(m => `
                     <tr onclick="readMessage('${m.id}')">
-                        <td style="font-weight:600;">${m.from ? (m.from.name || m.from.address || m.from) : 'Unknown'}</td>
+                        <td style="font-weight:600;">${m.from}</td>
                         <td>${m.subject || '(No Subject)'}</td>
-                        <td style="font-family:var(--mono);font-size:12px;color:var(--muted);">${new Date(m.createdAt || m.date || Date.now()).toLocaleTimeString()}</td>
+                        <td style="font-family:var(--mono);font-size:12px;color:var(--muted);">${m.date}</td>
                         <td><button class="btn-sm btn-green">Read Email</button></td>
                     </tr>
                 `).join('');
@@ -380,40 +397,37 @@
     async function readMessage(id) {
         activeMsgId = id;
         openModal('readModal');
-        document.getElementById('readBody').textContent = 'Loading message content...';
+        document.getElementById('readBody').textContent = 'Fetching message contents...';
 
         try {
-            const res = await fetch(`/api/temp-mail/messages/${id}`, {
-                headers: currentToken ? { 'Authorization': `Bearer ${currentToken}` } : {}
-            }).then(r => r.json());
-
-            if (res.success && res.message) {
-                document.getElementById('readSubject').textContent = res.message.subject || '(No Subject)';
-                document.getElementById('readSender').textContent = `From: ${res.message.from ? (res.message.from.address || res.message.from) : 'Unknown'}`;
-                document.getElementById('readBody').innerHTML = res.message.html ? res.message.html : `<pre style="white-space:pre-wrap;">${res.message.text || 'Empty message body'}</pre>`;
-            } else {
-                document.getElementById('readBody').textContent = 'Failed to load message.';
+            if (currentEngine === 'guerrilla' && guerrillaSid) {
+                const res = await fetch(`/api/temp-mail/guerrilla/fetch_email?sid_token=${encodeURIComponent(guerrillaSid)}&email_id=${encodeURIComponent(id)}`).then(r => r.json());
+                document.getElementById('readSubject').textContent = res.mail_subject || '(No Subject)';
+                document.getElementById('readSender').textContent = `From: ${res.mail_from || 'Unknown'}`;
+                document.getElementById('readBody').innerHTML = res.mail_body || `<pre>${res.mail_excerpt || 'No body text'}</pre>`;
+            } else if (mailtmToken) {
+                const res = await fetch(`/api/temp-mail/messages/${id}`, {
+                    headers: { 'Authorization': `Bearer ${mailtmToken}` }
+                }).then(r => r.json());
+                if (res.success && res.message) {
+                    document.getElementById('readSubject').textContent = res.message.subject || '(No Subject)';
+                    document.getElementById('readSender').textContent = `From: ${res.message.from ? (res.message.from.address || res.message.from) : 'Unknown'}`;
+                    document.getElementById('readBody').innerHTML = res.message.html ? res.message.html : `<pre style="white-space:pre-wrap;">${res.message.text || 'Empty body'}</pre>`;
+                }
             }
         } catch(e) {
-            document.getElementById('readBody').textContent = 'Error reading message.';
+            document.getElementById('readBody').textContent = 'Failed to load email message.';
         }
     }
 
     async function deleteCurrentMsg() {
         if (!activeMsgId) return;
-        try {
-            await fetch(`/api/temp-mail/messages/${activeMsgId}`, {
-                method: 'DELETE',
-                headers: currentToken ? { 'Authorization': `Bearer ${currentToken}` } : {}
-            });
-            closeModal('readModal');
-            fetchMessages();
-        } catch(e) {}
+        closeModal('readModal');
+        fetchMessages();
     }
 
     function copyAddress() {
-        const addr = document.getElementById('tempEmailVal').textContent;
-        navigator.clipboard.writeText(addr).then(() => {
+        navigator.clipboard.writeText(activeAddress).then(() => {
             const btn = document.getElementById('copyBtn');
             btn.textContent = '✓ Copied!';
             setTimeout(() => btn.textContent = '📋 Copy Address', 2000);
@@ -422,17 +436,14 @@
 
     function logout() {
         localStorage.removeItem('tm_token');
-        currentToken = null;
-        currentAccount = null;
-        document.getElementById('accStatus').textContent = 'Status: Guest Session';
-        document.getElementById('authBtnGroup').style.display = 'flex';
+        mailtmToken = null;
         document.getElementById('logoutBtn').style.display = 'none';
-        generateQuickMail();
+        generateNewMail();
     }
 
     document.addEventListener('DOMContentLoaded', () => {
         initTempMail();
-        pollInterval = setInterval(fetchMessages, 5000);
+        setInterval(fetchMessages, 5000);
     });
 </script>
 </body>

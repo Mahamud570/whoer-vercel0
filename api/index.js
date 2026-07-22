@@ -379,6 +379,36 @@ app.delete('/api/temp-mail/messages/:id', async (req, res) => {
     }
 });
 
+// ─── GUERRILLA MAIL API (REAL OTP & VERIFICATION SUPPORT) ─────────────────────
+app.get('/api/temp-mail/guerrilla/get_email_address', async (req, res) => {
+    try {
+        const gRes = await axios.get('https://api.guerrillamail.com/ajax.php?f=get_email_address', { timeout: 6000 });
+        return res.json(gRes.data);
+    } catch (err) {
+        return res.status(500).json({ error: 'guerrilla_failed' });
+    }
+});
+
+app.get('/api/temp-mail/guerrilla/get_email_list', async (req, res) => {
+    try {
+        const sid = req.query.sid_token || '';
+        const gRes = await axios.get(`https://api.guerrillamail.com/ajax.php?f=get_email_list&sid_token=${encodeURIComponent(sid)}&offset=0`, { timeout: 6000 });
+        return res.json(gRes.data);
+    } catch (err) {
+        return res.json({ list: [] });
+    }
+});
+
+app.get('/api/temp-mail/guerrilla/fetch_email', async (req, res) => {
+    try {
+        const { sid_token = '', email_id = '' } = req.query;
+        const gRes = await axios.get(`https://api.guerrillamail.com/ajax.php?f=fetch_email&sid_token=${encodeURIComponent(sid_token)}&email_id=${encodeURIComponent(email_id)}`, { timeout: 6000 });
+        return res.json(gRes.data);
+    } catch (err) {
+        return res.status(404).json({ error: 'email_fetch_failed' });
+    }
+});
+
 // ─── TOOL LANDING PAGES ──────────────────────────────────────────────────────
 app.get('/ip-location-lookup',    (req, res) => res.render('tool_landing', { tool: TOOL_LANDINGS['ip-location-lookup'], slug: 'ip-location-lookup', year: new Date().getFullYear() }));
 app.get('/vpn-detector',         (req, res) => res.render('tool_landing', { tool: TOOL_LANDINGS['vpn-detector'], slug: 'vpn-detector', year: new Date().getFullYear() }));
