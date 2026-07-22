@@ -281,6 +281,103 @@ app.get('/port-scanner',(req, res) => res.render('port_scanner'));
 app.get('/ping',        (req, res) => res.render('ping_test'));
 app.get('/guides',      (req, res) => res.render('guides'));
 app.get('/threat-map',  (req, res) => res.render('threat_map'));
+app.get('/temp-mail',   (req, res) => res.render('tempmail'));
+
+// ─── TEMP MAIL API (MAIL.TM PROTOCOL) ─────────────────────────────────────────
+let MAIL_TM_DOMAIN = 'mail.tm';
+async function getMailTmDomain() {
+    try {
+        const dRes = await axios.get('https://api.mail.tm/domains', { timeout: 4000 });
+        if (dRes.data && dRes.data['hydra:member'] && dRes.data['hydra:member'].length) {
+            return dRes.data['hydra:member'][0].domain;
+        }
+    } catch (_) {}
+    return 'mail.tm';
+}
+
+app.post('/api/temp-mail/accounts', async (req, res) => {
+    try {
+        const { username, password } = req.body;
+        const domain = await getMailTmDomain();
+        const address = username.includes('@') ? username : `${username}@${domain}`;
+        
+        // Register account on Mail.tm
+        await axios.post('https://api.mail.tm/accounts', { address, password }, { timeout: 5000 });
+        
+        // Obtain token
+        const tRes = await axios.post('https://api.mail.tm/token', { address, password }, { timeout: 5000 });
+        return res.json({ success: true, address, token: tRes.data.token });
+    } catch (err) {
+        return res.status(400).json({ success: false, error: err.response?.data?.['hydra:description'] || 'Account creation failed.' });
+    }
+});
+
+app.post('/api/temp-mail/token', async (req, res) => {
+    try {
+        const { address, password } = req.body;
+        const tRes = await axios.post('https://api.mail.tm/token', { address, password }, { timeout: 5000 });
+        return res.json({ success: true, address, token: tRes.data.token });
+    } catch (err) {
+        return res.status(401).json({ success: false, error: 'Invalid email or password.' });
+    }
+});
+
+app.get('/api/temp-mail/me', async (req, res) => {
+    try {
+        const token = (req.headers.authorization || '').replace('Bearer ', '');
+        if (!token) return res.status(401).json({ error: 'unauthorized' });
+        const meRes = await axios.get('https://api.mail.tm/me', { headers: { Authorization: `Bearer ${token}` }, timeout: 5000 });
+        return res.json({ success: true, account: meRes.data });
+    } catch (err) {
+        return res.status(401).json({ error: 'session_expired' });
+    }
+});
+
+app.get('/api/temp-mail/messages', async (req, res) => {
+    try {
+        const token = (req.headers.authorization || '').replace('Bearer ', '');
+        if (token) {
+            const mRes = await axios.get('https://api.mail.tm/messages', { headers: { Authorization: `Bearer ${token}` }, timeout: 5000 });
+            return res.json({ success: true, messages: mRes.data['hydra:member'] || [] });
+        }
+        
+        // 1secmail fallback
+        const { address = '' } = req.query;
+        const [login, domain] = address.split('@');
+        if (login && domain) {
+            const secRes = await axios.get(`https://www.1secmail.com/api/v1/?action=getMessages&login=${login}&domain=${domain}`, { timeout: 5000 });
+            return res.json({ success: true, messages: secRes.data || [] });
+        }
+        return res.json({ success: true, messages: [] });
+    } catch (err) {
+        return res.json({ success: true, messages: [] });
+    }
+});
+
+app.get('/api/temp-mail/messages/:id', async (req, res) => {
+    try {
+        const token = (req.headers.authorization || '').replace('Bearer ', '');
+        if (token) {
+            const mRes = await axios.get(`https://api.mail.tm/messages/${req.params.id}`, { headers: { Authorization: `Bearer ${token}` }, timeout: 5000 });
+            return res.json({ success: true, message: mRes.data });
+        }
+        return res.status(404).json({ error: 'message_not_found' });
+    } catch (err) {
+        return res.status(404).json({ error: 'message_not_found' });
+    }
+});
+
+app.delete('/api/temp-mail/messages/:id', async (req, res) => {
+    try {
+        const token = (req.headers.authorization || '').replace('Bearer ', '');
+        if (token) {
+            await axios.delete(`https://api.mail.tm/messages/${req.params.id}`, { headers: { Authorization: `Bearer ${token}` }, timeout: 5000 });
+        }
+        return res.json({ success: true });
+    } catch (err) {
+        return res.json({ success: true });
+    }
+});
 
 // ─── TOOL LANDING PAGES ──────────────────────────────────────────────────────
 app.get('/ip-location-lookup',    (req, res) => res.render('tool_landing', { tool: TOOL_LANDINGS['ip-location-lookup'], slug: 'ip-location-lookup', year: new Date().getFullYear() }));

@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Temporary Email Generator — Free Disposable Inbox | Whoer Live</title>
+    <meta name="description" content="Generate instant, disposable temporary email addresses. Protect your real inbox from spam, register accounts securely, and receive verification codes instantly.">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://www.whoer.live/temp-mail">
+    <link rel="icon" type="image/png" href="/img/logo.png">
+    
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Temporary Email Generator — Whoer Live">
+    <meta property="og:description" content="Free disposable email address generator. Receive SMS & verification emails instantly without revealing your identity.">
+    <meta property="og:url" content="https://www.whoer.live/temp-mail">
+    <meta property="og:image" content="https://www.whoer.live/img/logo.png">
+
+    <!-- Preload & Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"></noscript>
+    <style><%- include('../public/css/style.css') %></style>
+    
+    <style>
+        .tm-wrap { max-width: 960px; margin: 0 auto; padding: 20px 20px 100px; }
+        .tm-hero { text-align: center; padding: 32px 0 24px; }
+        .tm-hero h1 { font-size: 32px; font-weight: 700; margin-bottom: 10px; }
+        .tm-hero p { font-size: 15px; color: var(--muted); max-width: 560px; margin: 0 auto; line-height: 1.6; }
+        
+        .tm-card { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 24px; margin-bottom: 24px; }
+        .tm-box { display: flex; align-items: center; justify-content: space-between; background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 18px; margin-top: 14px; gap: 12px; flex-wrap: wrap; }
+        .tm-address { font-family: var(--mono); font-size: 18px; font-weight: 700; color: var(--green); word-break: break-all; }
+        
+        .tm-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; }
+        .btn-sm { padding: 8px 16px; font-size: 13px; border-radius: var(--radius); font-weight: 600; cursor: pointer; text-decoration: none; border: 1px solid var(--border); background: var(--panel); color: var(--text); transition: all 0.2s; }
+        .btn-sm:hover { background: var(--panel-hover); border-color: var(--border2); }
+        .btn-sm.btn-green { background: var(--green); color: #000; border-color: var(--green); }
+        .btn-sm.btn-green:hover { box-shadow: 0 4px 15px rgba(34,215,122,0.3); }
+
+        .inbox-table { width: 100%; border-collapse: collapse; margin-top: 14px; font-size: 14px; }
+        .inbox-table th { text-align: left; padding: 12px; color: var(--muted); border-b: 1px solid var(--border); font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .inbox-table td { padding: 14px 12px; border-b: 1px solid var(--border); color: var(--text); }
+        .inbox-table tr:hover td { background: var(--panel-hover); cursor: pointer; }
+
+        .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 1000; justify-content: center; align-items: center; padding: 20px; }
+        .modal-card { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius-lg); max-width: 540px; width: 100%; padding: 28px; box-shadow: 0 20px 40px rgba(0,0,0,0.6); }
+        .modal-card h3 { font-size: 20px; font-weight: 700; margin-bottom: 16px; }
+        .form-group { margin-bottom: 14px; text-align: left; }
+        .form-group label { display: block; font-size: 12px; color: var(--muted); margin-bottom: 6px; font-weight: 600; }
+        .form-input { width: 100%; padding: 10px 14px; background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius); color: var(--text); font-family: var(--mono); font-size: 14px; box-sizing: border-box; }
+        .form-input:focus { border-color: var(--blue); outline: none; }
+    </style>
+</head>
+<body>
+
+<!-- ─── HEADER ─────────────────────────────────────────────────────────── -->
+<header>
+    <div class="container header-inner">
+        <a href="/" style="display:flex;align-items:center;gap:10px;text-decoration:none;">
+            <img src="/img/logo.png" alt="Whoer Live" style="width:32px;height:32px;border-radius:8px;">
+            <div class="logo">WHOER<span>.LIVE</span> <sub>v4</sub></div>
+        </a>
+        <div class="header-actions">
+            <a href="/" class="btn">🛡️ IP Check</a>
+            <a href="/temp-mail" class="btn btn-primary" style="background:var(--green);color:#000;border-color:var(--green);">✉️ Temp Mail</a>
+            <a href="/bulk" class="btn">🔢 Bulk</a>
+            <a href="/api-docs" class="btn">⚡ API</a>
+            <a href="/threat-map" class="btn" style="color:var(--red);border-color:rgba(255,79,106,0.3);background:rgba(255,79,106,0.1);">🔴 Threats</a>
+        </div>
+    </div>
+</header>
+
+<!-- ─── MAIN CONTENT ────────────────────────────────────────────────────── -->
+<div class="tm-wrap">
+    
+    <div class="tm-hero">
+        <h1>Temporary Email Generator</h1>
+        <p>Instant disposable email addresses for temporary registrations, 2FA verification, and spam prevention. Complete Mail.tm account support included.</p>
+    </div>
+
+    <!-- ACTIVE EMAIL CARD -->
+    <div class="tm-card">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
+            <div>
+                <span style="font-size:12px;color:var(--muted);font-weight:600;text-transform:uppercase;">Active Temporary Email</span>
+                <div id="accStatus" style="font-size:12px;color:var(--blue);margin-top:2px;">Status: Guest Session</div>
+            </div>
+            <div id="authBtnGroup" style="display:flex;gap:8px;">
+                <button onclick="openModal('signupModal')" class="btn-sm">Create Account</button>
+                <button onclick="openModal('loginModal')" class="btn-sm">Log In</button>
+            </div>
+        </div>
+
+        <div class="tm-box">
+            <div id="tempEmailVal" class="tm-address">Generating temporary address...</div>
+            <button onclick="copyAddress()" class="btn-sm btn-green" id="copyBtn">📋 Copy Address</button>
+        </div>
+
+        <div class="tm-actions">
+            <button onclick="generateQuickMail()" class="btn-sm">↻ Quick New Mail</button>
+            <button onclick="openModal('signupModal')" class="btn-sm">Create Custom Account</button>
+            <button onclick="openModal('loginModal')" class="btn-sm">Log In</button>
+            <button onclick="fetchMessages()" class="btn-sm">🔄 Refresh Inbox</button>
+            <button id="logoutBtn" onclick="logout()" class="btn-sm" style="display:none;color:var(--red);border-color:rgba(255,79,106,0.3);">Logout</button>
+        </div>
+    </div>
+
+    <!-- INBOX TABLE CARD -->
+    <div class="tm-card">
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+            <h2 style="font-size:18px;font-weight:700;">Incoming Messages</h2>
+            <span id="msgCountBadge" style="font-size:12px;color:var(--muted);font-family:var(--mono);">0 messages</span>
+        </div>
+
+        <div style="overflow-x:auto;">
+            <table class="inbox-table">
+                <thead>
+                    <tr>
+                        <th>Sender</th>
+                        <th>Subject</th>
+                        <th>Date / Time</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="inboxBody">
+                    <tr>
+                        <td colspan="4" style="text-center:center;padding:32px;color:var(--muted);">
+                            No messages received yet. Your inbox checks for new mail automatically every 5 seconds.
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+<!-- ─── SIGN UP MODAL ───────────────────────────────────────────────────── -->
+<div id="signupModal" class="modal-overlay">
+    <div class="modal-card">
+        <h3>Create Custom Temp Account</h3>
+        <p style="font-size:13px;color:var(--muted);margin-bottom:18px;">Register a custom username and password to keep access to your inbox across sessions.</p>
+        
+        <form onsubmit="handleSignup(event)">
+            <div class="form-group">
+                <label>Username / Address Prefix</label>
+                <input type="text" id="signupUser" class="form-input" placeholder="myusername" required>
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" id="signupPass" class="form-input" placeholder="••••••••" required>
+            </div>
+            <div id="signupErr" style="color:var(--red);font-size:12px;margin-bottom:12px;display:none;"></div>
+            
+            <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:20px;">
+                <button type="button" onclick="closeModal('signupModal')" class="btn-sm">Cancel</button>
+                <button type="submit" class="btn-sm btn-green">Register Account</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- ─── LOGIN MODAL ─────────────────────────────────────────────────────── -->
+<div id="loginModal" class="modal-overlay">
+    <div class="modal-card">
+        <h3>Log In to Existing Inbox</h3>
+        <p style="font-size:13px;color:var(--muted);margin-bottom:18px;">Enter your temporary email address and password to retrieve saved messages.</p>
+        
+        <form onsubmit="handleLogin(event)">
+            <div class="form-group">
+                <label>Full Email Address</label>
+                <input type="email" id="loginAddress" class="form-input" placeholder="user@domain.com" required>
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" id="loginPass" class="form-input" placeholder="••••••••" required>
+            </div>
+            <div id="loginErr" style="color:var(--red);font-size:12px;margin-bottom:12px;display:none;"></div>
+            
+            <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:20px;">
+                <button type="button" onclick="closeModal('loginModal')" class="btn-sm">Cancel</button>
+                <button type="submit" class="btn-sm btn-green">Log In</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- ─── MESSAGE READ MODAL ─────────────────────────────────────────────── -->
+<div id="readModal" class="modal-overlay">
+    <div class="modal-card" style="max-width:680px;">
+        <h3 id="readSubject">Message Details</h3>
+        <div style="font-size:13px;color:var(--muted);margin-bottom:14px;" id="readSender">From: --</div>
+        
+        <div id="readBody" style="background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:16px;max-height:360px;overflow-y:auto;font-size:14px;line-height:1.6;margin-bottom:20px;">
+            Loading message body...
+        </div>
+        
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+            <button id="delMsgBtn" onclick="deleteCurrentMsg()" class="btn-sm" style="color:var(--red);border-color:rgba(255,79,106,0.3);">Delete Message</button>
+            <button onclick="closeModal('readModal')" class="btn-sm">Close</button>
+        </div>
+    </div>
+</div>
+
+<!-- ─── FOOTER ─────────────────────────────────────────────────────────── -->
+<footer>
+    <div class="container">
+        <div class="footer-links">
+            <a href="/">Home</a>
+            <a href="/temp-mail">Temp Mail</a>
+            <a href="/bulk">Bulk Check</a>
+            <a href="/api-docs">API Docs</a>
+            <a href="/sitemap.xml">Sitemap</a>
+        </div>
+        <div>Whoer Live &copy; <span id="yr"></span> — Free IP &amp; Privacy Tools</div>
+    </div>
+</footer>
+
+<script>
+    document.getElementById('yr').textContent = new Date().getFullYear();
+
+    let currentAccount = null;
+    let currentToken = localStorage.getItem('tm_token') || null;
+    let pollInterval = null;
+    let activeMsgId = null;
+
+    function openModal(id) { document.getElementById(id).style.display = 'flex'; }
+    function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+
+    async function initTempMail() {
+        if (currentToken) {
+            await loadAccountInfo();
+        } else {
+            await generateQuickMail();
+        }
+    }
+
+    async function generateQuickMail() {
+        try {
+            document.getElementById('tempEmailVal').textContent = 'Creating temporary account...';
+            const randomUser = 'whr_' + Math.random().toString(36).substring(2, 10);
+            const password = 'pass_' + Math.random().toString(36).substring(2, 10);
+
+            const res = await fetch('/api/temp-mail/accounts', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username: randomUser, password })
+            }).then(r => r.json());
+
+            if (res.success && res.token) {
+                currentToken = res.token;
+                localStorage.setItem('tm_token', currentToken);
+                await loadAccountInfo();
+            } else {
+                // Fallback to local 1secmail or standard quick mail
+                const altEmail = randomUser + '@1secmail.com';
+                document.getElementById('tempEmailVal').textContent = altEmail;
+                currentAccount = { address: altEmail };
+                fetchMessages();
+            }
+        } catch (e) {
+            document.getElementById('tempEmailVal').textContent = 'Failed to issue temp email.';
+        }
+    }
+
+    async function loadAccountInfo() {
+        try {
+            const res = await fetch('/api/temp-mail/me', {
+                headers: { 'Authorization': `Bearer ${currentToken}` }
+            }).then(r => r.json());
+
+            if (res.success && res.account) {
+                currentAccount = res.account;
+                document.getElementById('tempEmailVal').textContent = res.account.address;
+                document.getElementById('accStatus').textContent = 'Status: Account Authenticated (' + res.account.address + ')';
+                document.getElementById('authBtnGroup').style.display = 'none';
+                document.getElementById('logoutBtn').style.display = 'inline-block';
+                fetchMessages();
+            } else {
+                logout();
+            }
+        } catch (e) {
+            logout();
+        }
+    }
+
+    async function handleSignup(e) {
+        e.preventDefault();
+        const user = document.getElementById('signupUser').value.trim();
+        const pass = document.getElementById('signupPass').value.trim();
+        const errDiv = document.getElementById('signupErr');
+        errDiv.style.display = 'none';
+
+        try {
+            const res = await fetch('/api/temp-mail/accounts', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username: user, password: pass })
+            }).then(r => r.json());
+
+            if (res.success && res.token) {
+                currentToken = res.token;
+                localStorage.setItem('tm_token', currentToken);
+                closeModal('signupModal');
+                await loadAccountInfo();
+            } else {
+                errDiv.textContent = res.error || 'Failed to register account.';
+                errDiv.style.display = 'block';
+            }
+        } catch(err) {
+            errDiv.textContent = 'Server error.';
+            errDiv.style.display = 'block';
+        }
+    }
+
+    async function handleLogin(e) {
+        e.preventDefault();
+        const address = document.getElementById('loginAddress').value.trim();
+        const pass = document.getElementById('loginPass').value.trim();
+        const errDiv = document.getElementById('loginErr');
+        errDiv.style.display = 'none';
+
+        try {
+            const res = await fetch('/api/temp-mail/token', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ address, password: pass })
+            }).then(r => r.json());
+
+            if (res.success && res.token) {
+                currentToken = res.token;
+                localStorage.setItem('tm_token', currentToken);
+                closeModal('loginModal');
+                await loadAccountInfo();
+            } else {
+                errDiv.textContent = res.error || 'Invalid credentials.';
+                errDiv.style.display = 'block';
+            }
+        } catch(err) {
+            errDiv.textContent = 'Login failed.';
+            errDiv.style.display = 'block';
+        }
+    }
+
+    async function fetchMessages() {
+        if (!currentToken && !currentAccount) return;
+        try {
+            const url = currentToken ? '/api/temp-mail/messages' : `/api/temp-mail/messages?address=${encodeURIComponent(currentAccount.address)}`;
+            const res = await fetch(url, {
+                headers: currentToken ? { 'Authorization': `Bearer ${currentToken}` } : {}
+            }).then(r => r.json());
+
+            const msgs = res.messages || [];
+            document.getElementById('msgCountBadge').textContent = `${msgs.length} messages`;
+
+            const tbody = document.getElementById('inboxBody');
+            if (msgs.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="4" style="text-align:center;padding:32px;color:var(--muted);">
+                            No messages received yet. Auto-checking every 5 seconds...
+                        </td>
+                    </tr>
+                `;
+            } else {
+                tbody.innerHTML = msgs.map(m => `
+                    <tr onclick="readMessage('${m.id}')">
+                        <td style="font-weight:600;">${m.from ? (m.from.name || m.from.address || m.from) : 'Unknown'}</td>
+                        <td>${m.subject || '(No Subject)'}</td>
+                        <td style="font-family:var(--mono);font-size:12px;color:var(--muted);">${new Date(m.createdAt || m.date || Date.now()).toLocaleTimeString()}</td>
+                        <td><button class="btn-sm btn-green">Read Email</button></td>
+                    </tr>
+                `).join('');
+            }
+        } catch(e) {}
+    }
+
+    async function readMessage(id) {
+        activeMsgId = id;
+        openModal('readModal');
+        document.getElementById('readBody').textContent = 'Loading message content...';
+
+        try {
+            const res = await fetch(`/api/temp-mail/messages/${id}`, {
+                headers: currentToken ? { 'Authorization': `Bearer ${currentToken}` } : {}
+            }).then(r => r.json());
+
+            if (res.success && res.message) {
+                document.getElementById('readSubject').textContent = res.message.subject || '(No Subject)';
+                document.getElementById('readSender').textContent = `From: ${res.message.from ? (res.message.from.address || res.message.from) : 'Unknown'}`;
+                document.getElementById('readBody').innerHTML = res.message.html ? res.message.html : `<pre style="white-space:pre-wrap;">${res.message.text || 'Empty message body'}</pre>`;
+            } else {
+                document.getElementById('readBody').textContent = 'Failed to load message.';
+            }
+        } catch(e) {
+            document.getElementById('readBody').textContent = 'Error reading message.';
+        }
+    }
+
+    async function deleteCurrentMsg() {
+        if (!activeMsgId) return;
+        try {
+            await fetch(`/api/temp-mail/messages/${activeMsgId}`, {
+                method: 'DELETE',
+                headers: currentToken ? { 'Authorization': `Bearer ${currentToken}` } : {}
+            });
+            closeModal('readModal');
+            fetchMessages();
+        } catch(e) {}
+    }
+
+    function copyAddress() {
+        const addr = document.getElementById('tempEmailVal').textContent;
+        navigator.clipboard.writeText(addr).then(() => {
+            const btn = document.getElementById('copyBtn');
+            btn.textContent = '✓ Copied!';
+            setTimeout(() => btn.textContent = '📋 Copy Address', 2000);
+        });
+    }
+
+    function logout() {
+        localStorage.removeItem('tm_token');
+        currentToken = null;
+        currentAccount = null;
+        document.getElementById('accStatus').textContent = 'Status: Guest Session';
+        document.getElementById('authBtnGroup').style.display = 'flex';
+        document.getElementById('logoutBtn').style.display = 'none';
+        generateQuickMail();
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        initTempMail();
+        pollInterval = setInterval(fetchMessages, 5000);
+    });
+</script>
+</body>
+</html>
