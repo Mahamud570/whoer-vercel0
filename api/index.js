@@ -284,6 +284,16 @@ app.get('/threat-map',  (req, res) => res.render('threat_map'));
 app.get('/temp-mail',   (req, res) => res.render('tempmail'));
 
 // ─── TEMP MAIL API (MAIL.TM PROTOCOL) ─────────────────────────────────────────
+app.get('/api/temp-mail/domains', async (req, res) => {
+    try {
+        const dRes = await axios.get('https://api.mail.tm/domains', { timeout: 5000 });
+        const domains = (dRes.data && dRes.data['hydra:member']) ? dRes.data['hydra:member'].map(d => d.domain) : ['mail.tm'];
+        return res.json({ success: true, domains });
+    } catch (err) {
+        return res.json({ success: true, domains: ['mail.tm'] });
+    }
+});
+
 let MAIL_TM_DOMAIN = 'mail.tm';
 async function getMailTmDomain() {
     try {

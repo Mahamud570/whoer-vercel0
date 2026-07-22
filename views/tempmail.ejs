@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Temporary Email Generator — Free Disposable Inbox | Whoer Live</title>
-    <meta name="description" content="Generate instant, disposable temporary email addresses. Receive real OTP codes, verification emails, and protect your inbox from spam.">
+    <meta name="description" content="Persistent disposable temporary email system powered by Mail.tm protocol. Create custom accounts, save credentials, and log in anytime to read your inbox.">
     <meta name="robots" content="index, follow">
     <link rel="canonical" href="https://www.whoer.live/temp-mail">
     <link rel="icon" type="image/png" href="/img/logo.png">
@@ -12,7 +12,7 @@
     <!-- Open Graph -->
     <meta property="og:type" content="website">
     <meta property="og:title" content="Temporary Email Generator — Whoer Live">
-    <meta property="og:description" content="Free disposable email address generator. Receive SMS & verification emails instantly without revealing your identity.">
+    <meta property="og:description" content="Mail.tm style disposable email accounts. Sign up for a custom address or log in anytime to access your persistent temporary inbox.">
     <meta property="og:url" content="https://www.whoer.live/temp-mail">
     <meta property="og:image" content="https://www.whoer.live/img/logo.png">
 
@@ -27,19 +27,21 @@
         .tm-wrap { max-width: 960px; margin: 0 auto; padding: 20px 20px 100px; }
         .tm-hero { text-align: center; padding: 32px 0 24px; }
         .tm-hero h1 { font-size: 32px; font-weight: 700; margin-bottom: 10px; }
-        .tm-hero p { font-size: 15px; color: var(--muted); max-width: 560px; margin: 0 auto; line-height: 1.6; }
+        .tm-hero p { font-size: 15px; color: var(--muted); max-width: 580px; margin: 0 auto; line-height: 1.6; }
         
         .tm-card { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 24px; margin-bottom: 24px; }
         .tm-box { display: flex; align-items: center; justify-content: space-between; background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 18px; margin-top: 14px; gap: 12px; flex-wrap: wrap; }
         .tm-address { font-family: var(--mono); font-size: 18px; font-weight: 700; color: var(--green); word-break: break-all; }
         
-        .tm-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; align-items: center; }
+        .cred-row { display: flex; align-items: center; gap: 12px; background: rgba(255,255,255,0.02); border: 1px dashed var(--border2); padding: 10px 14px; border-radius: var(--radius); margin-top: 12px; font-size: 13px; flex-wrap: wrap; }
+        .cred-label { color: var(--muted); font-size: 12px; font-weight: 600; text-transform: uppercase; }
+        .cred-val { font-family: var(--mono); color: var(--text); font-weight: 600; }
+
+        .tm-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 18px; align-items: center; }
         .btn-sm { padding: 8px 16px; font-size: 13px; border-radius: var(--radius); font-weight: 600; cursor: pointer; text-decoration: none; border: 1px solid var(--border); background: var(--panel); color: var(--text); transition: all 0.2s; }
         .btn-sm:hover { background: var(--panel-hover); border-color: var(--border2); }
         .btn-sm.btn-green { background: var(--green); color: #000; border-color: var(--green); }
         .btn-sm.btn-green:hover { box-shadow: 0 4px 15px rgba(34,215,122,0.3); }
-
-        .provider-select { padding: 8px 12px; background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius); color: var(--text); font-size: 13px; font-weight: 600; outline: none; }
 
         .inbox-table { width: 100%; border-collapse: collapse; margin-top: 14px; font-size: 14px; }
         .inbox-table th { text-align: left; padding: 12px; color: var(--muted); border-b: 1px solid var(--border); font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
@@ -53,6 +55,7 @@
         .form-group label { display: block; font-size: 12px; color: var(--muted); margin-bottom: 6px; font-weight: 600; }
         .form-input { width: 100%; padding: 10px 14px; background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius); color: var(--text); font-family: var(--mono); font-size: 14px; box-sizing: border-box; }
         .form-input:focus { border-color: var(--blue); outline: none; }
+        .form-select { width: 100%; padding: 10px 14px; background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius); color: var(--text); font-size: 14px; outline: none; }
     </style>
 </head>
 <body>
@@ -78,37 +81,40 @@
 <div class="tm-wrap">
     
     <div class="tm-hero">
-        <h1>Temporary Email Generator</h1>
-        <p>Instant disposable email addresses for temporary registrations, 2FA verification, and real OTP reception across major web services.</p>
+        <h1>Temporary Email Account System</h1>
+        <p>Mail.tm style disposable email accounts. Register a custom address or use auto-generated credentials to log in anytime and retrieve your messages.</p>
     </div>
 
     <!-- ACTIVE EMAIL CARD -->
     <div class="tm-card">
         <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
             <div>
-                <span style="font-size:12px;color:var(--muted);font-weight:600;text-transform:uppercase;">Active Temporary Email</span>
-                <div id="accStatus" style="font-size:12px;color:var(--green);margin-top:2px;">Status: Real OTP Receiver Active</div>
+                <span style="font-size:12px;color:var(--muted);font-weight:600;text-transform:uppercase;">Active Account Address</span>
+                <div id="accStatus" style="font-size:12px;color:var(--green);margin-top:2px;">Status: Authenticated Session</div>
             </div>
-            <div style="display:flex;align-items:center;gap:8px;">
-                <label style="font-size:12px;color:var(--muted);font-weight:600;">Engine:</label>
-                <select id="engineSelect" onchange="switchEngine()" class="provider-select">
-                    <option value="guerrilla" selected>GuerrillaMail (High OTP Acceptance)</option>
-                    <option value="mailtm">Mail.tm (Custom Accounts & Tokens)</option>
-                </select>
+            <div style="display:flex;gap:8px;">
+                <button onclick="openModal('signupModal')" class="btn-sm">➕ Create Custom Account</button>
+                <button onclick="openModal('loginModal')" class="btn-sm">🔑 Log In to Account</button>
             </div>
         </div>
 
         <div class="tm-box">
-            <div id="tempEmailVal" class="tm-address">Generating active temp address...</div>
-            <button onclick="copyAddress()" class="btn-sm btn-green" id="copyBtn">📋 Copy Address</button>
+            <div id="tempEmailVal" class="tm-address">Creating Mail.tm account...</div>
+            <button onclick="copyAddress()" class="btn-sm btn-green" id="copyBtn">📋 Copy Email</button>
+        </div>
+
+        <!-- CREDENTIALS SAVE BANNER -->
+        <div class="cred-row">
+            <span class="cred-label">Account Password:</span>
+            <span id="passVal" class="cred-val">••••••••</span>
+            <button onclick="copyPassword()" class="btn-sm" style="padding:4px 10px;font-size:11px;margin-left:auto;">📋 Copy Password</button>
+            <span style="font-size:11px;color:var(--muted);">Save your password to log back in anytime!</span>
         </div>
 
         <div class="tm-actions">
-            <button onclick="generateNewMail()" class="btn-sm">↻ Generate New Email</button>
-            <button onclick="fetchMessages()" class="btn-sm">🔄 Check Inbox</button>
-            <button id="signupBtn" onclick="openModal('signupModal')" class="btn-sm" style="display:none;">Create Custom Account</button>
-            <button id="loginBtn" onclick="openModal('loginModal')" class="btn-sm" style="display:none;">Log In</button>
-            <button id="logoutBtn" onclick="logout()" class="btn-sm" style="display:none;color:var(--red);border-color:rgba(255,79,106,0.3);">Logout</button>
+            <button onclick="generateMailtmQuick()" class="btn-sm btn-green">↻ Auto New Email</button>
+            <button onclick="fetchMessages()" class="btn-sm">🔄 Refresh Inbox</button>
+            <button id="logoutBtn" onclick="logout()" class="btn-sm" style="color:var(--red);border-color:rgba(255,79,106,0.3);">Logout</button>
         </div>
     </div>
 
@@ -132,7 +138,7 @@
                 <tbody id="inboxBody">
                     <tr>
                         <td colspan="4" style="text-align:center;padding:32px;color:var(--muted);">
-                            No messages received yet. Your inbox auto-refreshes every 5 seconds.
+                            No messages received yet. Your inbox checks for new mail automatically every 5 seconds.
                         </td>
                     </tr>
                 </tbody>
@@ -146,12 +152,16 @@
 <div id="signupModal" class="modal-overlay">
     <div class="modal-card">
         <h3>Create Custom Mail.tm Account</h3>
-        <p style="font-size:13px;color:var(--muted);margin-bottom:18px;">Register a custom username and password to keep access to your inbox across sessions.</p>
+        <p style="font-size:13px;color:var(--muted);margin-bottom:18px;">Register your custom username &amp; password. You can log in anytime to check saved messages.</p>
         
         <form onsubmit="handleSignup(event)">
             <div class="form-group">
                 <label>Username / Address Prefix</label>
-                <input type="text" id="signupUser" class="form-input" placeholder="myusername" required>
+                <input type="text" id="signupUser" class="form-input" placeholder="myname" required>
+            </div>
+            <div class="form-group">
+                <label>Select Domain</label>
+                <select id="signupDomain" class="form-select"></select>
             </div>
             <div class="form-group">
                 <label>Password</label>
@@ -170,8 +180,8 @@
 <!-- ─── LOGIN MODAL ─────────────────────────────────────────────────────── -->
 <div id="loginModal" class="modal-overlay">
     <div class="modal-card">
-        <h3>Log In to Existing Inbox</h3>
-        <p style="font-size:13px;color:var(--muted);margin-bottom:18px;">Enter your temporary email address and password to retrieve saved messages.</p>
+        <h3>Log In to Saved Account</h3>
+        <p style="font-size:13px;color:var(--muted);margin-bottom:18px;">Enter your email address and password to retrieve your messages across sessions.</p>
         
         <form onsubmit="handleLogin(event)">
             <div class="form-group">
@@ -226,79 +236,32 @@
 <script>
     document.getElementById('yr').textContent = new Date().getFullYear();
 
-    let currentEngine = 'guerrilla';
-    let guerrillaSid = localStorage.getItem('g_sid') || null;
     let mailtmToken = localStorage.getItem('tm_token') || null;
-    let activeAddress = '';
+    let currentAddress = localStorage.getItem('tm_addr') || '';
+    let currentPass = localStorage.getItem('tm_pass') || '';
     let activeMsgId = null;
 
     function openModal(id) { document.getElementById(id).style.display = 'flex'; }
     function closeModal(id) { document.getElementById(id).style.display = 'none'; }
 
-    function switchEngine() {
-        currentEngine = document.getElementById('engineSelect').value;
-        if (currentEngine === 'mailtm') {
-            document.getElementById('signupBtn').style.display = 'inline-block';
-            document.getElementById('loginBtn').style.display = 'inline-block';
-        } else {
-            document.getElementById('signupBtn').style.display = 'none';
-            document.getElementById('loginBtn').style.display = 'none';
-        }
-        generateNewMail();
-    }
-
     async function initTempMail() {
-        if (currentEngine === 'guerrilla') {
-            await initGuerrillaMail();
-        } else {
-            if (mailtmToken) {
-                await loadMailtmAccountInfo();
-            } else {
-                await generateMailtmQuick();
-            }
-        }
-    }
-
-    async function generateNewMail() {
-        if (currentEngine === 'guerrilla') {
-            localStorage.removeItem('g_sid');
-            guerrillaSid = null;
-            await initGuerrillaMail();
+        await loadDomains();
+        if (mailtmToken) {
+            await loadMailtmAccountInfo();
         } else {
             await generateMailtmQuick();
         }
     }
 
-    // ─── GUERRILLA MAIL ENGINE ─────────────
-    async function initGuerrillaMail() {
+    async function loadDomains() {
         try {
-            document.getElementById('tempEmailVal').textContent = 'Connecting to Guerrilla Mail API...';
-            const url = guerrillaSid ? `/api/temp-mail/guerrilla/get_email_address?sid_token=${encodeURIComponent(guerrillaSid)}` : '/api/temp-mail/guerrilla/get_email_address';
-            const res = await fetch(url).then(r => r.json());
-
-            if (res.email_addr) {
-                activeAddress = res.email_addr;
-                guerrillaSid = res.sid_token;
-                localStorage.setItem('g_sid', guerrillaSid);
-                document.getElementById('tempEmailVal').textContent = activeAddress;
-                document.getElementById('accStatus').textContent = 'Status: GuerrillaMail Active (Real OTP Enabled)';
-                fetchMessages();
-            } else {
-                fallback1SecMail();
-            }
-        } catch(e) {
-            fallback1SecMail();
-        }
+            const res = await fetch('/api/temp-mail/domains').then(r => r.json());
+            const domains = res.domains || ['mail.tm'];
+            const select = document.getElementById('signupDomain');
+            select.innerHTML = domains.map(d => `<option value="${d}">${d}</option>`).join('');
+        } catch(e) {}
     }
 
-    function fallback1SecMail() {
-        const rand = 'whr_' + Math.random().toString(36).substring(2, 9);
-        activeAddress = rand + '@1secmail.com';
-        document.getElementById('tempEmailVal').textContent = activeAddress;
-        fetchMessages();
-    }
-
-    // ─── MAIL.TM ENGINE ─────────────────────
     async function generateMailtmQuick() {
         try {
             document.getElementById('tempEmailVal').textContent = 'Creating Mail.tm account...';
@@ -313,13 +276,18 @@
 
             if (res.success && res.token) {
                 mailtmToken = res.token;
+                currentAddress = res.address;
+                currentPass = password;
                 localStorage.setItem('tm_token', mailtmToken);
-                await loadMailtmAccountInfo();
+                localStorage.setItem('tm_addr', currentAddress);
+                localStorage.setItem('tm_pass', currentPass);
+                updateUI();
+                fetchMessages();
             } else {
-                fallback1SecMail();
+                document.getElementById('tempEmailVal').textContent = 'Failed to generate account.';
             }
         } catch(e) {
-            fallback1SecMail();
+            document.getElementById('tempEmailVal').textContent = 'Server error.';
         }
     }
 
@@ -330,10 +298,8 @@
             }).then(r => r.json());
 
             if (res.success && res.account) {
-                activeAddress = res.account.address;
-                document.getElementById('tempEmailVal').textContent = activeAddress;
-                document.getElementById('accStatus').textContent = 'Status: Mail.tm Authenticated Account';
-                document.getElementById('logoutBtn').style.display = 'inline-block';
+                currentAddress = res.account.address;
+                updateUI();
                 fetchMessages();
             } else {
                 logout();
@@ -343,32 +309,96 @@
         }
     }
 
-    // ─── INBOX FETCHING ──────────────────────
-    async function fetchMessages() {
-        if (!activeAddress && !guerrillaSid && !mailtmToken) return;
+    function updateUI() {
+        document.getElementById('tempEmailVal').textContent = currentAddress || 'No account active';
+        document.getElementById('passVal').textContent = currentPass || '••••••••';
+        document.getElementById('accStatus').textContent = currentAddress ? `Status: Logged In (${currentAddress})` : 'Status: Signed Out';
+    }
+
+    async function handleSignup(e) {
+        e.preventDefault();
+        const user = document.getElementById('signupUser').value.trim();
+        const domain = document.getElementById('signupDomain').value;
+        const pass = document.getElementById('signupPass').value.trim();
+        const fullAddr = `${user}@${domain}`;
+        const errDiv = document.getElementById('signupErr');
+        errDiv.style.display = 'none';
 
         try {
-            let msgs = [];
-            if (currentEngine === 'guerrilla' && guerrillaSid) {
-                const res = await fetch(`/api/temp-mail/guerrilla/get_email_list?sid_token=${encodeURIComponent(guerrillaSid)}`).then(r => r.json());
-                msgs = (res.list || []).map(m => ({
-                    id: m.mail_id,
-                    from: m.mail_from,
-                    subject: m.mail_subject,
-                    date: m.mail_date,
-                    excerpt: m.mail_excerpt
-                }));
-            } else if (mailtmToken) {
-                const res = await fetch('/api/temp-mail/messages', {
-                    headers: { 'Authorization': `Bearer ${mailtmToken}` }
-                }).then(r => r.json());
-                msgs = (res.messages || []).map(m => ({
-                    id: m.id,
-                    from: m.from ? (m.from.name || m.from.address) : 'Unknown',
-                    subject: m.subject,
-                    date: m.createdAt
-                }));
+            const res = await fetch('/api/temp-mail/accounts', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username: fullAddr, password: pass })
+            }).then(r => r.json());
+
+            if (res.success && res.token) {
+                mailtmToken = res.token;
+                currentAddress = res.address;
+                currentPass = pass;
+                localStorage.setItem('tm_token', mailtmToken);
+                localStorage.setItem('tm_addr', currentAddress);
+                localStorage.setItem('tm_pass', currentPass);
+                closeModal('signupModal');
+                updateUI();
+                fetchMessages();
+            } else {
+                errDiv.textContent = res.error || 'Failed to register account.';
+                errDiv.style.display = 'block';
             }
+        } catch(err) {
+            errDiv.textContent = 'Registration failed.';
+            errDiv.style.display = 'block';
+        }
+    }
+
+    async function handleLogin(e) {
+        e.preventDefault();
+        const address = document.getElementById('loginAddress').value.trim();
+        const pass = document.getElementById('loginPass').value.trim();
+        const errDiv = document.getElementById('loginErr');
+        errDiv.style.display = 'none';
+
+        try {
+            const res = await fetch('/api/temp-mail/token', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ address, password: pass })
+            }).then(r => r.json());
+
+            if (res.success && res.token) {
+                mailtmToken = res.token;
+                currentAddress = address;
+                currentPass = pass;
+                localStorage.setItem('tm_token', mailtmToken);
+                localStorage.setItem('tm_addr', currentAddress);
+                localStorage.setItem('tm_pass', currentPass);
+                closeModal('loginModal');
+                updateUI();
+                fetchMessages();
+            } else {
+                errDiv.textContent = res.error || 'Invalid address or password.';
+                errDiv.style.display = 'block';
+            }
+        } catch(err) {
+            errDiv.textContent = 'Login failed.';
+            errDiv.style.display = 'block';
+        }
+    }
+
+    async function fetchMessages() {
+        if (!mailtmToken) return;
+
+        try {
+            const res = await fetch('/api/temp-mail/messages', {
+                headers: { 'Authorization': `Bearer ${mailtmToken}` }
+            }).then(r => r.json());
+
+            const msgs = (res.messages || []).map(m => ({
+                id: m.id,
+                from: m.from ? (m.from.name || m.from.address) : 'Unknown',
+                subject: m.subject || '(No Subject)',
+                date: new Date(m.createdAt || Date.now()).toLocaleTimeString()
+            }));
 
             document.getElementById('msgCountBadge').textContent = `${msgs.length} messages`;
             const tbody = document.getElementById('inboxBody');
@@ -377,7 +407,7 @@
                 tbody.innerHTML = `
                     <tr>
                         <td colspan="4" style="text-align:center;padding:32px;color:var(--muted);">
-                            No messages received yet. Your inbox auto-refreshes every 5 seconds.
+                            No messages received yet. Auto-checking every 5 seconds...
                         </td>
                     </tr>
                 `;
@@ -385,7 +415,7 @@
                 tbody.innerHTML = msgs.map(m => `
                     <tr onclick="readMessage('${m.id}')">
                         <td style="font-weight:600;">${m.from}</td>
-                        <td>${m.subject || '(No Subject)'}</td>
+                        <td>${m.subject}</td>
                         <td style="font-family:var(--mono);font-size:12px;color:var(--muted);">${m.date}</td>
                         <td><button class="btn-sm btn-green">Read Email</button></td>
                     </tr>
@@ -400,45 +430,57 @@
         document.getElementById('readBody').textContent = 'Fetching message contents...';
 
         try {
-            if (currentEngine === 'guerrilla' && guerrillaSid) {
-                const res = await fetch(`/api/temp-mail/guerrilla/fetch_email?sid_token=${encodeURIComponent(guerrillaSid)}&email_id=${encodeURIComponent(id)}`).then(r => r.json());
-                document.getElementById('readSubject').textContent = res.mail_subject || '(No Subject)';
-                document.getElementById('readSender').textContent = `From: ${res.mail_from || 'Unknown'}`;
-                document.getElementById('readBody').innerHTML = res.mail_body || `<pre>${res.mail_excerpt || 'No body text'}</pre>`;
-            } else if (mailtmToken) {
-                const res = await fetch(`/api/temp-mail/messages/${id}`, {
-                    headers: { 'Authorization': `Bearer ${mailtmToken}` }
-                }).then(r => r.json());
-                if (res.success && res.message) {
-                    document.getElementById('readSubject').textContent = res.message.subject || '(No Subject)';
-                    document.getElementById('readSender').textContent = `From: ${res.message.from ? (res.message.from.address || res.message.from) : 'Unknown'}`;
-                    document.getElementById('readBody').innerHTML = res.message.html ? res.message.html : `<pre style="white-space:pre-wrap;">${res.message.text || 'Empty body'}</pre>`;
-                }
+            const res = await fetch(`/api/temp-mail/messages/${id}`, {
+                headers: { 'Authorization': `Bearer ${mailtmToken}` }
+            }).then(r => r.json());
+
+            if (res.success && res.message) {
+                document.getElementById('readSubject').textContent = res.message.subject || '(No Subject)';
+                document.getElementById('readSender').textContent = `From: ${res.message.from ? (res.message.from.address || res.message.from) : 'Unknown'}`;
+                document.getElementById('readBody').innerHTML = res.message.html ? res.message.html : `<pre style="white-space:pre-wrap;">${res.message.text || 'Empty message body'}</pre>`;
+            } else {
+                document.getElementById('readBody').textContent = 'Failed to load email.';
             }
         } catch(e) {
-            document.getElementById('readBody').textContent = 'Failed to load email message.';
+            document.getElementById('readBody').textContent = 'Error reading email.';
         }
     }
 
     async function deleteCurrentMsg() {
         if (!activeMsgId) return;
-        closeModal('readModal');
-        fetchMessages();
+        try {
+            await fetch(`/api/temp-mail/messages/${activeMsgId}`, {
+                method: 'DELETE',
+                headers: { 'Authorization': `Bearer ${mailtmToken}` }
+            });
+            closeModal('readModal');
+            fetchMessages();
+        } catch(e) {}
     }
 
     function copyAddress() {
-        navigator.clipboard.writeText(activeAddress).then(() => {
+        navigator.clipboard.writeText(currentAddress).then(() => {
             const btn = document.getElementById('copyBtn');
             btn.textContent = '✓ Copied!';
-            setTimeout(() => btn.textContent = '📋 Copy Address', 2000);
+            setTimeout(() => btn.textContent = '📋 Copy Email', 2000);
+        });
+    }
+
+    function copyPassword() {
+        navigator.clipboard.writeText(currentPass).then(() => {
+            alert('Password copied to clipboard! Save it to log back in anytime.');
         });
     }
 
     function logout() {
         localStorage.removeItem('tm_token');
+        localStorage.removeItem('tm_addr');
+        localStorage.removeItem('tm_pass');
         mailtmToken = null;
-        document.getElementById('logoutBtn').style.display = 'none';
-        generateNewMail();
+        currentAddress = '';
+        currentPass = '';
+        updateUI();
+        generateMailtmQuick();
     }
 
     document.addEventListener('DOMContentLoaded', () => {
