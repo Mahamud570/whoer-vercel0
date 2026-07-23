@@ -34,6 +34,54 @@ try {
 
 // ─── TOOL LANDINGS DATA ──────────────────────────────────────────────────────
 const TOOL_LANDINGS = {
+    'what-is-my-ip': {
+        title: 'What Is My IP Address? — Free Instant IP Location & Privacy Check | Whoer Live',
+        h1: 'What Is My IP Address?',
+        description: 'Find your real public IP address instantly. Check your geolocation, ISP, proxy/VPN status, and WebRTC leak vulnerabilities in one click.',
+        intro: 'Your IP address is your unique digital signature on the internet. Whoer Live automatically detects your IPv4/IPv6 address, physical country, city, ISP provider, and evaluates your connection privacy score.',
+        searchVolume: '450,000',
+        icon: '📡',
+        faqs: [
+            { q: 'What is my IPv4 address?', a: 'Your IPv4 address is assigned to your network router or device by your Internet Service Provider (ISP). Whoer Live displays it live at the top of this page.' },
+            { q: 'Can websites see my location with my IP?', a: 'Yes. Every HTTP request sends your public IP address, allowing websites to estimate your country, region, city, and ISP owner.' }
+        ]
+    },
+    'vpn-leak-test': {
+        title: 'VPN Leak Test — Check WebRTC, DNS & IP Leaks | Whoer Live',
+        h1: 'VPN Leak Test',
+        description: 'Run a full audit to check if your VPN is leaking your real IP address via WebRTC, DNS queries, or timezone mismatches.',
+        intro: 'A VPN tunnel is designed to encrypt and mask your traffic. However, misconfigured browsers, WebRTC STUN requests, or unencrypted DNS requests can leak your true IP address behind the VPN tunnel.',
+        searchVolume: '85,000',
+        icon: '🔒',
+        faqs: [
+            { q: 'How do I know if my VPN is leaking?', a: 'Disconnect your VPN and check your real IP. Reconnect your VPN and run Whoer Live. If your real IP or ISP appears anywhere in the report, your VPN is leaking.' },
+            { q: 'What is the most common VPN leak?', a: 'WebRTC leaks and DNS leaks are the two most frequent ways real IPs are exposed while using commercial VPNs.' }
+        ]
+    },
+    'proxy-checker': {
+        title: 'Proxy Checker — Audit Proxy Anonymity & Fraud Score | Whoer Live',
+        h1: 'Proxy Checker & Anonymity Audit',
+        description: 'Verify if your proxy connection is anonymous, transparent, or flagged as a datacenter IP by anti-bot fraud engines.',
+        intro: 'Not all proxies provide equal anonymity. Transparent proxies pass your real IP in HTTP headers like X-Forwarded-For, while elite proxies hide it completely. Our tool audits proxy headers and IP reputation.',
+        searchVolume: '65,000',
+        icon: '🕵️',
+        faqs: [
+            { q: 'What is the difference between Transparent, Anonymous, and Elite proxies?', a: 'Transparent proxies reveal your real IP. Anonymous proxies hide your IP but reveal proxy usage. Elite (High Anonymous) proxies hide both your IP and proxy usage.' },
+            { q: 'Why is my proxy flagged as datacenter?', a: 'Proxies hosted on AWS, DigitalOcean, or Hetzner servers are recognized by IP range databases as non-residential datacenter IPs.' }
+        ]
+    },
+    'antidetect-browser-test': {
+        title: 'Anti-Detect Browser Test — Audit Fingerprint Spoofing | Whoer Live',
+        h1: 'Anti-Detect Browser Audit',
+        description: 'Audit anti-detect browser profiles (AdsPower, Multilogin, Dolphin, GoLogin) for Canvas, WebGL, AudioContext, and Font fingerprint leaks.',
+        intro: 'Anti-detect browsers isolate browser profiles and spoof hardware parameters. This test verifies whether your Canvas noise, WebGL renderer, navigator properties, and WebRTC configurations pass anti-fraud detection.',
+        searchVolume: '24,000',
+        icon: '💻',
+        faqs: [
+            { q: 'How do anti-detect browsers work?', a: 'They modify native browser APIs (such as HTML5 Canvas, WebGL, Audio, and Screen APIs) to emulate different operating systems and hardware configurations.' },
+            { q: 'What causes an anti-detect profile to get banned?', a: 'Mismatched timezones, inconsistent Canvas hashes, WebRTC leaks, or using datacenter proxy IPs with residential user agents.' }
+        ]
+    },
     'ip-location-lookup': {
         title: 'IP Location Lookup — Find Geographic Location of Any IP | Whoer Live',
         h1: 'IP Location Lookup',
@@ -117,6 +165,14 @@ app.use(compression());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
+// Cache-Control headers for static assets
+app.use((req, res, next) => {
+    if (req.url.startsWith('/css/') || req.url.startsWith('/js/') || req.url.startsWith('/img/')) {
+        res.setHeader('Cache-Control', 'public, max-age=86400, immutable');
+    }
+    next();
+});
+
 // ─── MIDDLEWARE ──────────────────────────────────────────────────────────────
 const apiKeyValidator = async (req, res, next) => {
     const key = req.headers['x-api-key'];
@@ -139,44 +195,46 @@ app.use((req, res, next) => {
 // ─── ROBOTS & SITEMAP ────────────────────────────────────────────────────────
 app.get('/robots.txt', (req, res) => {
     res.type('text/plain');
-    res.send('User-agent: *\nAllow: /\nDisallow: /api/\nSitemap: https://www.whoer.live/sitemap.xml');
+    res.setHeader('Cache-Control', 'public, max-age=86400');
+    res.send('User-agent: *\nAllow: /\nDisallow: /api/\n\nSitemap: https://www.whoer.live/sitemap.xml');
 });
 
 // Redirect /sitemap and /api/sitemap to /sitemap.xml
-app.get(['/sitemap', '/api/sitemap'], (req, res) => res.redirect('/sitemap.xml'));
-
+app.get(['/sitemap', '/api/sitemap'], (req, res) => res.redirect(301, '/sitemap.xml'));
 
 app.get('/sitemap.xml', (req, res) => {
     const baseUrl = 'https://www.whoer.live';
     const lastMod = new Date().toISOString().split('T')[0];
     
     let urls = [
-        { loc: '/', priority: '1.0' },
-        { loc: '/bulk', priority: '0.8' },
-        { loc: '/api-docs', priority: '0.7' },
-        { loc: '/threat-map', priority: '0.7' },
-        { loc: '/blacklist', priority: '0.7' },
-        { loc: '/port-scanner', priority: '0.7' },
-        { loc: '/ping', priority: '0.7' },
-        { loc: '/guides', priority: '0.9' }
+        { loc: '/', priority: '1.0', changefreq: 'daily' },
+        { loc: '/temp-mail', priority: '0.9', changefreq: 'daily' },
+        { loc: '/bulk', priority: '0.8', changefreq: 'weekly' },
+        { loc: '/api-docs', priority: '0.7', changefreq: 'monthly' },
+        { loc: '/threat-map', priority: '0.7', changefreq: 'daily' },
+        { loc: '/blacklist', priority: '0.8', changefreq: 'daily' },
+        { loc: '/port-scanner', priority: '0.8', changefreq: 'weekly' },
+        { loc: '/ping', priority: '0.8', changefreq: 'weekly' },
+        { loc: '/guides', priority: '0.9', changefreq: 'weekly' },
+        { loc: '/directory', priority: '0.9', changefreq: 'weekly' }
     ];
 
     Object.keys(TOOL_LANDINGS).forEach(slug => {
-        urls.push({ loc: `/${slug}`, priority: '0.9' });
+        urls.push({ loc: `/${slug}`, priority: '0.9', changefreq: 'weekly' });
     });
 
     Object.keys(VPN_BRANDS).forEach(slug => {
-        urls.push({ loc: `/vpn-test/${slug}`, priority: '0.8' });
+        urls.push({ loc: `/vpn-test/${slug}`, priority: '0.8', changefreq: 'weekly' });
     });
 
     Object.keys(ISP_DATA).forEach(slug => {
-        urls.push({ loc: `/isp/${slug}`, priority: '0.7' });
+        urls.push({ loc: `/isp/${slug}`, priority: '0.7', changefreq: 'monthly' });
     });
 
     Object.keys(GEO_DATA).forEach(country => {
-        urls.push({ loc: `/proxy/${country}`, priority: '0.7' });
+        urls.push({ loc: `/proxy/${country}`, priority: '0.7', changefreq: 'monthly' });
         GEO_DATA[country].forEach(city => {
-            urls.push({ loc: `/proxy/${country}/${city}`, priority: '0.6' });
+            urls.push({ loc: `/proxy/${country}/${city}`, priority: '0.6', changefreq: 'monthly' });
         });
     });
 
@@ -185,11 +243,13 @@ app.get('/sitemap.xml', (req, res) => {
 ${urls.map(u => `  <url>
     <loc>${baseUrl}${u.loc}</loc>
     <lastmod>${lastMod}</lastmod>
+    <changefreq>${u.changefreq}</changefreq>
     <priority>${u.priority}</priority>
   </url>`).join('\n')}
 </urlset>`;
 
     res.header('Content-Type', 'application/xml');
+    res.header('Cache-Control', 'public, max-age=3600');
     res.send(xml);
 });
 
@@ -437,6 +497,10 @@ app.get('/api/temp-mail/guerrilla/fetch_email', async (req, res) => {
 });
 
 // ─── TOOL LANDING PAGES ──────────────────────────────────────────────────────
+app.get('/what-is-my-ip',        (req, res) => res.render('tool_landing', { tool: TOOL_LANDINGS['what-is-my-ip'], slug: 'what-is-my-ip', year: new Date().getFullYear() }));
+app.get('/vpn-leak-test',        (req, res) => res.render('tool_landing', { tool: TOOL_LANDINGS['vpn-leak-test'], slug: 'vpn-leak-test', year: new Date().getFullYear() }));
+app.get('/proxy-checker',        (req, res) => res.render('tool_landing', { tool: TOOL_LANDINGS['proxy-checker'], slug: 'proxy-checker', year: new Date().getFullYear() }));
+app.get('/antidetect-browser-test', (req, res) => res.render('tool_landing', { tool: TOOL_LANDINGS['antidetect-browser-test'], slug: 'antidetect-browser-test', year: new Date().getFullYear() }));
 app.get('/ip-location-lookup',    (req, res) => res.render('tool_landing', { tool: TOOL_LANDINGS['ip-location-lookup'], slug: 'ip-location-lookup', year: new Date().getFullYear() }));
 app.get('/vpn-detector',         (req, res) => res.render('tool_landing', { tool: TOOL_LANDINGS['vpn-detector'], slug: 'vpn-detector', year: new Date().getFullYear() }));
 app.get('/browser-fingerprint-test', (req, res) => res.render('tool_landing', { tool: TOOL_LANDINGS['browser-fingerprint-test'], slug: 'browser-fingerprint-test', year: new Date().getFullYear() }));

@@ -21,6 +21,51 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" media="print" onload="this.media='all'">
     <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"></noscript>
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://www.whoer.live/" },
+            { "@type": "ListItem", "position": 2, "name": "Temp Mail" }
+          ]
+        },
+        {
+          "@type": "WebApplication",
+          "name": "Temporary Email Generator — Whoer Live",
+          "url": "https://www.whoer.live/temp-mail",
+          "description": "Disposable temporary email inbox service for instantaneous OTP and verification emails.",
+          "applicationCategory": "SecurityApplication",
+          "operatingSystem": "Any",
+          "offers": { "@type": "Offer", "price": "0" }
+        },
+        {
+          "@type": "FAQPage",
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "What is a temporary disposable email?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "A temporary email is a short-lived inbox that allows you to receive verification codes and activation links without exposing your primary email address to spam."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "How long do temp emails last on Whoer Live?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Your temporary email account remains active as long as your session is open. You can also register custom credentials to save your inbox across devices."
+              }
+            }
+          ]
+        }
+      ]
+    }
+    </script>
     <style><%- include('../public/css/style.css') %></style>
     
     <style>
